@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 import {
   LayoutDashboard,
   Search,
@@ -26,12 +27,22 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ onCollapse }) => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { logout } = useAuth();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const handleCollapse = () => {
     const newState = !isCollapsed;
     setIsCollapsed(newState);
     onCollapse?.(newState);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/auth');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   };
 
   return (
@@ -77,9 +88,8 @@ const Sidebar: React.FC<SidebarProps> = ({ onCollapse }) => {
         >
           <User className="w-5 h-5" />
           {!isCollapsed && 'Profile'}
-        </Link>
-        <button
-          onClick={() => navigate('/auth')}
+        </Link>        <button
+          onClick={handleLogout}
           className="flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors duration-150 hover:bg-red-600/90 hover:text-white text-gray-200 bg-transparent border-none outline-none"
           title={isCollapsed ? 'Logout' : ''}
         >

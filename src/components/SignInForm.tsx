@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { Eye, EyeOff, Mail, Lock, Chrome, Facebook } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
+import { useAuth } from '../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 interface SignInFormProps {
   onSignIn?: () => void;
@@ -13,6 +15,9 @@ const SignInForm: React.FC<SignInFormProps> = ({ onSignIn }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(false);
+  const { login, resetPassword, loginWithGoogle } = useAuth();
+  const navigate = useNavigate();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -34,14 +39,65 @@ const SignInForm: React.FC<SignInFormProps> = ({ onSignIn }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateForm()) {
-      console.log('Sign in data:', formData);
-      // Handle sign in logic here
+    if (!validateForm()) return;
+
+    setLoading(true);
+    setErrors({});
+
+    try {
+      await login(formData.email, formData.password);
       if (onSignIn) {
         onSignIn();
+      } else {
+        navigate('/dashboard');
+      }    } catch (error: unknown) {
+      console.error('Sign in error:', error);
+      const errorMessage = error instanceof Error && 'code' in error && error.code === 'auth/invalid-credential'
+        ? 'Invalid email or password' 
+        : 'Failed to sign in. Please try again.';
+      setErrors({ submit: errorMessage });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    if (!formData.email) {
+      setErrors({ email: 'Please enter your email address first' });
+      return;
+    }
+
+    try {
+      await resetPassword(formData.email);
+      alert('Password reset email sent! Check your inbox.');    } catch (error: unknown) {
+      console.error('Password reset error:', error);
+      setErrors({ 
+        submit: 'Failed to send password reset email. Please try again.' 
+      });
+    }
+  };
+  const handleGoogleSignIn = async () => {
+    setLoading(true);
+    setErrors({});
+
+    try {
+      await loginWithGoogle();
+      // Navigation will be handled by the ProtectedRoute component
+      // which will redirect to profile setup if needed
+      if (onSignIn) {
+        onSignIn();
+      } else {
+        navigate('/dashboard');
       }
+    } catch (error: unknown) {
+      console.error('Google sign in error:', error);
+      setErrors({ 
+        submit: 'Failed to sign in with Google. Please try again.' 
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -50,9 +106,13 @@ const SignInForm: React.FC<SignInFormProps> = ({ onSignIn }) => {
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold text-brand-dark mb-2">Welcome Back</h2>
         <p className="text-gray-600">Continue your musical journey</p>
-      </div>
-
-      <form onSubmit={handleSubmit} className="space-y-6">
+      </div>      <form onSubmit={handleSubmit} className="space-y-6">
+        {errors.submit && (
+          <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg">
+            {errors.submit}
+          </div>
+        )}
+        
         <div>
           <label className="block text-sm font-medium text-brand-dark mb-2">
             Email
@@ -112,17 +172,19 @@ const SignInForm: React.FC<SignInFormProps> = ({ onSignIn }) => {
             <label htmlFor="remember" className="text-sm text-gray-600">
               Remember me
             </label>
-          </div>
-          <a href="#" className="text-sm text-brand-brown hover:underline">
+          </div>          <button
+            type="button"
+            onClick={handleForgotPassword}
+            className="text-sm text-brand-brown hover:underline"
+          >
             Forgot password?
-          </a>
-        </div>
-
-        <button
+          </button>
+        </div>        <button
           type="submit"
-          className="w-full bg-gradient-brand text-white py-3 px-6 rounded-lg font-semibold hover:shadow-lg transform hover:scale-[1.02] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-brand-brown focus:ring-offset-2"
+          disabled={loading}
+          className="w-full bg-gradient-brand text-white py-3 px-6 rounded-lg font-semibold hover:shadow-lg transform hover:scale-[1.02] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-brand-brown focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
         >
-          Sign In
+          {loading ? 'Signing In...' : 'Sign In'}
         </button>
 
         <div className="relative">
@@ -132,18 +194,20 @@ const SignInForm: React.FC<SignInFormProps> = ({ onSignIn }) => {
           <div className="relative flex justify-center text-sm">
             <span className="px-2 bg-brand-light text-gray-500">OR</span>
           </div>
-        </div>
-
-        <button
+        </div>        <button
           type="button"
-          className="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-brown focus:ring-offset-2"
+          onClick={handleGoogleSignIn}
+          disabled={loading}
+          className="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-brown focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <img 
             src="https://www.google.com/favicon.ico" 
             alt="Google" 
             className="w-4 h-4 mr-2"
           />
-          <span className="text-gray-700 font-medium">Continue with Google</span>
+          <span className="text-gray-700 font-medium">
+            {loading ? 'Signing in...' : 'Continue with Google'}
+          </span>
         </button>
       </form>
     </div>

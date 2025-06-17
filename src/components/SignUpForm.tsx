@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { Eye, EyeOff, Mail, Lock, User, Chrome, Facebook } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, User } from 'lucide-react';
+import { useAuth } from '../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 interface SignUpFormProps {
   onSignUp?: () => void;
@@ -12,11 +14,13 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSignUp }) => {
     email: '',
     password: '',
     confirmPassword: ''
-  });
-  const [showPassword, setShowPassword] = useState(false);
+  });  const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(false);
+  const { signup, loginWithGoogle } = useAuth(); // Added signup here
+  const navigate = useNavigate();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -42,15 +46,84 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSignUp }) => {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateForm()) {
-      console.log('Sign up data:', formData);
-      // Handle sign up logic here
+    if (!validateForm()) return;
+
+    setLoading(true);
+    setErrors({});
+    try {
+      const displayName = `${formData.firstName} ${formData.lastName}`.trim();
+      await signup(formData.email, formData.password, displayName);
+      // Successfully signed up, now navigate
+      // You might want to navigate to a dashboard or a specific page after signup
+      // For now, let's assume successful signup means the user can proceed.
+      // If onSignUp prop is provided, call it. Otherwise, navigate to a default page.
       if (onSignUp) {
         onSignUp();
+      } else {
+        // Navigate to a dashboard or home page after successful signup
+        // Or, if profile setup is still a separate step, navigate there,
+        // but now the user is actually created in Firebase.
+        navigate('/profile-setup', { 
+          state: { 
+            email: formData.email, 
+            // No need to pass password here anymore as user is created
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+          } 
+        }); 
+        // Or navigate('/'); if profile setup is part of the initial signup flow
       }
+    } catch (error) { // Changed error type to unknown for Firebase errors
+      console.error('Error during sign up:', error);
+      // Handle Firebase specific errors if needed
+      if (error instanceof Error && 'code' in error && (error as any).code === 'auth/email-already-in-use') {
+        setErrors({ email: 'This email is already in use.' });
+      } else if (error instanceof Error) {
+        setErrors({ submit: error.message || 'Failed to sign up. Please try again.' });
+      } else {
+        setErrors({ submit: 'An unknown error occurred. Please try again.' });
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    setLoading(true);
+    setErrors({});
+
+    try {
+      const userCredential = await loginWithGoogle();
+      // Extract first and last name from Google display name
+      let firstName = '';
+      let lastName = '';
+      const displayName = userCredential.user.displayName;
+      if (displayName) {
+        const nameParts = displayName.split(' ');
+        firstName = nameParts[0] || '';
+        lastName = nameParts.slice(1).join(' ') || '';
+      }
+
+      if (onSignUp) {
+        onSignUp();
+      } else {
+        console.log('Navigating to profile setup page with Google user first and last name...');
+        navigate('/profile-setup', { 
+          state: { 
+            firstName: firstName, 
+            lastName: lastName,
+            isGoogleSignIn: true // Flag to indicate Google sign-in
+          } 
+        });
+      }
+    } catch (error: unknown) {
+      console.error('Google sign in error:', error);
+      const errorMessage = 'Failed to sign in with Google. Please try again.';
+      setErrors({ submit: errorMessage });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -59,9 +132,14 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSignUp }) => {
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold text-brand-dark mb-2">Create Account</h2>
         <p className="text-gray-600">Start your musical journey today</p>
-      </div>
-
+      </div>      
       <form onSubmit={handleSubmit} className="space-y-6">
+        {errors.submit && (
+          <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg">
+            {errors.submit}
+          </div>
+        )}
+        
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-brand-dark mb-2">
@@ -193,13 +271,12 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSignUp }) => {
             <a href="#" className="text-brand-brown hover:underline">Privacy Policy</a>
           </label>
         </div>
-        {errors.terms && <p className="text-red-500 text-sm">{errors.terms}</p>}
-
-        <button
+        {errors.terms && <p className="text-red-500 text-sm">{errors.terms}</p>}        <button
           type="submit"
-          className="w-full bg-gradient-brand text-white py-3 px-6 rounded-lg font-semibold hover:shadow-lg transform hover:scale-[1.02] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-brand-brown focus:ring-offset-2"
+          disabled={loading}
+          className="w-full bg-gradient-brand text-white py-3 px-6 rounded-lg font-semibold hover:shadow-lg transform hover:scale-[1.02] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-brand-brown focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
         >
-          Sign Up
+          {loading ? 'Creating Account...' : 'Sign Up'}
         </button>
 
         <div className="relative">
@@ -209,18 +286,20 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSignUp }) => {
           <div className="relative flex justify-center text-sm">
             <span className="px-2 bg-brand-light text-gray-500">OR</span>
           </div>
-        </div>
-
-        <button
+        </div>        <button
           type="button"
-          className="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-brown focus:ring-offset-2"
+          onClick={handleGoogleSignIn}
+          disabled={loading}
+          className="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-brown focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <img 
             src="https://www.google.com/favicon.ico" 
             alt="Google" 
             className="w-4 h-4 mr-2"
           />
-          <span className="text-gray-700 font-medium">Continue with Google</span>
+          <span className="text-gray-700 font-medium">
+            {loading ? 'Signing in...' : 'Continue with Google'}
+          </span>
         </button>
       </form>
     </div>

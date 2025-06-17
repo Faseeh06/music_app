@@ -3,18 +3,8 @@ import { Music, Headphones, Play, Volume2 } from 'lucide-react';
 import SignUpForm from './SignUpForm';
 import SignInForm from './SignInForm';
 
-interface AuthPageProps {
-  onLogin?: () => void;
-}
-
-const AuthPage: React.FC<AuthPageProps> = ({ onLogin }) => {
+const AuthPage: React.FC = () => {
   const [isSignUp, setIsSignUp] = useState(true);
-
-  const handleAuth = () => {
-    if (onLogin) {
-      onLogin();
-    }
-  };
 
   return (
     <div className="min-h-screen flex">
@@ -122,12 +112,11 @@ const AuthPage: React.FC<AuthPageProps> = ({ onLogin }) => {
             <div 
               className="flex transition-transform duration-300 ease-in-out"
               style={{ transform: isSignUp ? 'translateX(0%)' : 'translateX(-100%)' }}
-            >
-              <div className="w-full flex-shrink-0">
-                <SignUpForm onSignUp={handleAuth} />
+            >              <div className="w-full flex-shrink-0">
+                <SignUpForm />
               </div>
               <div className="w-full flex-shrink-0">
-                <SignInForm onSignIn={handleAuth} />
+                <SignInForm />
               </div>
             </div>
           </div>
