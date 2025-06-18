@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import AuthPage from './components/AuthPage';
 import Dashboard from './components/Dashboard';
@@ -11,7 +11,7 @@ import './App.css';
 
 function App() {
   // Mock authentication state - in real app this would come from context/state management
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
 
   return (
     <Router>
