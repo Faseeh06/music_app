@@ -30,7 +30,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
   }
   
   if (!currentUser) return <Navigate to="/auth" replace />;
-  if (profileNeedsSetup) return <Navigate to="/profile-setup" replace />;
+  if (profileNeedsSetup) return <Navigate to="/dashboard" replace />;
   
   return <>{children}</>;
 };
