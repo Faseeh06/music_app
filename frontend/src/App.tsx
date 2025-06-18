@@ -2,13 +2,13 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { useAuth } from './hooks/useAuth';
-import { useUserProfile } from './hooks/useUserProfile';
+
 import AuthPage from './components/AuthPage';
-import ProfileSetupPage from './components/ProfileSetupPage';
 import Dashboard from './components/Dashboard';
 import SearchPage from './components/SearchPage';
 import PracticePage from './components/PracticePage';
 import ProfilePage from './components/ProfilePage';
+import SettingsPage from './components/SettingsPage';
 import HistoryPage from './pages/HistoryPage';
 import RankingPage from './pages/RankingPage';
 import './App.css';
@@ -16,21 +16,8 @@ import './App.css';
 // Protected Route component
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { currentUser } = useAuth();
-  const { loading, profileNeedsSetup } = useUserProfile();
-  
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-brown mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
-        </div>
-      </div>
-    );
-  }
   
   if (!currentUser) return <Navigate to="/auth" replace />;
-  if (profileNeedsSetup) return <Navigate to="/dashboard" replace />;
   
   return <>{children}</>;
 };
@@ -53,21 +40,6 @@ function AppContent() {
               <AuthRoute>
                 <AuthPage />
               </AuthRoute>
-            } 
-          />          <Route 
-            path="/profile-setup" 
-            element={
-              currentUser ? 
-              <ProfileSetupPage /> : 
-              <Navigate to="/auth" replace />
-            } 
-          />
-          <Route 
-            path="/profile-edit" 
-            element={
-              <ProtectedRoute>
-                <ProfileSetupPage />
-              </ProtectedRoute>
             } 
           />
           <Route
@@ -103,6 +75,14 @@ function AppContent() {
             } 
           />
           <Route 
+            path="/settings" 
+            element={
+              <ProtectedRoute>
+                <SettingsPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
             path="/history" 
             element={
               <ProtectedRoute>
@@ -121,9 +101,7 @@ function AppContent() {
           <Route 
             path="/" 
             element={
-              <AuthRoute>
-                <Navigate to="/dashboard" replace />
-              </AuthRoute>
+              currentUser ? <Navigate to="/dashboard" replace /> : <Navigate to="/auth" replace />
             } 
           />
         </Routes>

@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from './useAuth';
+import { useLocation } from 'react-router-dom';
 import { UserProfile, getUserProfile, createUserProfile, isProfileComplete } from '../services/userService';
 
 export const useUserProfile = () => {
   const { currentUser } = useAuth();
+  const location = useLocation();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [profileNeedsSetup, setProfileNeedsSetup] = useState(false);
@@ -35,7 +37,16 @@ export const useUserProfile = () => {
         }
 
         setProfile(userProfile);
-        setProfileNeedsSetup(!isProfileComplete(userProfile));
+        const needsSetup = !isProfileComplete(userProfile);
+        console.log('Profile loaded:', { 
+          profileCompleted: userProfile?.profileCompleted, 
+          needsSetup,
+          username: userProfile?.username,
+          dateOfBirth: userProfile?.dateOfBirth,
+          instruments: userProfile?.instruments?.length,
+          favoriteGenres: userProfile?.favoriteGenres?.length
+        });
+        setProfileNeedsSetup(needsSetup);
       } catch (error) {
         console.error('Error loading user profile:', error);
       } finally {
@@ -44,7 +55,7 @@ export const useUserProfile = () => {
     };
 
     loadUserProfile();
-  }, [currentUser]);
+  }, [currentUser, location.pathname]);
 
   const refreshProfile = async () => {
     if (!currentUser) return;

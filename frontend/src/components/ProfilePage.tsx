@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { User, Upload, BarChart3, Award, Lock, Eye, Edit3, MapPin, Calendar, Music, Guitar } from 'lucide-react';
-import Layout from './Layout';
+import Sidebar from './Sidebar';
+import Navbar from './Navbar';
 import { useUserProfile } from '../hooks/useUserProfile';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
@@ -31,6 +32,7 @@ const ProfilePage: React.FC = () => {
   const navigate = useNavigate();
   const [avatar, setAvatar] = useState<string | null>(null);
   const [privacy, setPrivacy] = useState(dummyPrivacy);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
   // Update avatar when profile loads
   React.useEffect(() => {
@@ -41,26 +43,34 @@ const ProfilePage: React.FC = () => {
 
   if (loading) {
     return (
-      <Layout showSearchBar={false}>
-        <div className="max-w-3xl mx-auto py-10 px-4 flex items-center justify-center min-h-[400px]">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-brown mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading profile...</p>
+      <div className="min-h-screen bg-gray-50 font-poppins">
+        <Sidebar onCollapse={setSidebarCollapsed} />
+        <div className={`transition-all duration-300 ${sidebarCollapsed ? 'ml-20' : 'ml-64'}`}>
+          <Navbar />
+          <div className="max-w-3xl mx-auto py-10 px-4 flex items-center justify-center min-h-[400px]">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-brown mx-auto mb-4"></div>
+              <p className="text-gray-600">Loading profile...</p>
+            </div>
           </div>
         </div>
-      </Layout>
+      </div>
     );
   }
 
   if (!profile) {
     return (
-      <Layout showSearchBar={false}>
-        <div className="max-w-3xl mx-auto py-10 px-4 flex items-center justify-center min-h-[400px]">
-          <div className="text-center">
-            <p className="text-gray-600">Profile not found</p>
+      <div className="min-h-screen bg-gray-50 font-poppins">
+        <Sidebar onCollapse={setSidebarCollapsed} />
+        <div className={`transition-all duration-300 ${sidebarCollapsed ? 'ml-20' : 'ml-64'}`}>
+          <Navbar />
+          <div className="max-w-3xl mx-auto py-10 px-4 flex items-center justify-center min-h-[400px]">
+            <div className="text-center">
+              <p className="text-gray-600">Profile not found</p>
+            </div>
           </div>
         </div>
-      </Layout>
+      </div>
     );  }
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -72,8 +82,11 @@ const ProfilePage: React.FC = () => {
   };
 
   return (
-    <Layout showSearchBar={false}>
-      <div className="max-w-3xl mx-auto py-10 px-4">
+    <div className="min-h-screen bg-gray-50 font-poppins">
+      <Sidebar onCollapse={setSidebarCollapsed} />
+      <div className={`transition-all duration-300 ${sidebarCollapsed ? 'ml-20' : 'ml-64'}`}>
+        <Navbar />
+        <div className="max-w-3xl mx-auto py-10 px-4">
         {/* Profile Header */}
         <div className="bg-white rounded-2xl shadow-lg p-8 flex flex-col sm:flex-row items-center gap-8 mb-8">
           <div className="relative group">
@@ -103,7 +116,7 @@ const ProfilePage: React.FC = () => {
               </h2>              <button 
                 className="p-1 rounded-full hover:bg-gray-100 transition-colors" 
                 title="Edit Profile"
-                onClick={() => navigate('/profile-edit')}
+                onClick={() => navigate('/settings')}
               >
                 <Edit3 className="w-4 h-4 text-brand-brown" />
               </button>
@@ -263,8 +276,9 @@ const ProfilePage: React.FC = () => {
             </label>
           </div>
         </div>
+        </div>
       </div>
-    </Layout>
+    </div>
   );
 };
 

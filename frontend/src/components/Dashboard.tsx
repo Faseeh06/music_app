@@ -3,28 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
 import { 
-  Clock, 
-  Calendar, 
-  TrendingUp, 
+
   Play, 
-  Search, 
-  Music, 
-  BarChart3, 
-  Users, 
-  Star,
-  RotateCcw,
-  Plus,
-  Filter,
-  ChevronRight,
-  Headphones,
+
   Timer,
-  Target,
-  Award,
+
   Flame,
   Pause,
   SkipForward,
   SkipBack,
-  Music2
+
 } from 'lucide-react';
 
 interface PracticeSession {

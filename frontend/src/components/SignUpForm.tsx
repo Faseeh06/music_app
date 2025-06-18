@@ -65,7 +65,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSignUp }) => {
         // Navigate to a dashboard or home page after successful signup
         // Or, if profile setup is still a separate step, navigate there,
         // but now the user is actually created in Firebase.
-        navigate('/profile-setup', { 
+        navigate('/settings', { 
           state: { 
             email: formData.email, 
             // No need to pass password here anymore as user is created
@@ -109,8 +109,8 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSignUp }) => {
       if (onSignUp) {
         onSignUp();
       } else {
-        console.log('Navigating to profile setup page with Google user first and last name...');
-        navigate('/profile-setup', { 
+        console.log('Navigating to settings page with Google user first and last name...');
+        navigate('/settings', { 
           state: { 
             firstName: firstName, 
             lastName: lastName,

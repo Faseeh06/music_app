@@ -7,6 +7,7 @@ import {
   History,
   Trophy,
   User,
+  Settings,
   LogOut,
   ChevronLeft,
   ChevronRight
@@ -83,11 +84,23 @@ const Sidebar: React.FC<SidebarProps> = ({ onCollapse }) => {
       <div className="mb-6 px-4 flex flex-col gap-2">
         <Link
           to="/profile"
-          className="flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors duration-150 hover:bg-brand-brown/80 hover:text-white text-gray-200"
+          className={`flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors duration-150 hover:bg-brand-brown/80 hover:text-white ${
+            location.pathname === '/profile' ? 'bg-brand-brown text-white' : 'text-gray-200'
+          }`}
           title={isCollapsed ? 'Profile' : ''}
         >
           <User className="w-5 h-5" />
           {!isCollapsed && 'Profile'}
+        </Link>
+        <Link
+          to="/settings"
+          className={`flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors duration-150 hover:bg-brand-brown/80 hover:text-white ${
+            location.pathname === '/settings' ? 'bg-brand-brown text-white' : 'text-gray-200'
+          }`}
+          title={isCollapsed ? 'Settings' : ''}
+        >
+          <Settings className="w-5 h-5" />
+          {!isCollapsed && 'Settings'}
         </Link>        <button
           onClick={handleLogout}
           className="flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors duration-150 hover:bg-red-600/90 hover:text-white text-gray-200 bg-transparent border-none outline-none"
