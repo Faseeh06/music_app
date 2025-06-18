@@ -1,6 +1,9 @@
 import React, { useRef, useState } from 'react';
-import { User, Upload, BarChart3, Award, Lock, Eye, Edit3 } from 'lucide-react';
+import { User, Upload, BarChart3, Award, Lock, Eye, Edit3, MapPin, Calendar, Music, Guitar } from 'lucide-react';
 import Layout from './Layout';
+import { useUserProfile } from '../hooks/useUserProfile';
+import { useAuth } from '../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 const dummyStats = {
   totalPractice: 142,
@@ -23,9 +26,42 @@ const dummyPrivacy = {
 };
 
 const ProfilePage: React.FC = () => {
+  const { currentUser } = useAuth();
+  const { profile, loading } = useUserProfile();
+  const navigate = useNavigate();
   const [avatar, setAvatar] = useState<string | null>(null);
   const [privacy, setPrivacy] = useState(dummyPrivacy);
   const fileInput = useRef<HTMLInputElement>(null);
+  // Update avatar when profile loads
+  React.useEffect(() => {
+    if (profile) {
+      setAvatar(profile.photoURL || currentUser?.photoURL || null);
+    }
+  }, [profile, currentUser]);
+
+  if (loading) {
+    return (
+      <Layout showSearchBar={false}>
+        <div className="max-w-3xl mx-auto py-10 px-4 flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-brown mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading profile...</p>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <Layout showSearchBar={false}>
+        <div className="max-w-3xl mx-auto py-10 px-4 flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <p className="text-gray-600">Profile not found</p>
+          </div>
+        </div>
+      </Layout>
+    );  }
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -60,21 +96,105 @@ const ProfilePage: React.FC = () => {
               ref={fileInput}
               onChange={handleAvatarChange}
             />
-          </div>
-          <div className="flex-1 min-w-0">
+          </div>          <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-2">
-              <h2 className="text-3xl font-bold text-brand-dark truncate">John Doe</h2>
-              <button className="p-1 rounded-full hover:bg-gray-100 transition-colors" title="Edit Name">
+              <h2 className="text-3xl font-bold text-brand-dark truncate">
+                {profile.displayName || profile.username || 'User'}
+              </h2>              <button 
+                className="p-1 rounded-full hover:bg-gray-100 transition-colors" 
+                title="Edit Profile"
+                onClick={() => navigate('/profile-edit')}
+              >
                 <Edit3 className="w-4 h-4 text-brand-brown" />
               </button>
             </div>
-            <p className="text-gray-500 mb-2">@johnny_music</p>
+            <p className="text-gray-500 mb-2">@{profile.username}</p>
+            <p className="text-gray-600 mb-2">{currentUser?.email}</p>
+            
+            {profile.bio && (
+              <p className="text-gray-700 mb-2">{profile.bio}</p>
+            )}
+            
+            {profile.location && (
+              <div className="flex items-center gap-1 text-gray-600 mb-2">
+                <MapPin className="w-4 h-4" />
+                <span className="text-sm">{profile.location}</span>
+              </div>
+            )}
+            
+            {profile.dateOfBirth && (
+              <div className="flex items-center gap-1 text-gray-600 mb-2">
+                <Calendar className="w-4 h-4" />
+                <span className="text-sm">Born {new Date(profile.dateOfBirth).toLocaleDateString()}</span>
+              </div>
+            )}
+            
             <div className="flex flex-wrap gap-4 mt-2">
-              <span className="bg-brand-brown/10 text-brand-brown px-3 py-1 rounded-full text-sm font-medium">Level {dummyStats.level}</span>
-              <span className="bg-brand-yellow/20 text-brand-dark px-3 py-1 rounded-full text-sm font-medium">{dummyStats.streak} Day Streak</span>
+              <span className="bg-brand-brown/10 text-brand-brown px-3 py-1 rounded-full text-sm font-medium">
+                {profile.skillLevel.charAt(0).toUpperCase() + profile.skillLevel.slice(1)}
+              </span>
+              <span className="bg-brand-yellow/20 text-brand-dark px-3 py-1 rounded-full text-sm font-medium">
+                {dummyStats.streak} Day Streak
+              </span>
             </div>
           </div>
         </div>
+
+        {/* User Info Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          {/* Instruments */}
+          <div className="bg-white rounded-xl shadow p-6">
+            <h3 className="text-lg font-bold text-brand-dark mb-4 flex items-center gap-2">
+              <Guitar className="w-5 h-5" />
+              Instruments
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              {profile.instruments.map((instrument) => (
+                <span 
+                  key={instrument}
+                  className="bg-brand-brown/10 text-brand-brown px-3 py-1 rounded-full text-sm font-medium"
+                >
+                  {instrument}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Favorite Genres */}
+          <div className="bg-white rounded-xl shadow p-6">
+            <h3 className="text-lg font-bold text-brand-dark mb-4 flex items-center gap-2">
+              <Music className="w-5 h-5" />
+              Favorite Genres
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              {profile.favoriteGenres.map((genre) => (
+                <span 
+                  key={genre}
+                  className="bg-brand-yellow/20 text-brand-dark px-3 py-1 rounded-full text-sm font-medium"
+                >
+                  {genre}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Goals Section */}
+        {profile.goals && profile.goals.length > 0 && (
+          <div className="bg-white rounded-xl shadow p-6 mb-8">
+            <h3 className="text-lg font-bold text-brand-dark mb-4">Musical Goals</h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {profile.goals.map((goal) => (
+                <div 
+                  key={goal}
+                  className="bg-gradient-to-r from-brand-brown/10 to-brand-yellow/10 border border-brand-brown/20 rounded-lg p-3 text-center"
+                >
+                  <span className="text-sm font-medium text-brand-dark">{goal}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Stats Dashboard */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">

@@ -1,11 +1,21 @@
 import React, { useState, useRef } from 'react';
 import { Settings, LogOut, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 
 const Navbar: React.FC = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
+  const navigate = useNavigate();  const { logout, currentUser } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/auth');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
 
   // Close dropdown on outside click
   React.useEffect(() => {
@@ -37,9 +47,8 @@ const Navbar: React.FC = () => {
           <button
             className="flex items-center gap-2 p-1 rounded-full hover:bg-gray-100 transition-colors"
             onClick={() => setDropdownOpen((v) => !v)}
-          >
-            <img
-              src={"https://picsum.photos/40"}
+          >            <img
+              src={currentUser?.photoURL || "https://picsum.photos/40"}
               alt="Profile"
               className="w-10 h-10 rounded-full object-cover border-2 border-brand-brown"
             />
@@ -51,10 +60,9 @@ const Navbar: React.FC = () => {
                 onClick={() => { setDropdownOpen(false); navigate('/profile'); }}
               >
                 <User className="w-5 h-5" /> Profile
-              </button>
-              <button
+              </button>              <button
                 className="w-full flex items-center gap-2 px-4 py-3 text-red-600 hover:bg-gray-50 rounded-b-xl"
-                onClick={() => { setDropdownOpen(false); navigate('/auth'); }}
+                onClick={() => { setDropdownOpen(false); handleLogout(); }}
               >
                 <LogOut className="w-5 h-5" /> Logout
               </button>
