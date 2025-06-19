@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider } from './contexts/AuthContext';
 import { useAuth } from './hooks/useAuth';
 
+import LandingPage from './components/LandingPage';
 import AuthPage from './components/AuthPage';
 import Dashboard from './components/Dashboard';
 import SearchPage from './components/SearchPage';
@@ -101,7 +102,7 @@ function AppContent() {
           <Route 
             path="/" 
             element={
-              currentUser ? <Navigate to="/dashboard" replace /> : <Navigate to="/auth" replace />
+              currentUser ? <Navigate to="/dashboard" replace /> : <LandingPage />
             } 
           />
         </Routes>
