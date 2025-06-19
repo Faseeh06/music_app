@@ -8,7 +8,11 @@ import {
   Zap,
   ArrowRight
 } from 'lucide-react';
-import zenicBanner from '../assets/images/zenic_banner.png';
+import Header from './Header';
+import Footer from './Footer';
+import landingPage1 from '../assets/images/landing_page1.png';
+import landingPage2 from '../assets/images/landing_page2.png';
+import landingPage3 from '../assets/images/landing_page3.png';
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
@@ -47,61 +51,41 @@ const LandingPage: React.FC = () => {
         <div className="absolute bottom-1/4 left-1/3 w-64 h-64 bg-gradient-radial from-brand-brown/15 via-brand-brown/5 to-transparent rounded-full blur-3xl"></div>
       </div>
 
-      {/* Navigation */}
-      <nav className="relative z-50 px-6 py-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center">
-            <img src={zenicBanner} alt="Zenic" className="h-10 object-contain" />
-          </div>
-          <div className="flex items-center gap-4">
-            <button 
-              onClick={() => navigate('/auth')}
-              className="px-4 py-2 text-gray-300 hover:text-brand-yellow transition-colors"
-            >
-              Sign In
-            </button>
-            <button 
-              onClick={() => navigate('/auth')}
-              className="px-6 py-2 bg-brand-brown text-white rounded-lg hover:bg-brand-brown/90 transition-all shadow-lg hover:shadow-brand-brown/25"
-            >
-              Get Started
-            </button>
-          </div>
-        </div>
-      </nav>
+            {/* Navigation */}
+      <Header />
 
       {/* Hero Section */}
       <section className="relative px-6 pt-20 pb-32">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            {/* Small Badge */}
-            <div className="inline-flex items-center gap-2 bg-brand-brown/10 border border-brand-brown/20 rounded-full px-4 py-2 mb-8">
+                        {/* Small Badge */}
+            <div className="inline-flex items-center gap-3 bg-gray-600/20 border border-gray-600/30 px-6 py-3 mb-8">
               <div className="w-2 h-2 bg-brand-yellow rounded-full animate-pulse"></div>
-              <span className="text-sm text-brand-yellow font-medium">Streamline music practice and master your instrument</span>
-            </div>
-
+              <span className="text-base text-white font-medium">Streamline music practice and master your instrument</span>
+        </div>
+        
             {/* Main Heading */}
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-8 leading-tight">
               <span className="bg-gradient-to-r from-white via-gray-200 to-gray-300 bg-clip-text text-transparent">
                 Practice with
               </span>
-              <br />
+              <span className="mx-1 md:mx-3"></span>
               <span className="bg-gradient-to-r from-brand-brown via-brand-yellow to-brand-brown bg-clip-text text-transparent">
-                Intelligence
+                ZENIC
               </span>
-            </h1>
-
+          </h1>
+          
             {/* Subtitle */}
             <p className="text-xl md:text-2xl text-gray-300 mb-12 max-w-4xl mx-auto leading-relaxed">
-              Zenic AI integrates seamlessly into your workflow, collaborating with you to 
+              Enhance you music career with Zenic and
               <br className="hidden md:block" />
-              maximize performance and efficiency.
+              practice  on the go.
             </p>
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
-              <button 
-                onClick={() => navigate('/auth')}
+            <button 
+              onClick={() => navigate('/signup')}
                 className="group px-8 py-4 bg-brand-brown text-white rounded-lg hover:bg-brand-brown/90 transition-all shadow-xl hover:shadow-brand-brown/25 flex items-center gap-3 font-semibold text-lg"
               >
                 Get Started for Free
@@ -109,14 +93,14 @@ const LandingPage: React.FC = () => {
               </button>
               <button className="px-8 py-4 border border-gray-600 text-gray-300 rounded-lg hover:border-brand-brown hover:text-brand-yellow transition-all font-semibold text-lg">
                 Join our Community
-              </button>
+            </button>
             </div>
 
             {/* Trust Indicators */}
             <div className="text-center text-gray-400 text-sm mb-4">
               Join thousands of musicians
             </div>
-          </div>
+              </div>
 
           {/* Preview Interface */}
           <div className="relative max-w-7xl mx-auto">
@@ -125,7 +109,7 @@ const LandingPage: React.FC = () => {
                 <iframe 
                   width="100%" 
                   height="600"
-                  src="https://www.youtube.com/embed/ZK-rNEhJIDs" 
+                  src="https://www.youtube.com/embed/hAP2QF--2Dg" 
                   title="Zenic Practice Demo"
                   frameBorder="0" 
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
@@ -151,7 +135,7 @@ const LandingPage: React.FC = () => {
               <span className="text-brand-brown">Practice with</span> The Real
               <span className="bg-gradient-to-r from-brand-yellow to-brand-brown bg-clip-text text-transparent">AI</span> 
               <span className="text-white"> Engine</span>
-            </h2>
+          </h2>
             <p className="text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
               Zenic enables natural conversations to unlock possibilities for Human-AI 
               collaboration; just <span className="text-brand-yellow">@Agent</span> <span className="text-brand-yellow">@Context</span>, and 
@@ -186,20 +170,15 @@ const LandingPage: React.FC = () => {
       <section className="px-6 py-24 bg-[#101218] relative">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
-            {/* Left side - Video */}
+            {/* Left side - Image */}
             <div className="relative">
               <div className="bg-gradient-to-br from-brand-brown/20 via-brand-yellow/10 to-transparent rounded-2xl p-2">
                 <div className="bg-gradient-to-br from-[#101218] to-[#0a0b0f] rounded-xl overflow-hidden">
-                  <iframe 
-                    width="100%" 
-                    height="400"
-                    src="https://www.youtube.com/embed/ZK-rNEhJIDs" 
-                    title="AI Tutors Demo"
-                    frameBorder="0" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                    allowFullScreen
-                    className="rounded-xl"
-                  ></iframe>
+                  <img 
+                    src={landingPage1}
+                    alt="AI Tutors Demo"
+                    className="w-full h-[400px] object-cover rounded-xl"
+                  />
                 </div>
               </div>
             </div>
@@ -253,20 +232,15 @@ const LandingPage: React.FC = () => {
               </p>
             </div>
 
-            {/* Right side - Video */}
+            {/* Right side - Image */}
             <div className="relative">
               <div className="bg-gradient-to-br from-brand-yellow/20 via-brand-brown/10 to-transparent rounded-2xl p-2">
                 <div className="bg-gradient-to-br from-[#101218] to-[#0a0b0f] rounded-xl overflow-hidden">
-                  <iframe 
-                    width="100%" 
-                    height="400"
-                    src="https://www.youtube.com/embed/ZK-rNEhJIDs" 
-                    title="Music Practice Tools Demo"
-                    frameBorder="0" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                    allowFullScreen
-                    className="rounded-xl"
-                  ></iframe>
+                  <img 
+                    src={landingPage2}
+                    alt="Music Practice Tools Demo"
+                    className="w-full h-[400px] object-cover rounded-xl"
+                  />
                 </div>
               </div>
             </div>
@@ -278,20 +252,15 @@ const LandingPage: React.FC = () => {
       <section className="px-6 py-24 bg-[#101218] relative">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
-            {/* Left side - Video */}
+            {/* Left side - Image */}
             <div className="relative">
               <div className="bg-gradient-to-br from-brand-brown/20 via-brand-yellow/10 to-transparent rounded-2xl p-2">
                 <div className="bg-gradient-to-br from-[#101218] to-[#0a0b0f] rounded-xl overflow-hidden">
-                  <iframe 
-                    width="100%" 
-                    height="400"
-                    src="https://www.youtube.com/embed/ZK-rNEhJIDs" 
-                    title="Practice Analytics Demo"
-                    frameBorder="0" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                    allowFullScreen
-                    className="rounded-xl"
-                  ></iframe>
+                  <img 
+                    src={landingPage3}
+                    alt="Practice Analytics Demo"
+                    className="w-full h-[400px] object-cover rounded-xl"
+                  />
                 </div>
               </div>
             </div>
@@ -348,7 +317,7 @@ const LandingPage: React.FC = () => {
               We prioritize protecting users' privacy and data security, adhering to the principle of 'local first' and 'minimal data collection'.
             </p>
           </div>
-
+          
           <div className="grid md:grid-cols-3 gap-8">
             {[
               {
@@ -478,7 +447,7 @@ const LandingPage: React.FC = () => {
           <h2 className="text-5xl md:text-7xl font-bold mb-8 leading-tight">
             <span className="text-white">Get Started for </span>
             <span className="bg-gradient-to-r from-brand-brown to-brand-yellow bg-clip-text text-transparent">Free</span>
-          </h2>
+            </h2>
           
           <p className="text-xl text-gray-300 mb-12 max-w-2xl mx-auto leading-relaxed">
             Go to the first in your free and enjoy the community free worker among 
@@ -486,28 +455,19 @@ const LandingPage: React.FC = () => {
           </p>
           
           <div className="mb-16">
-            <button 
-              onClick={() => navigate('/auth')}
+              <button 
+                onClick={() => navigate('/signup')}
               className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-brand-brown to-brand-yellow text-white font-semibold rounded-lg hover:shadow-2xl hover:shadow-brand-brown/25 transition-all text-lg"
             >
               <Music className="w-5 h-5" />
-              Download Trae for PC
-            </button>
+              Get Started
+              </button>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="px-6 py-12 border-t border-gray-800 bg-[#101218]">
-        <div className="max-w-6xl mx-auto text-center">
-          <div className="flex items-center justify-center mb-6">
-            <img src={zenicBanner} alt="Zenic" className="h-8 object-contain" />
-          </div>
-          <p className="text-gray-400 text-sm">
-            © 2024 Zenic. All rights reserved. AI-powered music learning platform.
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };

@@ -40,7 +40,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onCollapse }) => {
   const handleLogout = async () => {
     try {
       await logout();
-      navigate('/auth');
+      navigate('/signin');
     } catch (error) {
       console.error('Logout error:', error);
     }

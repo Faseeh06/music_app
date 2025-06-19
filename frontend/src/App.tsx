@@ -5,6 +5,8 @@ import { useAuth } from './hooks/useAuth';
 
 import LandingPage from './components/LandingPage';
 import AuthPage from './components/AuthPage';
+import SignInPage from './components/SignInPage';
+import SignUpPage from './components/SignUpPage';
 import Dashboard from './components/Dashboard';
 import SearchPage from './components/SearchPage';
 import PracticePage from './components/PracticePage';
@@ -12,6 +14,10 @@ import ProfilePage from './components/ProfilePage';
 import SettingsPage from './components/SettingsPage';
 import HistoryPage from './pages/HistoryPage';
 import RankingPage from './pages/RankingPage';
+import PrivacyPage from './components/PrivacyPage';
+import BlogPage from './components/BlogPage';
+import FAQPage from './components/FAQPage';
+import DocsPage from './components/DocsPage';
 import './App.css';
 
 // Protected Route component
@@ -37,9 +43,21 @@ function AppContent() {
       <div className="min-h-screen bg-gray-50 font-poppins">        <Routes>
           <Route 
             path="/auth" 
+            element={<Navigate to="/signin" replace />} 
+          />
+          <Route 
+            path="/signin" 
             element={
               <AuthRoute>
-                <AuthPage />
+                <SignInPage />
+              </AuthRoute>
+            } 
+          />
+          <Route 
+            path="/signup" 
+            element={
+              <AuthRoute>
+                <SignUpPage />
               </AuthRoute>
             } 
           />
@@ -98,6 +116,22 @@ function AppContent() {
                 <RankingPage />
               </ProtectedRoute>
             } 
+          />
+          <Route 
+            path="/privacy" 
+            element={<PrivacyPage />} 
+          />
+          <Route 
+            path="/blog" 
+            element={<BlogPage />} 
+          />
+          <Route 
+            path="/faq" 
+            element={<FAQPage />} 
+          />
+          <Route 
+            path="/docs" 
+            element={<DocsPage />} 
           />
           <Route 
             path="/" 

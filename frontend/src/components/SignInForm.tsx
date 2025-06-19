@@ -104,8 +104,7 @@ const SignInForm: React.FC<SignInFormProps> = ({ onSignIn }) => {
   return (
     <div>
       <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-brand-dark mb-2">Welcome Back</h2>
-        <p className="text-gray-600">Continue your musical journey</p>
+        
       </div>      <form onSubmit={handleSubmit} className="space-y-6">
         {errors.submit && (
           <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg">

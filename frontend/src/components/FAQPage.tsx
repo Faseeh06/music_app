@@ -1,129 +1,152 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, HelpCircle, ChevronDown, ChevronUp, Search, Music, Bot, Shield, Zap } from 'lucide-react';
-import zenicBanner from '../assets/images/zenic_banner.png';
+import { Search, HelpCircle, ChevronDown, ChevronUp, Music, Shield, Settings, Headphones } from 'lucide-react';
+import Header from './Header';
+import Footer from './Footer';
 
 const FAQPage: React.FC = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
-  const [openQuestion, setOpenQuestion] = useState<number | null>(0);
+  const [activeCategory, setActiveCategory] = useState('all');
+  const [expandedItems, setExpandedItems] = useState<number[]>([]);
 
   const categories = [
-    {
-      id: 'getting-started',
-      title: 'Getting Started',
-      icon: <Music className="w-5 h-5" />,
-      color: 'text-brand-brown'
-    },
-    {
-      id: 'ai-features',
-      title: 'AI Features',
-      icon: <Bot className="w-5 h-5" />,
-      color: 'text-brand-yellow'
-    },
-    {
-      id: 'privacy-security',
-      title: 'Privacy & Security',
-      icon: <Shield className="w-5 h-5" />,
-      color: 'text-blue-400'
-    },
-    {
-      id: 'technical',
-      title: 'Technical Support',
-      icon: <Zap className="w-5 h-5" />,
-      color: 'text-green-400'
-    }
+    { id: 'all', name: 'All Questions', icon: <HelpCircle className="w-5 h-5" />, count: 18 },
+    { id: 'getting-started', name: 'Getting Started', icon: <Music className="w-5 h-5" />, count: 6 },
+    { id: 'ai-features', name: 'AI Features', icon: <Settings className="w-5 h-5" />, count: 5 },
+    { id: 'privacy', name: 'Privacy & Security', icon: <Shield className="w-5 h-5" />, count: 4 },
+    { id: 'technical', name: 'Technical Support', icon: <Headphones className="w-5 h-5" />, count: 3 }
   ];
 
-  const faqs = [
+  const faqData = [
     {
+      id: 1,
       category: 'getting-started',
       question: 'How do I get started with Zenic?',
-      answer: 'Getting started is easy! Simply create a free account, choose your instrument, and begin your first practice session. Our AI will assess your skill level and provide personalized recommendations from day one.'
+      answer: 'Getting started with Zenic is simple! First, create your free account by clicking the "Get Started" button. Once registered, you can choose your instrument(s), set your skill level, and begin with our guided onboarding process. Our AI will assess your current abilities and create a personalized learning path just for you.'
     },
     {
+      id: 2,
       category: 'getting-started',
-      question: 'What instruments are supported?',
-      answer: 'Zenic supports guitar, piano, vocals, drums, bass, violin, and many other instruments. Our AI adapts to each instrument\'s unique characteristics and provides specific feedback and exercises.'
+      question: 'What instruments does Zenic support?',
+      answer: 'Zenic currently supports guitar, piano, violin, drums, bass guitar, and vocals. We are continuously adding support for more instruments based on user feedback. Each instrument comes with specialized AI tutors trained specifically for that instrument\'s techniques and repertoire.'
     },
     {
+      id: 3,
+      category: 'ai-features',
+      question: 'How does the AI practice recommendation system work?',
+      answer: 'Our AI analyzes your practice sessions, identifies areas for improvement, and suggests personalized exercises and songs. It considers your skill level, musical preferences, practice history, and progress patterns to create recommendations that challenge you appropriately while keeping you engaged.'
+    },
+    {
+      id: 4,
+      category: 'ai-features',
+      question: 'Can the AI tutor adapt to my learning style?',
+      answer: 'Absolutely! Our AI continuously learns from your interactions, practice patterns, and feedback to adapt its teaching approach. Whether you learn better through visual cues, repetition, or theoretical explanations, the AI adjusts its methodology to match your preferred learning style.'
+    },
+    {
+      id: 5,
       category: 'getting-started',
-      question: 'Do I need any special equipment?',
-      answer: 'For basic practice, you just need your instrument and a device with internet connection. For advanced features like real-time audio analysis, we recommend a good microphone or audio interface.'
+      question: 'Do I need any special equipment to use Zenic?',
+      answer: 'For basic use, you only need your instrument and a device with internet access. However, for advanced features like real-time feedback and precise audio analysis, we recommend using a good quality microphone or audio interface. Our app works great with both built-in device microphones and professional audio equipment.'
     },
     {
+      id: 6,
+      category: 'privacy',
+      question: 'How is my practice data protected?',
+      answer: 'We take your privacy seriously. All practice data is encrypted both in transit and at rest. Your personal information is never sold to third parties, and you have full control over your data. You can export, modify, or delete your data at any time through your account settings.'
+    },
+    {
+      id: 7,
+      category: 'ai-features',
+      question: 'How accurate is the AI feedback on my playing?',
+      answer: 'Our AI feedback system achieves over 95% accuracy in detecting pitch, timing, and technique issues. The system is continuously improved through machine learning and feedback from professional musicians. While it\'s highly accurate, we always recommend combining AI feedback with occasional lessons from human instructors for the best results.'
+    },
+    {
+      id: 8,
       category: 'getting-started',
-      question: 'Is there a free trial?',
-      answer: 'Yes! Zenic offers a free tier with basic practice tracking and AI recommendations. You can upgrade to premium for advanced features like detailed analytics and unlimited practice sessions.'
+      question: 'Can I practice offline?',
+      answer: 'Some features of Zenic work offline, including accessing downloaded songs, practice exercises, and basic recording. However, AI analysis, real-time feedback, and progress syncing require an internet connection. We recommend downloading practice materials when you have internet access for offline use.'
     },
     {
-      category: 'ai-features',
-      question: 'How does the AI tutor work?',
-      answer: 'Our AI analyzes your practice sessions in real-time, tracking accuracy, timing, and technique. It provides instant feedback and creates personalized lesson plans based on your progress and learning style.'
-    },
-    {
-      category: 'ai-features',
-      question: 'Can I customize my AI tutor?',
-      answer: 'Absolutely! You can adjust your AI tutor\'s teaching style, focus areas, difficulty progression, and even personality. Create multiple AI tutors for different aspects of your musical journey.'
-    },
-    {
-      category: 'ai-features',
-      question: 'How accurate is the AI feedback?',
-      answer: 'Our AI uses advanced machine learning algorithms trained on thousands of hours of musical data. It achieves over 95% accuracy in rhythm detection and 90% in pitch recognition, continuously improving with updates.'
-    },
-    {
-      category: 'ai-features',
-      question: 'Does the AI work offline?',
-      answer: 'Basic practice tracking works offline, but AI analysis and recommendations require an internet connection. Your practice data syncs automatically when you\'re back online.'
-    },
-    {
-      category: 'privacy-security',
-      question: 'Is my practice data private?',
-      answer: 'Yes, your practice data is completely private. We use end-to-end encryption and store most data locally on your device. We never sell your personal information or practice data to third parties.'
-    },
-    {
-      category: 'privacy-security',
-      question: 'Can I delete my data?',
-      answer: 'You have full control over your data. You can export, modify, or permanently delete your account and all associated data at any time through your account settings.'
-    },
-    {
-      category: 'privacy-security',
-      question: 'How do you protect my information?',
-      answer: 'We use industry-standard security measures including SSL encryption, secure cloud storage, and regular security audits. Your data is protected by the same standards used by major financial institutions.'
-    },
-    {
+      id: 9,
       category: 'technical',
-      question: 'What devices are supported?',
-      answer: 'Zenic works on Windows, macOS, iOS, and Android. We also offer a web version that works in any modern browser. All your data syncs seamlessly across devices.'
+      question: 'What should I do if the app isn\'t recognizing my instrument?',
+      answer: 'First, check your microphone permissions and ensure your device\'s microphone is working properly. Make sure you\'re in a quiet environment and your instrument is close enough to the microphone. If issues persist, try adjusting the input sensitivity in the app settings or contact our support team for personalized troubleshooting.'
     },
     {
-      category: 'technical',
-      question: 'Why is my audio not being detected?',
-      answer: 'Check your microphone permissions and ensure your input device is selected correctly. For best results, use a good quality microphone and practice in a quiet environment.'
+      id: 10,
+      category: 'ai-features',
+      question: 'Can I customize my AI tutor\'s personality and teaching style?',
+      answer: 'Yes! You can adjust your AI tutor\'s communication style, feedback frequency, and motivational approach in the settings. Choose from different personality types like encouraging, direct, or analytical to match your preferences. You can also set goals and adjust the challenge level to create your ideal learning environment.'
     },
     {
-      category: 'technical',
-      question: 'How do I sync across multiple devices?',
-      answer: 'Once logged in, your data automatically syncs across all your devices. Make sure you\'re connected to the internet and logged into the same account on each device.'
+      id: 11,
+      category: 'privacy',
+      question: 'Does Zenic share my data with other users?',
+      answer: 'No, your personal practice data and progress information are completely private. Only anonymized and aggregated data (without any personal identifiers) may be used to improve our AI models and platform features. You can opt out of this data usage in your privacy settings if you prefer.'
     },
     {
+      id: 12,
+      category: 'getting-started',
+      question: 'Is there a mobile app available?',
+      answer: 'Yes! Zenic is available on iOS and Android devices, as well as through web browsers on desktop computers. All your progress syncs across devices, so you can practice on your phone, tablet, or computer seamlessly. The mobile apps include all core features with touch-optimized interfaces.'
+    },
+    {
+      id: 13,
       category: 'technical',
-      question: 'What should I do if the app crashes?',
-      answer: 'First, try restarting the app. If problems persist, check for updates or contact our support team. We typically respond within 24 hours and provide personalized troubleshooting assistance.'
+      question: 'Why is there a delay in the audio feedback?',
+      answer: 'Audio latency can be caused by several factors including your device\'s processing power, audio drivers, or internet connection. Try using wired headphones instead of Bluetooth, close other applications, and ensure you have a stable internet connection. For the best experience, we recommend using devices with at least 4GB of RAM.'
+    },
+    {
+      id: 14,
+      category: 'ai-features',
+      question: 'How often does the AI update my learning path?',
+      answer: 'The AI continuously analyzes your progress and adjusts recommendations in real-time. Major learning path updates typically occur after each practice session, while minor adjustments happen throughout your practice. You\'ll see significant path changes when you master new skills or when the AI identifies areas that need additional focus.'
+    },
+    {
+      id: 15,
+      category: 'privacy',
+      question: 'Can I use Zenic without creating an account?',
+      answer: 'While some basic features can be accessed without an account, creating a free account unlocks the full potential of Zenic, including personalized AI tutoring, progress tracking, and cloud sync across devices. Account creation is free and only requires an email address.'
+    },
+    {
+      id: 16,
+      category: 'getting-started',
+      question: 'What skill levels does Zenic cater to?',
+      answer: 'Zenic is designed for all skill levels, from complete beginners to advanced musicians. Our AI assessment creates appropriate challenges regardless of your starting point. Beginners get foundational lessons and basic techniques, while advanced players receive complex arrangements and professional-level feedback.'
+    },
+    {
+      id: 17,
+      category: 'technical',
+      question: 'How much storage space does Zenic require?',
+      answer: 'The Zenic app itself requires about 150MB of storage space. Additional space is needed for downloaded songs and recorded practice sessions, typically 2-5MB per song. You can manage storage by deleting old recordings and removing downloaded songs you no longer need.'
+    },
+    {
+      id: 18,
+      category: 'privacy',
+      question: 'How long is my data retained?',
+      answer: 'Your practice data and progress information are retained as long as your account is active. After account deletion, most data is permanently removed within 30 days, though some anonymized analytics data may be retained longer for service improvement. You can request complete data deletion by contacting our privacy team.'
     }
   ];
 
-  const filteredFAQs = faqs.filter(faq => 
-    faq.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    faq.answer.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const toggleQuestion = (index: number) => {
-    setOpenQuestion(openQuestion === index ? null : index);
+  const toggleExpanded = (id: number) => {
+    setExpandedItems(prev => 
+      prev.includes(id) 
+        ? prev.filter(item => item !== id)
+        : [...prev, id]
+    );
   };
 
+  const filteredFAQs = faqData.filter(faq => {
+    const matchesCategory = activeCategory === 'all' || faq.category === activeCategory;
+    const matchesSearch = searchQuery === '' || 
+      faq.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      faq.answer.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
+
   return (
-    <div className="min-h-screen bg-[#101218] text-white">
+    <div className="min-h-screen bg-[#101218] text-white relative overflow-hidden">
       {/* Background Effects */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-gradient-radial from-brand-brown/20 via-brand-brown/5 to-transparent rounded-full blur-3xl"></div>
@@ -131,192 +154,130 @@ const FAQPage: React.FC = () => {
         <div className="absolute bottom-1/4 left-1/3 w-64 h-64 bg-gradient-radial from-brand-brown/15 via-brand-brown/5 to-transparent rounded-full blur-3xl"></div>
       </div>
 
-      {/* Navigation */}
-      <nav className="relative z-50 px-6 py-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <button 
-              onClick={() => navigate('/')}
-              className="flex items-center gap-2 text-gray-300 hover:text-brand-yellow transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5" />
-              <span className="hidden sm:inline">Back to Home</span>
-            </button>
-            <img src={zenicBanner} alt="Zenic" className="h-8 object-contain" />
-          </div>
-          <div className="flex items-center gap-4">
-            <button 
-              onClick={() => navigate('/auth')}
-              className="px-4 py-2 text-gray-300 hover:text-brand-yellow transition-colors"
-            >
-              Sign In
-            </button>
-            <button 
-              onClick={() => navigate('/auth')}
-              className="px-6 py-2 bg-brand-brown text-white rounded-lg hover:bg-brand-brown/90 transition-all shadow-lg hover:shadow-brand-brown/25"
-            >
-              Get Started
-            </button>
-          </div>
-        </div>
-      </nav>
-
       {/* Header */}
-      <section className="relative px-6 py-16">
-        <div className="max-w-4xl mx-auto text-center relative z-10">
-          <div className="w-16 h-16 bg-gradient-to-br from-brand-brown to-brand-yellow rounded-2xl flex items-center justify-center mx-auto mb-8">
+      <Header />
+
+      {/* Main Content */}
+      <main className="max-w-6xl mx-auto px-6 py-12 relative z-10">
+        {/* Hero Section */}
+        <div className="text-center mb-16">
+          <div className="w-16 h-16 bg-gradient-to-br from-brand-brown to-brand-yellow rounded-2xl flex items-center justify-center mx-auto mb-6">
             <HelpCircle className="w-8 h-8 text-white" />
           </div>
-          
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-            <span className="bg-gradient-to-r from-white via-gray-200 to-gray-300 bg-clip-text text-transparent">
-              Frequently Asked
-            </span>
-            <br />
-            <span className="bg-gradient-to-r from-brand-brown to-brand-yellow bg-clip-text text-transparent">
-              Questions
-            </span>
-          </h1>
-          
-          <p className="text-xl text-gray-300 mb-8 leading-relaxed">
-            Find answers to common questions about Zenic and get the help you need.
+          <h1 className="text-4xl md:text-5xl font-bold mb-6">Frequently Asked Questions</h1>
+          <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+            Find answers to common questions about Zenic's AI-powered music learning platform. 
+            Can't find what you're looking for? Contact our support team.
           </p>
+        </div>
 
-          {/* Search Bar */}
-          <div className="relative max-w-2xl mx-auto">
-            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <Search className="w-5 h-5 text-gray-400" />
-            </div>
+        {/* Search Bar */}
+        <div className="max-w-2xl mx-auto mb-12">
+          <div className="relative">
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
             <input
               type="text"
-              placeholder="Search for answers..."
+              placeholder="Search frequently asked questions..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-4 bg-gray-900/50 border border-gray-700/50 rounded-lg text-white placeholder-gray-400 focus:border-brand-brown focus:outline-none focus:ring-2 focus:ring-brand-brown/20 transition-all"
+              className="w-full pl-12 pr-4 py-4 bg-gray-900/30 border border-gray-700/30 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-brand-brown focus:bg-gray-900/50 transition-all"
             />
           </div>
         </div>
-      </section>
 
-      {/* Categories */}
-      <section className="px-6 py-8 bg-[#101218] relative">
-        <div className="max-w-4xl mx-auto relative z-10">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {categories.map((category) => (
-              <div 
-                key={category.id}
-                className="bg-gray-900/30 backdrop-blur-sm border border-gray-700/30 rounded-xl p-6 hover:border-brand-brown/50 hover:bg-gray-900/50 transition-all duration-300 text-center group cursor-pointer"
-              >
-                <div className={`${category.color} group-hover:text-brand-yellow transition-colors mb-3 flex justify-center`}>
-                  {category.icon}
-                </div>
-                <h3 className="text-white font-semibold text-sm group-hover:text-brand-yellow transition-colors">
-                  {category.title}
-                </h3>
-              </div>
-            ))}
-          </div>
+        {/* Categories */}
+        <div className="flex flex-wrap gap-3 justify-center mb-12">
+          {categories.map((category) => (
+            <button
+              key={category.id}
+              onClick={() => setActiveCategory(category.id)}
+              className={`flex items-center gap-2 px-4 py-3 rounded-xl border transition-all duration-200 ${
+                activeCategory === category.id
+                  ? 'bg-brand-brown text-white border-brand-brown'
+                  : 'bg-gray-900/30 text-gray-300 border-gray-700/30 hover:border-brand-brown/50 hover:text-brand-yellow hover:bg-gray-900/50'
+              }`}
+            >
+              {category.icon}
+              <span className="font-medium">{category.name}</span>
+              <span className="text-xs bg-gray-700/50 px-2 py-1 rounded-full">
+                {category.count}
+              </span>
+            </button>
+          ))}
         </div>
-      </section>
 
-      {/* FAQ Content */}
-      <section className="px-6 py-12 bg-[#101218] relative">
-        <div className="max-w-4xl mx-auto relative z-10">
+        {/* FAQ Items */}
+        <div className="space-y-4">
           {filteredFAQs.length === 0 ? (
-            <div className="text-center py-16">
-              <p className="text-xl text-gray-400">No questions found matching your search.</p>
-              <button 
-                onClick={() => setSearchQuery('')}
-                className="mt-4 text-brand-brown hover:text-brand-yellow transition-colors"
-              >
-                Clear search
-              </button>
+            <div className="text-center py-12">
+              <HelpCircle className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-gray-400 mb-2">No questions found</h3>
+              <p className="text-gray-500">Try adjusting your search terms or selecting a different category.</p>
             </div>
           ) : (
-            <div className="space-y-4">
-              {filteredFAQs.map((faq, index) => {
-                const category = categories.find(cat => cat.id === faq.category);
-                return (
-                  <div 
-                    key={index}
-                    className="bg-gray-900/30 backdrop-blur-sm border border-gray-700/30 rounded-xl overflow-hidden hover:border-brand-brown/30 transition-all duration-300"
-                  >
-                    <button
-                      onClick={() => toggleQuestion(index)}
-                      className="w-full px-6 py-6 text-left flex items-center justify-between hover:bg-gray-900/20 transition-colors"
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className={`${category?.color} p-2 bg-gray-800/50 rounded-lg`}>
-                          {category?.icon}
-                        </div>
-                        <h3 className="text-lg font-semibold text-white pr-4">
-                          {faq.question}
-                        </h3>
-                      </div>
-                      <div className="text-brand-brown">
-                        {openQuestion === index ? 
-                          <ChevronUp className="w-5 h-5" /> : 
-                          <ChevronDown className="w-5 h-5" />
-                        }
-                      </div>
-                    </button>
-                    
-                    {openQuestion === index && (
-                      <div className="px-6 pb-6 border-t border-gray-700/30">
-                        <div className="pt-4 pl-12">
-                          <p className="text-gray-300 leading-relaxed">
-                            {faq.answer}
-                          </p>
-                        </div>
-                      </div>
-                    )}
+            filteredFAQs.map((faq) => (
+              <div
+                key={faq.id}
+                className="bg-gray-900/30 backdrop-blur-sm border border-gray-700/30 rounded-xl overflow-hidden hover:border-brand-brown/50 transition-all duration-200"
+              >
+                <button
+                  onClick={() => toggleExpanded(faq.id)}
+                  className="w-full p-6 text-left flex items-center justify-between hover:bg-gray-900/50 transition-colors"
+                >
+                  <h3 className="text-lg font-semibold text-white pr-4 flex-1">
+                    {faq.question}
+                  </h3>
+                  {expandedItems.includes(faq.id) ? (
+                    <ChevronUp className="w-5 h-5 text-brand-brown flex-shrink-0" />
+                  ) : (
+                    <ChevronDown className="w-5 h-5 text-gray-400 flex-shrink-0" />
+                  )}
+                </button>
+                {expandedItems.includes(faq.id) && (
+                  <div className="px-6 pb-6">
+                    <div className="border-t border-gray-700/30 pt-4">
+                      <p className="text-gray-300 leading-relaxed">
+                        {faq.answer}
+                      </p>
+                    </div>
                   </div>
-                );
-              })}
-            </div>
+                )}
+              </div>
+            ))
           )}
         </div>
-      </section>
 
-      {/* Contact Section */}
-      <section className="px-6 py-16 bg-[#101218] relative">
-        <div className="max-w-4xl mx-auto text-center relative z-10">
-          <div className="bg-gray-900/30 backdrop-blur-sm border border-gray-700/30 rounded-2xl p-12">
-            <h2 className="text-3xl font-bold text-white mb-6">Still Have Questions?</h2>
-            <p className="text-xl text-gray-300 mb-8 leading-relaxed">
-              Can't find what you're looking for? Our support team is here to help you 
-              get the most out of your musical journey.
+        {/* Contact Support */}
+        <div className="mt-16 bg-gray-900/30 backdrop-blur-sm border border-gray-700/30 rounded-2xl p-8 text-center">
+          <div className="max-w-2xl mx-auto">
+            <div className="w-16 h-16 bg-gradient-to-br from-brand-brown to-brand-yellow rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <Headphones className="w-8 h-8 text-white" />
+            </div>
+            <h2 className="text-2xl font-bold mb-4">Still Have Questions?</h2>
+            <p className="text-gray-300 mb-6">
+              Our support team is here to help you get the most out of your Zenic experience. 
+              We typically respond within 24 hours.
             </p>
-            
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button 
-                onClick={() => navigate('/contact')}
-                className="px-8 py-4 bg-brand-brown text-white font-semibold rounded-lg hover:bg-brand-brown/90 hover:shadow-2xl hover:shadow-brand-brown/25 transition-all"
+              <a 
+                href="mailto:support@zenic.com"
+                className="px-6 py-3 bg-brand-brown text-white rounded-lg hover:bg-brand-brown/90 transition-colors font-medium"
               >
                 Contact Support
-              </button>
-              <button 
+              </a>
+              <button
                 onClick={() => navigate('/privacy')}
-                className="px-8 py-4 border-2 border-brand-brown text-brand-brown font-semibold rounded-lg hover:bg-brand-brown hover:text-white hover:shadow-2xl hover:shadow-brand-brown/25 transition-all"
+                className="px-6 py-3 border border-gray-600 text-gray-300 rounded-lg hover:border-brand-brown hover:text-brand-yellow transition-colors font-medium"
               >
                 Privacy Policy
               </button>
             </div>
           </div>
         </div>
-      </section>
+      </main>
 
       {/* Footer */}
-      <footer className="px-6 py-12 border-t border-gray-800 bg-[#101218]">
-        <div className="max-w-6xl mx-auto text-center">
-          <div className="flex items-center justify-center mb-6">
-            <img src={zenicBanner} alt="Zenic" className="h-8 object-contain" />
-          </div>
-          <p className="text-gray-400 text-sm">
-            © 2024 Zenic. All rights reserved. AI-powered music learning platform.
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };

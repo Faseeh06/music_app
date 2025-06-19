@@ -167,13 +167,13 @@ const PrivacyPolicy: React.FC = () => {
           </div>
           <div className="flex items-center gap-4">
             <button 
-              onClick={() => navigate('/auth')}
+              onClick={() => navigate('/signin')}
               className="px-4 py-2 text-gray-300 hover:text-brand-yellow transition-colors"
             >
               Sign In
             </button>
             <button 
-              onClick={() => navigate('/auth')}
+              onClick={() => navigate('/signup')}
               className="px-6 py-2 bg-brand-brown text-white rounded-lg hover:bg-brand-brown/90 transition-all shadow-lg hover:shadow-brand-brown/25"
             >
               Get Started
