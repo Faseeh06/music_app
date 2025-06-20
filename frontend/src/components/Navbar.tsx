@@ -27,6 +27,12 @@ const Navbar: React.FC = () => {
     }
   };
 
+  const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
+
   const handleVoiceSearch = () => {
     setIsListening(true);
     // Simulate voice search
@@ -87,6 +93,7 @@ const Navbar: React.FC = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
               onFocus={handleSearchFocus}
               onBlur={handleSearchBlur}
+              onKeyDown={handleSearch}
               placeholder="Search songs, playlists, albums, artists, etc..."
               className={`w-full rounded-2xl pl-12 pr-32 py-3 bg-[#101218]/90 backdrop-blur-sm text-white placeholder:text-gray-400 border transition-all duration-300 ease-in-out text-base font-medium ${
                 searchFocused 
@@ -260,4 +267,4 @@ const Navbar: React.FC = () => {
   );
 };
 
-export default Navbar; 
+export default Navbar;

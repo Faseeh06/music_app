@@ -78,7 +78,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSignUp }) => {
     } catch (error) { // Changed error type to unknown for Firebase errors
       console.error('Error during sign up:', error);
       // Handle Firebase specific errors if needed
-      if (error instanceof Error && 'code' in error && (error as any).code === 'auth/email-already-in-use') {
+      if (error instanceof Error && 'code' in error && (error as Error & { code: string }).code === 'auth/email-already-in-use') {
         setErrors({ email: 'This email is already in use.' });
       } else if (error instanceof Error) {
         setErrors({ submit: error.message || 'Failed to sign up. Please try again.' });

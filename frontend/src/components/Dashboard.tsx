@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
+import { useMusicPlayer } from '../contexts/PlayerContext'; // Import the hook
 import { 
   Play, 
   Pause,
-  SkipForward,
   SkipBack,
+  SkipForward,
   Brain,
   Target,
   TrendingUp,
@@ -118,7 +119,7 @@ const popularSongs: PopularSong[] = [
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(true);
+  const { currentTrack, isPlaying, togglePlay, progress, duration, seek, skip, playTrack } = useMusicPlayer();
 
   // Mock data with AI-enhanced features
 
@@ -175,18 +176,7 @@ const Dashboard: React.FC = () => {
     }
   ];
 
-  const nowPlaying = {
-    title: 'Perfect',
-    artist: 'Ed Sheeran',
-    thumbnail: 'https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop',
-    duration: '4:23',
-    currentTime: '1:58',
-    progress: 0.45,
-    difficulty: 'Intermediate',
-    aiInsight: 'Focus on smooth chord transitions in the chorus',
-    yourScore: 87,
-    yourRank: 6
-  };
+
 
   const getAIRecommendationIcon = (type: string) => {
     switch (type) {
@@ -215,6 +205,27 @@ const Dashboard: React.FC = () => {
     }
   };
 
+  const formatTime = (seconds: number) => new Date(seconds * 1000).toISOString().substr(14, 5);
+
+  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
+    seek(Number(e.target.value));
+  };
+
+  const handleProgressBarClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!duration) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const clickRatio = clickX / rect.width;
+    const newTime = clickRatio * duration;
+    seek(newTime);
+  };
+
+  // Calculate progress for the styled seekbar
+  const progressPercentage = duration > 0 ? (progress / duration) * 100 : 0;
+  const trackStyle = {
+    background: `linear-gradient(to right, #8B4513 ${progressPercentage}%, #e2e8f0 ${progressPercentage}%)`
+  };
+
   return (
     <div className="min-h-screen bg-[#101218] text-white font-poppins relative">
       {/* Background Effects */}
@@ -236,42 +247,59 @@ const Dashboard: React.FC = () => {
             <div className="lg:col-span-9 p-6">
               <div className="relative">
                 <img
-                  src="/src/assets/images/bmwsong.jpeg"
-                  alt={nowPlaying.title}
+                  src={currentTrack?.thumbnail || "/src/assets/images/bmwsong.jpeg"}
+                  alt={currentTrack?.title || "No track playing"}
                   className="w-full aspect-[3/1] rounded-xl object-cover"
                 />
                 <div className="absolute top-3 right-3 bg-black/70 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-full">
-                  {nowPlaying.difficulty}
+                  Intermediate
                 </div>
                 
                 {/* Music Player Controls - Left Side */}
                 <div className="absolute bottom-3 left-6 right-3">
                   <div className="flex items-start">
                     <div className="flex flex-col items-center">
-                      <h3 className="text-xl font-bold text-white mb-1 text-center">Zenso</h3>
-                      <p className="text-sm text-gray-300 mb-3 text-center">{nowPlaying.artist}</p>
+                      <h3 className="text-xl font-bold text-white mb-1 text-center">
+                        {currentTrack?.title || "No Song Playing"}
+                      </h3>
+                      <p className="text-sm text-gray-300 mb-3 text-center">
+                        {currentTrack?.channelTitle || "Select a song to start"}
+                      </p>
                       
                       {/* Progress Bar */}
                       <div className="flex items-center gap-2 mb-3 w-64">
-                        <span className="text-xs text-gray-400">{nowPlaying.currentTime}</span>
-                        <div className="flex-1 h-1.5 bg-gray-600 rounded-full overflow-hidden">
-                          <div className="h-1.5 bg-brand-brown rounded-full" style={{ width: `${nowPlaying.progress * 100}%` }}></div>
+                        <span className="text-xs text-gray-400">{formatTime(progress)}</span>
+                        <div className="flex-1 h-1.5 bg-gray-600 rounded-full overflow-hidden cursor-pointer"
+                             onClick={handleProgressBarClick}>
+                          <div 
+                            className="h-1.5 bg-brand-brown rounded-full transition-all duration-200" 
+                            style={{ width: duration > 0 ? `${(progress / duration) * 100}%` : '0%' }}
+                          ></div>
                         </div>
-                        <span className="text-xs text-gray-400">{nowPlaying.duration}</span>
+                        <span className="text-xs text-gray-400">{formatTime(duration)}</span>
                       </div>
 
                       {/* Play Controls */}
                       <div className="flex items-center justify-center gap-4">
-                        <button className="p-2 rounded-full hover:bg-gray-700/50 transition-colors">
+                        <button 
+                          className="p-2 rounded-full hover:bg-gray-700/50 transition-colors"
+                          onClick={() => skip(-10)}
+                          disabled={!currentTrack}
+                        >
                           <SkipBack className="w-4 h-4 text-gray-300" />
                         </button>
                         <button
-                          className="p-3 rounded-full bg-brand-brown text-white hover:bg-brand-yellow transition-colors"
-                          onClick={() => setIsPlaying((p) => !p)}
+                          className="p-3 rounded-full bg-brand-brown text-white hover:bg-brand-yellow transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          onClick={() => togglePlay()}
+                          disabled={!currentTrack}
                         >
                           {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
                         </button>
-                        <button className="p-2 rounded-full hover:bg-gray-700/50 transition-colors">
+                        <button 
+                          className="p-2 rounded-full hover:bg-gray-700/50 transition-colors"
+                          onClick={() => skip(10)}
+                          disabled={!currentTrack}
+                        >
                           <SkipForward className="w-4 h-4 text-gray-300" />
                         </button>
                       </div>
@@ -313,7 +341,20 @@ const Dashboard: React.FC = () => {
               </div>
               <div className="space-y-3">
                 {popularSongs.map((song, index) => (
-                  <div key={song.id} className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800/20 transition-colors cursor-pointer">
+                  <div 
+                    key={song.id} 
+                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800/20 transition-colors cursor-pointer group"
+                    onClick={() => {
+                      // Create a mock track object for demo purposes
+                      const track = {
+                        id: song.id,
+                        title: song.title,
+                        thumbnail: song.avatar,
+                        channelTitle: song.artist
+                      };
+                      playTrack(track);
+                    }}
+                  >
                     <div className="flex-shrink-0 w-6 text-center">
                       <span className="text-sm font-bold text-gray-400">{index + 1}</span>
                     </div>
@@ -323,7 +364,7 @@ const Dashboard: React.FC = () => {
                       className="w-10 h-10 rounded-lg object-cover"
                     />
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-white truncate text-sm">{song.title}</h4>
+                      <h4 className="font-semibold text-white truncate text-sm group-hover:text-brand-yellow transition-colors">{song.title}</h4>
                       <p className="text-xs text-gray-400 truncate">{song.artist}</p>
                     </div>
                     <div className="text-right">
@@ -334,6 +375,10 @@ const Dashboard: React.FC = () => {
                       <span className={`text-xs px-2 py-0.5 rounded border ${getDifficultyColorDark(song.difficulty)}`}>
                         {song.difficulty}
                       </span>
+                    </div>
+                    {/* Play button overlay */}
+                    <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Play className="w-4 h-4 text-brand-brown" />
                     </div>
                   </div>
                 ))}
@@ -450,64 +495,22 @@ const Dashboard: React.FC = () => {
                     <p className="text-xs text-gray-400">Personalized suggestions</p>
                   </div>
                 </div>
+                <div className="text-right">
+                  <div className="text-2xl font-bold">22/30</div>
+                  <div className="text-yellow-100 text-sm">minutes</div>
+                </div>
               </div>
-              <div className="space-y-3">
-                {aiRecommendations.slice(0, 3).map((rec) => (
-                  <div key={rec.id} className="rounded-lg p-3 hover:bg-gray-800/20 hover:shadow-lg transition-all cursor-pointer group">
-                    <div className="flex items-start gap-2 mb-2">
-                      <div className="w-6 h-6 bg-gray-700/50 rounded flex items-center justify-center group-hover:bg-brand-brown group-hover:text-white transition-colors">
-                        {getAIRecommendationIcon(rec.type)}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-semibold text-white text-sm truncate">{rec.title}</h4>
-                        <p className="text-xs text-gray-400 truncate">{rec.description}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 text-xs">
-                      <span className={`px-1.5 py-0.5 rounded-full text-xs ${getDifficultyColor(rec.difficulty)}`}>
-                        {rec.difficulty}
-                      </span>
-                      <span className="text-gray-500 flex items-center gap-1">
-                        <Clock className="w-3 h-3" />
-                        {rec.estimatedTime}min
-                      </span>
-                    </div>
-                  </div>
-                ))}
+              <div className="w-full bg-white/20 rounded-full h-3 mb-2">
+                <div className="bg-white h-3 rounded-full" style={{ width: '73%' }}></div>
               </div>
+              <p className="text-yellow-100 text-sm">8 more minutes to reach your daily goal! 🎯</p>
             </div>
           </div>
+
+
         </div>
         
-        {/* Mobile Now Playing - Enhanced */}
-        <div className="fixed bottom-0 left-0 right-0 z-50 bg-gray-900/90 backdrop-blur-sm border-t border-gray-700/50 p-3 flex items-center gap-3 shadow-xl lg:hidden">
-          <img
-            src={nowPlaying.thumbnail}
-            alt={nowPlaying.title}
-            className="w-12 h-12 rounded-lg object-cover"
-          />
-          <div className="flex-1 min-w-0">
-            <h4 className="font-semibold text-white truncate">{nowPlaying.title}</h4>
-            <p className="text-xs text-gray-400 truncate">{nowPlaying.artist}</p>
-            <div className="w-full flex items-center gap-2 mt-1">
-              <div className="flex-1 h-1 bg-gray-700 rounded-full overflow-hidden">
-                <div className="h-1 bg-brand-brown rounded-full" style={{ width: `${nowPlaying.progress * 100}%` }}></div>
-              </div>
-              <span className="text-xs text-gray-400">{nowPlaying.duration}</span>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="text-xs bg-blue-900/30 text-blue-400 px-2 py-1 rounded border border-blue-700/30">
-              AI Tips
-            </div>
-            <button
-              className="p-2 rounded-full bg-brand-brown text-white hover:bg-brand-yellow transition-colors"
-              onClick={() => setIsPlaying((p) => !p)}
-            >
-              {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
-            </button>
-          </div>
-        </div>
+
       </div>
     </div>
   );
