@@ -1,154 +1,81 @@
-import React, { useState, useEffect } from 'react';
-import { User, Calendar, MapPin, Settings, Save, Lock, Eye, Bell, Shield } from 'lucide-react';
+import React, { useState } from 'react';
+import { User, Security, Bell, Save, Edit3 } from 'lucide-react';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
+import { useUserProfile } from '../hooks/useUserProfile';
 import { useAuth } from '../hooks/useAuth';
-import { useNavigate } from 'react-router-dom';
-import { updateProfile as updateFirebaseAuthProfile } from 'firebase/auth';
-import { getUserProfile, updateUserProfile as updateUserServiceProfile, isUsernameAvailable, createUserProfile as createUserServiceProfile } from '../services/userService';
+import { useSidebar } from '../contexts/SidebarContext';
 
-interface UserProfileData {
-  username: string;
-  firstName?: string;
-  lastName?: string;
-  bio: string;
-  location: string;
-  dateOfBirth: string;
-  favoriteGenres: string[];
-  instruments: string[];
-  skillLevel: string;
-  goals: string[];
-}
-
-interface PrivacySettings {
-  profileVisible: boolean;
-  shareStats: boolean;
-  emailNotifications: boolean;
-  pushNotifications: boolean;
-}
+type TabType = 'profile' | 'privacy' | 'notifications';
 
 const SettingsPage: React.FC = () => {
   const { currentUser } = useAuth();
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [usernameStatus, setUsernameStatus] = useState<'available' | 'taken' | 'checking' | ''>('');
-  const [activeTab, setActiveTab] = useState<'profile' | 'privacy' | 'notifications'>('profile');
-  
-  const [profileData, setProfileData] = useState<UserProfileData>({
+  const { profile, updateProfile, loading } = useUserProfile();
+  const { isCollapsed } = useSidebar();
+  const [activeTab, setActiveTab] = useState<TabType>('profile');
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState({
+    displayName: '',
     username: '',
-    firstName: '',
-    lastName: '',
     bio: '',
     location: '',
     dateOfBirth: '',
-    favoriteGenres: [],
-    instruments: [],
-    skillLevel: 'beginner',
-    goals: []
+    skillLevel: 'beginner' as 'beginner' | 'intermediate' | 'advanced',
+    instruments: [] as string[],
+    favoriteGenres: [] as string[],
+    goals: [] as string[]
   });
 
-  const [privacySettings, setPrivacySettings] = useState<PrivacySettings>({
-    profileVisible: true,
-    shareStats: false,
-    emailNotifications: true,
-    pushNotifications: true
-  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Load existing profile data
-  useEffect(() => {
-    if (currentUser) {
-      const loadProfile = async () => {
-        try {
-          const profile = await getUserProfile(currentUser.uid);
-          if (profile) {
-            setProfileData({
-              username: profile.username || '',
-              firstName: profile.firstName || '',
-              lastName: profile.lastName || '',
-              bio: profile.bio || '',
-              location: profile.location || '',
-              dateOfBirth: profile.dateOfBirth || '',
-              favoriteGenres: profile.favoriteGenres || [],
-              instruments: profile.instruments || [],
-              skillLevel: profile.skillLevel || 'beginner',
-              goals: profile.goals || []
-            });
-          } else {
-            // Create fallback username for new users
-            const suggestedUsernameBase = 
-              currentUser.displayName?.replace(/\s+/g, '').toLowerCase() || 
-              currentUser.email?.split('@')[0].toLowerCase() || 
-              'user';
-            
-            let suggestedUsername = suggestedUsernameBase;
-            let attempts = 0;
-            while (!(await isUsernameAvailable(suggestedUsername)) && attempts < 5) {
-              attempts++;
-              const randomSuffix = Math.random().toString(36).substring(2, 7);
-              suggestedUsername = `${suggestedUsernameBase}${randomSuffix}`;
-            }
-
-            setProfileData(prev => ({
-              ...prev,
-              username: suggestedUsername,
-              firstName: currentUser.displayName?.split(' ')[0] || '',
-              lastName: currentUser.displayName?.split(' ').slice(1).join(' ') || '',
-            }));
-          }
-        } catch (error) {
-          console.error('Error loading profile:', error);
-        }
-      };
-      loadProfile();
+  React.useEffect(() => {
+    if (profile) {
+      setFormData({
+        displayName: profile.displayName || '',
+        username: profile.username || '',
+        bio: profile.bio || '',
+        location: profile.location || '',
+        dateOfBirth: profile.dateOfBirth || '',
+        skillLevel: profile.skillLevel || 'beginner',
+        instruments: profile.instruments || [],
+        favoriteGenres: profile.favoriteGenres || [],
+        goals: profile.goals || []
+      });
     }
-  }, [currentUser]);
+  }, [profile]);
 
-  const genres = [
-    'Rock', 'Pop', 'Jazz', 'Classical', 'Hip Hop', 'Electronic', 
-    'Country', 'Folk', 'R&B', 'Blues', 'Metal', 'Alternative'
-  ];
-
-  const instruments = [
-    'Guitar', 'Piano', 'Drums', 'Bass', 'Violin', 'Vocals', 
-    'Saxophone', 'Trumpet', 'Flute', 'Cello', 'Ukulele', 'Harmonica'
-  ];
-
-  const goals = [
-    'Learn new songs', 'Improve technique', 'Perform live', 'Record music',
-    'Join a band', 'Teach others', 'Compose music', 'Master scales'
-  ];
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setProfileData(prev => ({ ...prev, [name]: value }));
-    if (name === 'username') {
-      setUsernameStatus('');
-    }
-    if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: '' }));
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: '' }));
     }
   };
 
-  const handleArrayToggle = (array: keyof Pick<UserProfileData, 'favoriteGenres' | 'instruments' | 'goals'>, item: string) => {
-    setProfileData(prev => ({
+  const toggleArrayItem = (array: string[], item: string) => {
+    return array.includes(item) 
+      ? array.filter(i => i !== item)
+      : [...array, item];
+  };
+
+  const handleArrayChange = (field: 'instruments' | 'favoriteGenres' | 'goals', value: string) => {
+    setFormData(prev => ({
       ...prev,
-      [array]: prev[array].includes(item)
-        ? prev[array].filter(i => i !== item)
-        : [...prev[array], item]
+      [field]: toggleArrayItem(prev[field], value)
     }));
   };
 
-  const validateForm = (): boolean => {
+  const validateForm = () => {
     const newErrors: Record<string, string> = {};
-
-    if (!profileData.username.trim()) {
+    
+    if (!formData.displayName.trim()) {
+      newErrors.displayName = 'Display name is required';
+    }
+    
+    if (!formData.username.trim()) {
       newErrors.username = 'Username is required';
-    } else if (profileData.username.length < 3) {
+    } else if (formData.username.length < 3) {
       newErrors.username = 'Username must be at least 3 characters';
-    } else if (!/^[a-zA-Z0-9_]+$/.test(profileData.username)) {
-      newErrors.username = 'Username can only contain letters, numbers, and underscores';
     }
 
     setErrors(newErrors);
@@ -157,433 +84,396 @@ const SettingsPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validateForm() || !currentUser) return;
-
-    // Check username availability
-    if (profileData.username) {
-      setUsernameStatus('checking');
-      const currentProfile = await getUserProfile(currentUser.uid);
-      if (!currentProfile || currentProfile.username !== profileData.username) {
-        const available = await isUsernameAvailable(profileData.username);
-        if (!available) {
-          setErrors(prev => ({ ...prev, username: 'Username is already taken. Please choose another.' }));
-          setUsernameStatus('taken');
-          return;
-        }
-      }
-      setUsernameStatus('available');
-    }
-
-    setLoading(true);
+    
+    if (!validateForm()) return;
+    
+    setIsSubmitting(true);
     try {
-      const userProfilePayload = {
-        uid: currentUser.uid,
-        email: currentUser.email || '',
-        username: profileData.username,
-        firstName: profileData.firstName,
-        lastName: profileData.lastName,
-        displayName: `${profileData.firstName} ${profileData.lastName}`.trim(),
-        bio: profileData.bio,
-        location: profileData.location,
-        dateOfBirth: profileData.dateOfBirth,
-        favoriteGenres: profileData.favoriteGenres,
-        instruments: profileData.instruments,
-        skillLevel: profileData.skillLevel,
-        goals: profileData.goals,
-        profileCompleted: true,
-      };
-
-      // Update Firebase Auth display name
-      if (currentUser.displayName !== userProfilePayload.displayName) {
-        await updateFirebaseAuthProfile(currentUser, { displayName: userProfilePayload.displayName });
-      }
-
-      const existingProfile = await getUserProfile(currentUser.uid);
-      if (existingProfile) {
-        await updateUserServiceProfile(currentUser.uid, userProfilePayload);
-      } else {
-        await createUserServiceProfile(currentUser, userProfilePayload);
-      }
-
-      // Show success message or redirect
-      navigate('/profile');
+      await updateProfile(formData);
+      setIsEditing(false);
     } catch (error) {
-      console.error('Error saving profile:', error);
-      let errorMessage = 'Failed to save profile. Please try again.';
-      if (error instanceof Error) {
-        errorMessage = error.message;
-      }
-      setErrors({ submit: errorMessage });
+      console.error('Error updating profile:', error);
+      setErrors({ submit: 'Failed to update profile. Please try again.' });
     } finally {
-      setLoading(false);
+      setIsSubmitting(false);
     }
   };
 
+  const instrumentOptions = ['Guitar', 'Piano', 'Drums', 'Bass', 'Violin', 'Saxophone', 'Trumpet', 'Flute'];
+  const genreOptions = ['Rock', 'Pop', 'Jazz', 'Blues', 'Country', 'Classical', 'Electronic', 'Hip Hop', 'R&B', 'Folk'];
+  const goalOptions = ['Learn songs', 'Improve technique', 'Write music', 'Play with others', 'Perform live', 'Record music'];
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-[#101218] to-[#03020a] font-poppins">
+        <Sidebar />
+        <div className={`transition-all duration-300 ${isCollapsed ? 'ml-20' : 'ml-64'}`}>
+          <Navbar />
+          <div className="max-w-7xl mx-auto py-10 px-4 flex items-center justify-center min-h-[400px]">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-brown mx-auto mb-4"></div>
+              <p className="text-gray-400">Loading settings...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#101218] to-[#03020a] font-poppins">
-      <Sidebar onCollapse={setSidebarCollapsed} />
-      <div className={`transition-all duration-300 ${sidebarCollapsed ? 'ml-20' : 'ml-64'}`}>
+      <Sidebar />
+      <div className={`transition-all duration-300 ${isCollapsed ? 'ml-20' : 'ml-64'}`}>
         <Navbar />
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {/* Header */}
-          <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl border border-gray-700/50 p-6 mb-8">
-            <div className="flex items-center gap-3">
-              <div className="bg-brand-brown/20 p-3 rounded-lg border border-brand-brown/30">
-                <Settings className="w-6 h-6 text-brand-brown" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-white">Settings</h1>
-                <p className="text-gray-400">Manage your account and preferences</p>
-              </div>
+        <div className="max-w-7xl mx-auto py-8 px-4">
+          <h1 className="text-3xl font-bold text-white mb-8">Settings</h1>
+          
+          {/* Tab Navigation */}
+          <div className="bg-gray-800/30 backdrop-blur-sm rounded-t-2xl border border-gray-700/50 border-b-0">
+            <div className="flex">
+              <button
+                onClick={() => setActiveTab('profile')}
+                className={`flex items-center gap-2 px-6 py-4 font-medium rounded-tl-2xl transition-all duration-300 ${
+                  activeTab === 'profile' 
+                    ? 'bg-gray-700/50 text-white border-b-2 border-brand-brown' 
+                    : 'text-gray-400 hover:text-white hover:bg-gray-700/30'
+                }`}
+              >
+                <User className="w-5 h-5" />
+                Profile
+              </button>
+              <button
+                onClick={() => setActiveTab('privacy')}
+                className={`flex items-center gap-2 px-6 py-4 font-medium transition-all duration-300 ${
+                  activeTab === 'privacy' 
+                    ? 'bg-gray-700/50 text-white border-b-2 border-brand-brown' 
+                    : 'text-gray-400 hover:text-white hover:bg-gray-700/30'
+                }`}
+              >
+                <Security className="w-5 h-5" />
+                Privacy
+              </button>
+              <button
+                onClick={() => setActiveTab('notifications')}
+                className={`flex items-center gap-2 px-6 py-4 font-medium rounded-tr-2xl transition-all duration-300 ${
+                  activeTab === 'notifications' 
+                    ? 'bg-gray-700/50 text-white border-b-2 border-brand-brown' 
+                    : 'text-gray-400 hover:text-white hover:bg-gray-700/30'
+                }`}
+              >
+                <Bell className="w-5 h-5" />
+                Notifications
+              </button>
             </div>
           </div>
 
-          {/* Tabs */}
-          <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl border border-gray-700/50 mb-8">
-            <div className="border-b border-gray-700/50">
-              <nav className="flex space-x-8 px-6">
-                {[
-                  { id: 'profile', label: 'Profile', icon: User },
-                  { id: 'privacy', label: 'Privacy', icon: Shield },
-                  { id: 'notifications', label: 'Notifications', icon: Bell }
-                ].map((tab) => {
-                  const Icon = tab.icon;
-                  return (
+          {/* Tab Content */}
+          <div className="bg-gray-800/30 backdrop-blur-sm rounded-b-2xl border border-gray-700/50 p-8">
+            {activeTab === 'profile' && (
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-xl font-bold text-white">Profile Information</h2>
+                  {!isEditing ? (
                     <button
-                      key={tab.id}
-                      onClick={() => setActiveTab(tab.id as any)}
-                      className={`flex items-center gap-2 py-4 border-b-2 font-medium text-sm transition-colors ${
-                        activeTab === tab.id
-                          ? 'border-brand-brown text-brand-brown'
-                          : 'border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-600'
-                      }`}
+                      type="button"
+                      onClick={() => setIsEditing(true)}
+                      className="flex items-center gap-2 px-4 py-2 bg-brand-brown text-white rounded-lg hover:bg-brand-brown/80 transition-colors"
                     >
-                      <Icon className="w-4 h-4" />
-                      {tab.label}
+                      <Edit3 className="w-4 h-4" />
+                      Edit Profile
                     </button>
-                  );
-                })}
-              </nav>
-            </div>
-
-            <div className="p-6">
-              {activeTab === 'profile' && (
-                <form onSubmit={handleSubmit} className="space-y-8">
-                  {/* Personal Information */}
-                  <div>
-                    <h3 className="text-lg font-semibold text-white mb-4">Personal Information</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div>
-                        <label htmlFor="firstName" className="block text-sm font-medium text-gray-300 mb-2">
-                          First Name
-                        </label>
-                        <input
-                          type="text"
-                          name="firstName"
-                          id="firstName"
-                          value={profileData.firstName}
-                          onChange={handleInputChange}
-                          className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-brown focus:border-brand-brown"
-                          placeholder="Enter your first name"
-                        />
-                      </div>
-
-                      <div>
-                        <label htmlFor="lastName" className="block text-sm font-medium text-gray-300 mb-2">
-                          Last Name
-                        </label>
-                        <input
-                          type="text"
-                          name="lastName"
-                          id="lastName"
-                          value={profileData.lastName}
-                          onChange={handleInputChange}
-                          className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-brown focus:border-brand-brown"
-                          placeholder="Enter your last name"
-                        />
-                      </div>
-
-                      <div>
-                        <label htmlFor="username" className="block text-sm font-medium text-gray-300 mb-2">
-                          Username <span className="text-red-400">*</span>
-                        </label>
-                        <div className="relative">
-                          <input
-                            type="text"
-                            name="username"
-                            id="username"
-                            value={profileData.username}
-                            onChange={handleInputChange}
-                            className={`w-full px-4 py-3 bg-gray-700/50 border rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-brown focus:border-brand-brown ${
-                              errors.username ? 'border-red-500 bg-red-900/20' : 'border-gray-600'
-                            }`}
-                            placeholder="your_username"
-                            required
-                          />
-                          {usernameStatus && (
-                            <div className={`absolute right-3 top-1/2 transform -translate-y-1/2 ${
-                              usernameStatus === 'available' ? 'text-green-400' : 'text-red-400'
-                            }`}>
-                              {usernameStatus === 'available' ? '✓' : usernameStatus === 'taken' ? '✗' : '...'}
-                            </div>
-                          )}
-                        </div>
-                        {errors.username && <p className="text-red-400 text-sm mt-1">{errors.username}</p>}
-                      </div>
-
-                      <div>
-                        <label htmlFor="dateOfBirth" className="block text-sm font-medium text-gray-300 mb-2">
-                          Date of Birth
-                        </label>
-                        <div className="relative">
-                          <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                          <input
-                            type="date"
-                            name="dateOfBirth"
-                            id="dateOfBirth"
-                            value={profileData.dateOfBirth}
-                            onChange={handleInputChange}
-                            className="w-full pl-10 pr-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-brand-brown focus:border-brand-brown"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="md:col-span-2">
-                        <label htmlFor="location" className="block text-sm font-medium text-gray-300 mb-2">
-                          Location
-                        </label>
-                        <div className="relative">
-                          <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                          <input
-                            type="text"
-                            name="location"
-                            id="location"
-                            value={profileData.location}
-                            onChange={handleInputChange}
-                            className="w-full pl-10 pr-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-brown focus:border-brand-brown"
-                            placeholder="City, Country"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="md:col-span-2">
-                        <label htmlFor="bio" className="block text-sm font-medium text-gray-300 mb-2">
-                          Bio
-                        </label>
-                        <textarea
-                          name="bio"
-                          id="bio"
-                          value={profileData.bio}
-                          onChange={handleInputChange}
-                          rows={3}
-                          className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-brown focus:border-brand-brown resize-none"
-                          placeholder="Tell us about your musical journey..."
-                        />
-                      </div>
-
-                      <div className="md:col-span-2">
-                        <label htmlFor="skillLevel" className="block text-sm font-medium text-gray-300 mb-2">
-                          Skill Level
-                        </label>
-                        <select
-                          name="skillLevel"
-                          id="skillLevel"
-                          value={profileData.skillLevel}
-                          onChange={handleInputChange}
-                          className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-brand-brown focus:border-brand-brown"
-                        >
-                          <option value="beginner">🌱 Beginner</option>
-                          <option value="intermediate">🎵 Intermediate</option>
-                          <option value="advanced">🎸 Advanced</option>
-                          <option value="professional">🎼 Professional</option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Musical Preferences */}
-                  <div>
-                    <h3 className="text-lg font-semibold text-white mb-4">Musical Preferences</h3>
-                    
-                    {/* Instruments */}
-                    <div className="mb-6">
-                      <label className="block text-sm font-medium text-gray-300 mb-3">
-                        Instruments You Play
-                      </label>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                        {instruments.map((instrument) => (
-                          <button
-                            key={instrument}
-                            type="button"
-                            onClick={() => handleArrayToggle('instruments', instrument)}
-                            className={`p-3 rounded-xl border text-sm font-medium transition-all ${
-                              profileData.instruments.includes(instrument)
-                                ? 'bg-brand-brown/20 border-brand-brown text-brand-brown'
-                                : 'bg-gray-700/30 border-gray-600 text-gray-300 hover:bg-gray-700/50'
-                            }`}
-                          >
-                            {instrument}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Genres */}
-                    <div className="mb-6">
-                      <label className="block text-sm font-medium text-gray-300 mb-3">
-                        Favorite Genres
-                      </label>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                        {genres.map((genre) => (
-                          <button
-                            key={genre}
-                            type="button"
-                            onClick={() => handleArrayToggle('favoriteGenres', genre)}
-                            className={`p-3 rounded-xl border text-sm font-medium transition-all ${
-                              profileData.favoriteGenres.includes(genre)
-                                ? 'bg-purple-500/20 border-purple-500 text-purple-400'
-                                : 'bg-gray-700/30 border-gray-600 text-gray-300 hover:bg-gray-700/50'
-                            }`}
-                          >
-                            {genre}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Goals */}
-                    <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-3">
-                        Musical Goals
-                      </label>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                        {goals.map((goal) => (
-                          <button
-                            key={goal}
-                            type="button"
-                            onClick={() => handleArrayToggle('goals', goal)}
-                            className={`p-3 rounded-xl border text-sm font-medium transition-all ${
-                              profileData.goals.includes(goal)
-                                ? 'bg-blue-500/20 border-blue-500 text-blue-400'
-                                : 'bg-gray-700/30 border-gray-600 text-gray-300 hover:bg-gray-700/50'
-                            }`}
-                          >
-                            {goal}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Submit Button */}
-                  <div className="flex justify-end pt-6 border-t border-gray-700/50">
-                    <button
-                      type="submit"
-                      disabled={loading}
-                      className="bg-brand-brown text-white px-8 py-3 rounded-xl font-medium hover:bg-brand-brown/80 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
-                    >
-                      {loading ? (
-                        <>
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                          Saving...
-                        </>
-                      ) : (
-                        <>
-                          <Save className="w-4 h-4" />
-                          Save Changes
-                        </>
-                      )}
-                    </button>
-                  </div>
-
-                  {errors.submit && (
-                    <div className="text-red-400 text-sm mt-2 p-4 bg-red-900/20 border border-red-500/30 rounded-xl">
-                      {errors.submit}
+                  ) : (
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsEditing(false);
+                          setErrors({});
+                        }}
+                        className="px-4 py-2 text-gray-400 hover:text-white transition-colors"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="flex items-center gap-2 px-4 py-2 bg-brand-brown text-white rounded-lg hover:bg-brand-brown/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <Save className="w-4 h-4" />
+                        {isSubmitting ? 'Saving...' : 'Save Changes'}
+                      </button>
                     </div>
                   )}
-                </form>
-              )}
+                </div>
 
-              {activeTab === 'privacy' && (
-                <div className="space-y-6">
-                  <h3 className="text-lg font-semibold text-white mb-4">Privacy Settings</h3>
-                  
-                  <div className="space-y-4">
-                    <label className="flex items-center justify-between p-4 bg-gray-700/30 rounded-xl border border-gray-600 hover:bg-gray-700/50 transition-all cursor-pointer">
-                      <div className="flex items-center gap-3">
-                        <Eye className="w-5 h-5 text-gray-400" />
-                        <div>
-                          <div className="text-white font-medium">Profile Visibility</div>
-                          <div className="text-gray-400 text-sm">Allow others to view your profile</div>
-                        </div>
-                      </div>
-                      <input
-                        type="checkbox"
-                        checked={privacySettings.profileVisible}
-                        onChange={e => setPrivacySettings(p => ({ ...p, profileVisible: e.target.checked }))}
-                        className="w-5 h-5 text-brand-brown rounded focus:ring-brand-brown focus:ring-2"
-                      />
-                    </label>
+                {errors.submit && (
+                  <div className="bg-red-500/20 border border-red-500/50 text-red-400 px-4 py-3 rounded-lg">
+                    {errors.submit}
+                  </div>
+                )}
 
-                    <label className="flex items-center justify-between p-4 bg-gray-700/30 rounded-xl border border-gray-600 hover:bg-gray-700/50 transition-all cursor-pointer">
-                      <div className="flex items-center gap-3">
-                        <Lock className="w-5 h-5 text-gray-400" />
-                        <div>
-                          <div className="text-white font-medium">Share Practice Stats</div>
-                          <div className="text-gray-400 text-sm">Share your practice statistics publicly</div>
-                        </div>
-                      </div>
-                      <input
-                        type="checkbox"
-                        checked={privacySettings.shareStats}
-                        onChange={e => setPrivacySettings(p => ({ ...p, shareStats: e.target.checked }))}
-                        className="w-5 h-5 text-brand-brown rounded focus:ring-brand-brown focus:ring-2"
-                      />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Display Name
                     </label>
+                    <input
+                      type="text"
+                      value={formData.displayName}
+                      onChange={(e) => handleInputChange('displayName', e.target.value)}
+                      disabled={!isEditing}
+                      className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-brown focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+                      placeholder="Enter your display name"
+                    />
+                    {errors.displayName && (
+                      <p className="text-red-400 text-sm mt-1">{errors.displayName}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Username
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.username}
+                      onChange={(e) => handleInputChange('username', e.target.value)}
+                      disabled={!isEditing}
+                      className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-brown focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+                      placeholder="Enter your username"
+                    />
+                    {errors.username && (
+                      <p className="text-red-400 text-sm mt-1">{errors.username}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Email
+                    </label>
+                    <input
+                      type="email"
+                      value={currentUser?.email || ''}
+                      disabled
+                      className="w-full px-4 py-3 bg-gray-700/30 border border-gray-600/30 rounded-lg text-gray-400 opacity-50 cursor-not-allowed"
+                    />
+                    <p className="text-gray-500 text-xs mt-1">Email cannot be changed</p>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Skill Level
+                    </label>
+                    <select
+                      value={formData.skillLevel}
+                      onChange={(e) => handleInputChange('skillLevel', e.target.value)}
+                      disabled={!isEditing}
+                      className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-brand-brown focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <option value="beginner">Beginner</option>
+                      <option value="intermediate">Intermediate</option>
+                      <option value="advanced">Advanced</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Location
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.location}
+                      onChange={(e) => handleInputChange('location', e.target.value)}
+                      disabled={!isEditing}
+                      className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-brown focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+                      placeholder="Enter your location"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Date of Birth
+                    </label>
+                    <input
+                      type="date"
+                      value={formData.dateOfBirth}
+                      onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
+                      disabled={!isEditing}
+                      className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-brand-brown focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+                    />
                   </div>
                 </div>
-              )}
 
-              {activeTab === 'notifications' && (
-                <div className="space-y-6">
-                  <h3 className="text-lg font-semibold text-white mb-4">Notification Preferences</h3>
-                  
-                  <div className="space-y-4">
-                    <label className="flex items-center justify-between p-4 bg-gray-700/30 rounded-xl border border-gray-600 hover:bg-gray-700/50 transition-all cursor-pointer">
-                      <div className="flex items-center gap-3">
-                        <Bell className="w-5 h-5 text-gray-400" />
-                        <div>
-                          <div className="text-white font-medium">Email Notifications</div>
-                          <div className="text-gray-400 text-sm">Receive updates via email</div>
-                        </div>
-                      </div>
-                      <input
-                        type="checkbox"
-                        checked={privacySettings.emailNotifications}
-                        onChange={e => setPrivacySettings(p => ({ ...p, emailNotifications: e.target.checked }))}
-                        className="w-5 h-5 text-brand-brown rounded focus:ring-brand-brown focus:ring-2"
-                      />
-                    </label>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Bio
+                  </label>
+                  <textarea
+                    value={formData.bio}
+                    onChange={(e) => handleInputChange('bio', e.target.value)}
+                    disabled={!isEditing}
+                    rows={4}
+                    className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-brown focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed resize-none"
+                    placeholder="Tell us about yourself..."
+                  />
+                </div>
 
-                    <label className="flex items-center justify-between p-4 bg-gray-700/30 rounded-xl border border-gray-600 hover:bg-gray-700/50 transition-all cursor-pointer">
-                      <div className="flex items-center gap-3">
-                        <Bell className="w-5 h-5 text-gray-400" />
-                        <div>
-                          <div className="text-white font-medium">Push Notifications</div>
-                          <div className="text-gray-400 text-sm">Receive push notifications in browser</div>
-                        </div>
-                      </div>
-                      <input
-                        type="checkbox"
-                        checked={privacySettings.pushNotifications}
-                        onChange={e => setPrivacySettings(p => ({ ...p, pushNotifications: e.target.checked }))}
-                        className="w-5 h-5 text-brand-brown rounded focus:ring-brand-brown focus:ring-2"
-                      />
-                    </label>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-4">
+                    Instruments
+                  </label>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    {instrumentOptions.map((instrument) => (
+                      <button
+                        key={instrument}
+                        type="button"
+                        onClick={() => isEditing && handleArrayChange('instruments', instrument)}
+                        disabled={!isEditing}
+                        className={`px-4 py-3 rounded-lg font-medium transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed ${
+                          formData.instruments.includes(instrument)
+                            ? 'bg-brand-brown text-white border border-brand-brown'
+                            : 'bg-gray-700/50 text-gray-300 border border-gray-600/50 hover:bg-gray-700/70 hover:text-white'
+                        }`}
+                      >
+                        {instrument}
+                      </button>
+                    ))}
                   </div>
                 </div>
-              )}
-            </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-4">
+                    Favorite Genres
+                  </label>
+                  <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                    {genreOptions.map((genre) => (
+                      <button
+                        key={genre}
+                        type="button"
+                        onClick={() => isEditing && handleArrayChange('favoriteGenres', genre)}
+                        disabled={!isEditing}
+                        className={`px-4 py-3 rounded-lg font-medium transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed ${
+                          formData.favoriteGenres.includes(genre)
+                            ? 'bg-purple-600 text-white border border-purple-600'
+                            : 'bg-gray-700/50 text-gray-300 border border-gray-600/50 hover:bg-gray-700/70 hover:text-white'
+                        }`}
+                      >
+                        {genre}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-4">
+                    Musical Goals
+                  </label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {goalOptions.map((goal) => (
+                      <button
+                        key={goal}
+                        type="button"
+                        onClick={() => isEditing && handleArrayChange('goals', goal)}
+                        disabled={!isEditing}
+                        className={`px-4 py-3 rounded-lg font-medium transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed ${
+                          formData.goals.includes(goal)
+                            ? 'bg-blue-600 text-white border border-blue-600'
+                            : 'bg-gray-700/50 text-gray-300 border border-gray-600/50 hover:bg-gray-700/70 hover:text-white'
+                        }`}
+                      >
+                        {goal}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </form>
+            )}
+
+            {activeTab === 'privacy' && (
+              <div className="space-y-6">
+                <h2 className="text-xl font-bold text-white mb-6">Privacy Settings</h2>
+                
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between p-4 bg-gray-700/30 rounded-lg border border-gray-600/50">
+                    <div>
+                      <h3 className="font-medium text-white">Profile Visibility</h3>
+                      <p className="text-sm text-gray-400">Allow others to view your profile</p>
+                    </div>
+                    <input
+                      type="checkbox"
+                      defaultChecked
+                      className="w-4 h-4 text-brand-brown bg-gray-700 border-gray-600 rounded focus:ring-brand-brown focus:ring-2"
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between p-4 bg-gray-700/30 rounded-lg border border-gray-600/50">
+                    <div>
+                      <h3 className="font-medium text-white">Show Practice Stats</h3>
+                      <p className="text-sm text-gray-400">Display your practice statistics publicly</p>
+                    </div>
+                    <input
+                      type="checkbox"
+                      className="w-4 h-4 text-brand-brown bg-gray-700 border-gray-600 rounded focus:ring-brand-brown focus:ring-2"
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between p-4 bg-gray-700/30 rounded-lg border border-gray-600/50">
+                    <div>
+                      <h3 className="font-medium text-white">Show Achievements</h3>
+                      <p className="text-sm text-gray-400">Let others see your achievements</p>
+                    </div>
+                    <input
+                      type="checkbox"
+                      defaultChecked
+                      className="w-4 h-4 text-brand-brown bg-gray-700 border-gray-600 rounded focus:ring-brand-brown focus:ring-2"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'notifications' && (
+              <div className="space-y-6">
+                <h2 className="text-xl font-bold text-white mb-6">Notification Preferences</h2>
+                
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between p-4 bg-gray-700/30 rounded-lg border border-gray-600/50">
+                    <div>
+                      <h3 className="font-medium text-white">Practice Reminders</h3>
+                      <p className="text-sm text-gray-400">Get reminded to practice daily</p>
+                    </div>
+                    <input
+                      type="checkbox"
+                      defaultChecked
+                      className="w-4 h-4 text-brand-brown bg-gray-700 border-gray-600 rounded focus:ring-brand-brown focus:ring-2"
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between p-4 bg-gray-700/30 rounded-lg border border-gray-600/50">
+                    <div>
+                      <h3 className="font-medium text-white">Achievement Notifications</h3>
+                      <p className="text-sm text-gray-400">Be notified when you unlock achievements</p>
+                    </div>
+                    <input
+                      type="checkbox"
+                      defaultChecked
+                      className="w-4 h-4 text-brand-brown bg-gray-700 border-gray-600 rounded focus:ring-brand-brown focus:ring-2"
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between p-4 bg-gray-700/30 rounded-lg border border-gray-600/50">
+                    <div>
+                      <h3 className="font-medium text-white">Email Updates</h3>
+                      <p className="text-sm text-gray-400">Receive weekly progress summaries via email</p>
+                    </div>
+                    <input
+                      type="checkbox"
+                      className="w-4 h-4 text-brand-brown bg-gray-700 border-gray-600 rounded focus:ring-brand-brown focus:ring-2"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

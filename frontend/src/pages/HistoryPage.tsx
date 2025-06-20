@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
+import { Calendar, Clock, Play, Star, BarChart3, TrendingUp, Target, Award } from 'lucide-react';
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
-import { CalendarDays, ChevronDown, Search, Download, Play, BarChart3, Clock, Star } from 'lucide-react';
+import { useSidebar } from '../contexts/SidebarContext';
 
 const dummySessions = [
   {
@@ -68,8 +69,7 @@ const weeklyStats = [
 ];
 
 const HistoryPage: React.FC = () => {
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [search, setSearch] = useState('');
+  const { isCollapsed } = useSidebar();
 
   const renderStars = (rating: number) => {
     return [...Array(5)].map((_, i) => (
@@ -84,161 +84,207 @@ const HistoryPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#101218] to-[#03020a] font-poppins">
-      <Sidebar onCollapse={setSidebarCollapsed} />
-      <div className={`transition-all duration-300 ${sidebarCollapsed ? 'ml-20' : 'ml-64'}`}>
+      <Sidebar />
+      <div className={`transition-all duration-300 ${isCollapsed ? 'ml-20' : 'ml-64'}`}>
         <Navbar />
-        <div className="max-w-7xl mx-auto p-8">
+        <div className="max-w-7xl mx-auto py-8 px-4">
           <h1 className="text-3xl font-bold text-white mb-8">Practice History</h1>
           
-          {/* Filters */}
-          <div className="flex flex-wrap gap-4 mb-8 items-center">
-            <button className="flex items-center gap-2 bg-brand-brown/20 border border-brand-brown text-brand-brown px-4 py-2 rounded-lg font-medium hover:bg-brand-brown/30 transition-colors">
-              <CalendarDays className="w-5 h-5" /> Last 30 days <ChevronDown className="w-4 h-4" />
-            </button>
-            <button className="flex items-center gap-2 bg-purple-500/20 border border-purple-500 text-purple-400 px-4 py-2 rounded-lg font-medium hover:bg-purple-500/30 transition-colors">
-              🎸 All instruments <ChevronDown className="w-4 h-4" />
-            </button>
-            <button className="flex items-center gap-2 bg-blue-500/20 border border-blue-500 text-blue-400 px-4 py-2 rounded-lg font-medium hover:bg-blue-500/30 transition-colors">
-              ⏱️ All durations <ChevronDown className="w-4 h-4" />
-            </button>
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search songs..."
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-                className="pl-10 pr-4 py-2 rounded-lg bg-gray-800/50 border border-gray-600 text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-brown w-64"
-              />
-              <Search className="absolute left-3 top-2.5 w-5 h-5 text-gray-400" />
+          {/* Stats Overview */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="bg-blue-500/20 p-2 rounded-lg">
+                  <Clock className="w-5 h-5 text-blue-400" />
+                </div>
+                <span className="text-gray-400 text-sm">Total Practice</span>
+              </div>
+              <div className="text-2xl font-bold text-white">142h 30m</div>
             </div>
-            <button className="ml-auto flex items-center gap-2 bg-green-500/20 border border-green-500 text-green-400 px-4 py-2 rounded-lg font-medium hover:bg-green-500/30 transition-colors">
-              <Download className="w-5 h-5" /> Export
-            </button>
+            
+            <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="bg-green-500/20 p-2 rounded-lg">
+                  <Calendar className="w-5 h-5 text-green-400" />
+                </div>
+                <span className="text-gray-400 text-sm">Sessions</span>
+              </div>
+              <div className="text-2xl font-bold text-white">89</div>
+            </div>
+            
+            <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="bg-yellow-500/20 p-2 rounded-lg">
+                  <TrendingUp className="w-5 h-5 text-yellow-400" />
+                </div>
+                <span className="text-gray-400 text-sm">Average Score</span>
+              </div>
+              <div className="text-2xl font-bold text-white">87%</div>
+            </div>
+            
+            <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="bg-purple-500/20 p-2 rounded-lg">
+                  <Target className="w-5 h-5 text-purple-400" />
+                </div>
+                <span className="text-gray-400 text-sm">Streak</span>
+              </div>
+              <div className="text-2xl font-bold text-white">12 days</div>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-            {/* Calendar View */}
-            <div className="lg:col-span-2 bg-gray-800/30 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">
-              <div className="text-white font-semibold mb-6 flex items-center gap-3">
-                <div className="bg-brand-brown/20 p-2 rounded-lg">
-                  <CalendarDays className="w-6 h-6 text-brand-brown" />
-                </div>
-                <div>
-                  <h2 className="text-xl">Practice Calendar</h2>
-                  <p className="text-sm text-gray-400">January 2024</p>
-                </div>
-              </div>
-              <div className="grid grid-cols-7 gap-2 text-center text-gray-400 mb-4">
-                <div className="font-medium">S</div><div className="font-medium">M</div><div className="font-medium">T</div><div className="font-medium">W</div><div className="font-medium">T</div><div className="font-medium">F</div><div className="font-medium">S</div>
-              </div>
-              {/* Calendar days */}
+          {/* Calendar and Weekly Stats */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            {/* Practice Calendar */}
+            <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">
+              <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                <Calendar className="w-5 h-5 text-brand-brown" />
+                Practice Calendar
+              </h2>
               <div className="grid grid-cols-7 gap-2 text-center">
-                <div></div><div></div><div className="text-gray-500 p-2">1</div><div className="text-gray-500 p-2">2</div><div className="text-gray-500 p-2">3</div><div className="text-gray-500 p-2">4</div><div></div>
-                <div className="text-gray-500 p-2">5</div><div className="text-gray-500 p-2">6</div><div className="text-gray-500 p-2">7</div><div className="text-gray-500 p-2">8</div><div className="text-gray-500 p-2">9</div><div className="text-gray-500 p-2">10</div><div className="text-gray-500 p-2">11</div>
-                <div className="bg-brand-brown/30 text-brand-brown rounded-lg p-2 font-bold border border-brand-brown/50">12</div><div className="bg-brand-brown/30 text-brand-brown rounded-lg p-2 font-bold border border-brand-brown/50">13</div><div className="bg-brand-brown/30 text-brand-brown rounded-lg p-2 font-bold border border-brand-brown/50">14</div><div className="bg-brand-brown/30 text-brand-brown rounded-lg p-2 font-bold border border-brand-brown/50">15</div><div className="text-gray-500 p-2">16</div><div className="text-gray-500 p-2">17</div><div className="text-gray-500 p-2">18</div>
-                <div className="text-gray-500 p-2">19</div><div className="text-gray-500 p-2">20</div><div className="bg-brand-brown/30 text-brand-brown rounded-lg p-2 font-bold border border-brand-brown/50">21</div><div className="text-gray-500 p-2">22</div><div className="bg-brand-brown/30 text-brand-brown rounded-lg p-2 font-bold border border-brand-brown/50">23</div><div className="text-gray-500 p-2">24</div><div className="text-gray-500 p-2">25</div>
-                <div className="text-gray-500 p-2">26</div><div className="text-gray-500 p-2">27</div><div className="text-gray-500 p-2">28</div><div className="text-gray-500 p-2">29</div><div className="text-gray-500 p-2">30</div><div className="text-gray-500 p-2">31</div><div></div>
-              </div>
-              <div className="mt-4 text-xs text-gray-400 flex items-center gap-2">
-                <span className="bg-brand-brown/30 w-3 h-3 rounded border border-brand-brown/50 inline-block"></span> 
-                = Practice day
+                {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day) => (
+                  <div key={day} className="text-gray-400 font-medium py-2">{day}</div>
+                ))}
+                {Array.from({ length: 35 }, (_, i) => {
+                  const isPracticeDay = Math.random() > 0.6;
+                  const isToday = i === 15;
+                  return (
+                    <div
+                      key={i}
+                      className={`h-8 flex items-center justify-center rounded-lg text-sm transition-colors ${
+                        isToday
+                          ? 'bg-brand-brown text-white ring-2 ring-brand-brown/50'
+                          : isPracticeDay
+                          ? 'bg-green-500/20 text-green-400 hover:bg-green-500/30'
+                          : 'text-gray-500 hover:bg-gray-700/50'
+                      }`}
+                    >
+                      {i + 1}
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
             {/* Weekly Stats */}
-            <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">
-              <div className="text-white font-semibold mb-6 flex items-center gap-3">
-                <div className="bg-blue-500/20 p-2 rounded-lg">
-                  <BarChart3 className="w-6 h-6 text-blue-400" />
-                </div>
-                <div>
-                  <h2 className="text-xl">This Week</h2>
-                  <p className="text-sm text-gray-400">Practice minutes</p>
-                </div>
-              </div>
-              <div className="space-y-3">
-                {weeklyStats.map((stat, idx) => (
-                  <div key={stat.day} className="flex items-center gap-3">
-                    <div className="w-8 text-gray-400 text-sm font-medium">{stat.day}</div>
-                    <div className="flex-1 bg-gray-700/50 rounded-full h-2">
-                      <div 
-                        className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-300"
-                        style={{ width: `${(stat.minutes / maxMinutes) * 100}%` }}
-                      ></div>
+            <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">
+              <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                <BarChart3 className="w-5 h-5 text-brand-brown" />
+                Weekly Practice
+              </h2>
+              <div className="space-y-4">
+                {[
+                  { day: 'Monday', minutes: 45, color: 'from-blue-500 to-blue-600' },
+                  { day: 'Tuesday', minutes: 30, color: 'from-green-500 to-green-600' },
+                  { day: 'Wednesday', minutes: 60, color: 'from-purple-500 to-purple-600' },
+                  { day: 'Thursday', minutes: 25, color: 'from-yellow-500 to-yellow-600' },
+                  { day: 'Friday', minutes: 50, color: 'from-red-500 to-red-600' },
+                  { day: 'Saturday', minutes: 75, color: 'from-indigo-500 to-indigo-600' },
+                  { day: 'Sunday', minutes: 40, color: 'from-pink-500 to-pink-600' }
+                ].map((stat) => (
+                  <div key={stat.day} className="flex items-center gap-4">
+                    <div className="w-16 text-gray-400 text-sm">{stat.day.slice(0, 3)}</div>
+                    <div className="flex-1 bg-gray-700/30 rounded-full h-3">
+                      <div
+                        className={`h-3 rounded-full bg-gradient-to-r ${stat.color} transition-all duration-500`}
+                        style={{ width: `${(stat.minutes / 75) * 100}%` }}
+                      />
                     </div>
-                    <div className="text-blue-400 text-sm font-medium w-12">{stat.minutes}m</div>
+                    <div className="w-12 text-white text-sm font-medium">{stat.minutes}m</div>
                   </div>
                 ))}
               </div>
             </div>
           </div>
 
-          {/* Session Details */}
-          <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl p-6 mb-8 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">
-            <div className="text-white font-semibold mb-6 flex items-center gap-3">
-              <div className="bg-purple-500/20 p-2 rounded-lg">
-                <Clock className="w-6 h-6 text-purple-400" />
-              </div>
-              <div>
-                <h2 className="text-xl">Recent Sessions</h2>
-                <p className="text-sm text-gray-400">Your latest practice sessions</p>
-              </div>
-            </div>
+          {/* Recent Sessions */}
+          <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl p-6 mb-8 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">
+            <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+              <Clock className="w-5 h-5 text-brand-brown" />
+              Recent Practice Sessions
+            </h2>
             <div className="space-y-4">
-              {dummySessions.map((session, idx) => (
-                <div key={idx} className="bg-gray-700/30 rounded-xl p-6 border border-gray-600/50 hover:bg-gray-700/50 transition-all duration-300">
-                  <div className="flex items-start gap-4">
-                    <img src={session.cover} alt={session.song} className="w-16 h-16 rounded-lg object-cover" />
-                    <div className="flex-1">
-                      <div className="flex items-start justify-between mb-2">
-                        <div>
-                          <h3 className="text-lg font-medium text-white mb-1">{session.song}</h3>
-                          <div className="flex items-center gap-4 text-sm text-gray-400 mb-2">
-                            <span className="flex items-center gap-1">
-                              📅 {session.date}
-                            </span>
-                            <span className="flex items-center gap-1">
-                              ⏰ {session.time}
-                            </span>
-                            <span className="flex items-center gap-1">
-                              ⏱️ {session.duration}
-                            </span>
-                            <span className="flex items-center gap-1">
-                              🎸 {session.instrument}
-                            </span>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          {renderStars(session.rating)}
-                        </div>
-                      </div>
-                      
-                      <div className="mb-3">
-                        <div className="flex items-center justify-between text-sm mb-1">
-                          <span className="text-gray-400">Progress</span>
-                          <span className="text-white font-medium">{session.progress}%</span>
-                        </div>
-                        <div className="w-full bg-gray-600 rounded-full h-2">
-                          <div 
-                            className="bg-gradient-to-r from-brand-brown to-yellow-500 h-2 rounded-full transition-all duration-300"
-                            style={{ width: `${session.progress}%` }}
-                          ></div>
-                        </div>
-                      </div>
-                      
-                      <p className="text-gray-300 text-sm mb-4">📝 {session.notes}</p>
-                      
-                      <div className="flex gap-3">
-                        <button className="bg-brand-brown/20 hover:bg-brand-brown/30 text-brand-brown border border-brand-brown/50 px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
-                          <Play className="w-4 h-4" />
-                          Practice Again
-                        </button>
-                        <button className="bg-gray-600/30 hover:bg-gray-600/50 text-gray-300 border border-gray-600 px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
-                          <BarChart3 className="w-4 h-4" />
-                          View Stats
-                        </button>
-                      </div>
+              {[
+                {
+                  id: 1,
+                  song: 'Hotel California',
+                  artist: 'Eagles',
+                  date: '2024-01-15',
+                  duration: '45m',
+                  score: 92,
+                  progress: 85,
+                  thumbnail: 'https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg?w=80&h=80&fit=crop'
+                },
+                {
+                  id: 2,
+                  song: 'Wonderwall',
+                  artist: 'Oasis',
+                  date: '2024-01-14',
+                  duration: '30m',
+                  score: 88,
+                  progress: 78,
+                  thumbnail: 'https://images.pexels.com/photos/1763076/pexels-photo-1763076.jpeg?w=80&h=80&fit=crop'
+                },
+                {
+                  id: 3,
+                  song: 'Perfect',
+                  artist: 'Ed Sheeran',
+                  date: '2024-01-13',
+                  duration: '40m',
+                  score: 94,
+                  progress: 90,
+                  thumbnail: 'https://images.pexels.com/photos/1763077/pexels-photo-1763077.jpeg?w=80&h=80&fit=crop'
+                }
+              ].map((session) => (
+                <div key={session.id} className="flex items-center gap-4 p-4 bg-gray-700/30 rounded-lg border border-gray-600/50 hover:bg-gray-700/50 transition-all duration-300">
+                  <div className="relative">
+                    <img src={session.thumbnail} alt={session.song} className="w-16 h-16 rounded-lg object-cover" />
+                    <div className="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
+                      <Play className="w-6 h-6 text-white" />
                     </div>
+                  </div>
+                  
+                  <div className="flex-1">
+                    <h3 className="font-medium text-white">{session.song}</h3>
+                    <p className="text-gray-400 text-sm">{session.artist}</p>
+                  </div>
+                  
+                  <div className="text-center">
+                    <div className="text-white font-medium">{session.duration}</div>
+                    <div className="text-gray-400 text-sm">{session.date}</div>
+                  </div>
+                  
+                  <div className="text-center">
+                    <div className="flex items-center gap-1 mb-1">
+                      {Array.from({ length: 5 }, (_, i) => (
+                        <Star
+                          key={i}
+                          className={`w-4 h-4 ${
+                            i < Math.floor(session.score / 20) ? 'text-yellow-400 fill-current' : 'text-gray-600'
+                          }`}
+                        />
+                      ))}
+                    </div>
+                    <div className="text-white text-sm font-medium">{session.score}%</div>
+                  </div>
+                  
+                  <div className="text-center">
+                    <div className="w-16 bg-gray-700 rounded-full h-2 mb-1">
+                      <div
+                        className="bg-brand-brown h-2 rounded-full transition-all duration-300"
+                        style={{ width: `${session.progress}%` }}
+                      />
+                    </div>
+                    <div className="text-gray-400 text-xs">{session.progress}% complete</div>
+                  </div>
+                  
+                  <div className="flex gap-2">
+                    <button className="px-3 py-1 bg-brand-brown text-white rounded-lg text-sm hover:bg-brand-brown/80 transition-colors">
+                      Practice Again
+                    </button>
+                    <button className="px-3 py-1 bg-gray-600 text-white rounded-lg text-sm hover:bg-gray-500 transition-colors">
+                      View Stats
+                    </button>
                   </div>
                 </div>
               ))}
@@ -246,23 +292,67 @@ const HistoryPage: React.FC = () => {
           </div>
 
           {/* Practice Insights */}
-          <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">
-            <div className="text-white font-semibold mb-6 flex items-center gap-3">
-              <div className="bg-green-500/20 p-2 rounded-lg">
-                <BarChart3 className="w-6 h-6 text-green-400" />
-              </div>
-              <div>
-                <h2 className="text-xl">Practice Insights</h2>
-                <p className="text-sm text-gray-400">AI-powered recommendations</p>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {insights.map((insight, idx) => (
-                <div key={idx} className="bg-gray-700/30 p-4 rounded-xl border border-gray-600/50 flex items-start gap-3">
-                  <div className="bg-green-500/20 p-2 rounded-lg">
-                    <span className="text-green-400 text-lg">💡</span>
+          <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">
+            <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+              <Award className="w-5 h-5 text-brand-brown" />
+              Practice Insights
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[
+                {
+                  title: 'Most Practiced Song',
+                  content: 'Hotel California',
+                  subtitle: '12 sessions this month',
+                  icon: <Play className="w-5 h-5 text-blue-400" />,
+                  color: 'bg-blue-500/20'
+                },
+                {
+                  title: 'Favorite Genre',
+                  content: 'Rock',
+                  subtitle: '68% of your practice time',
+                  icon: <TrendingUp className="w-5 h-5 text-green-400" />,
+                  color: 'bg-green-500/20'
+                },
+                {
+                  title: 'Best Practice Day',
+                  content: 'Saturday',
+                  subtitle: 'Average 75 minutes',
+                  icon: <Calendar className="w-5 h-5 text-purple-400" />,
+                  color: 'bg-purple-500/20'
+                },
+                {
+                  title: 'Skill Improvement',
+                  content: '+15%',
+                  subtitle: 'This month vs last month',
+                  icon: <Target className="w-5 h-5 text-yellow-400" />,
+                  color: 'bg-yellow-500/20'
+                },
+                {
+                  title: 'Streak Record',
+                  content: '21 days',
+                  subtitle: 'Your longest practice streak',
+                  icon: <Award className="w-5 h-5 text-red-400" />,
+                  color: 'bg-red-500/20'
+                },
+                {
+                  title: 'Next Goal',
+                  content: '150 hours',
+                  subtitle: '8 hours to milestone',
+                  icon: <Clock className="w-5 h-5 text-indigo-400" />,
+                  color: 'bg-indigo-500/20'
+                }
+              ].map((insight, index) => (
+                <div key={index} className="bg-gray-700/30 rounded-lg p-4 border border-gray-600/50 hover:bg-gray-700/50 transition-all duration-300">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className={`p-2 rounded-lg ${insight.color}`}>
+                      {insight.icon}
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-medium text-white text-sm">{insight.title}</h3>
+                    </div>
                   </div>
-                  <div className="text-gray-300 text-sm">{insight}</div>
+                  <div className="text-xl font-bold text-white mb-1">{insight.content}</div>
+                  <div className="text-gray-400 text-xs">{insight.subtitle}</div>
                 </div>
               ))}
             </div>

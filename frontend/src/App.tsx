@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { MusicPlayerProvider } from './contexts/PlayerContext';
+import { SidebarProvider } from './contexts/SidebarContext';
 import { useAuth } from './hooks/useAuth';
 
 import LandingPage from './components/LandingPage';
@@ -151,7 +152,9 @@ function App() {
   return (
     <AuthProvider>
       <MusicPlayerProvider>
-        <AppContent />
+        <SidebarProvider>
+          <AppContent />
+        </SidebarProvider>
       </MusicPlayerProvider>
     </AuthProvider>
   );

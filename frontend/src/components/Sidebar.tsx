@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import { useSidebar } from '../contexts/SidebarContext';
 import {
   LayoutDashboard,
   Search,
@@ -21,21 +22,11 @@ const navItems = [
   { label: 'Ranking', icon: <Trophy className="w-5 h-5" />, to: '/ranking' },
 ];
 
-interface SidebarProps {
-  onCollapse?: (isCollapsed: boolean) => void;
-}
-
-const Sidebar: React.FC<SidebarProps> = ({ onCollapse }) => {
+const Sidebar: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { logout } = useAuth();
-  const [isCollapsed, setIsCollapsed] = useState(false);
-
-  const handleCollapse = () => {
-    const newState = !isCollapsed;
-    setIsCollapsed(newState);
-    onCollapse?.(newState);
-  };
+  const { isCollapsed, toggleSidebar } = useSidebar();
 
   const handleLogout = async () => {
     try {
@@ -141,7 +132,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onCollapse }) => {
         </button>
       </div>
       <button
-        onClick={handleCollapse}
+        onClick={toggleSidebar}
         className="absolute -right-3 top-8 bg-brand-brown text-white p-1 rounded-full hover:bg-brand-yellow transition-all duration-300 ease-in-out hover:scale-110 transform hover:shadow-lg"
         title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
       >

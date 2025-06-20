@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
-import { useMusicPlayer } from '../contexts/PlayerContext'; // Import the hook
+import { useMusicPlayer } from '../contexts/PlayerContext';
+import { useSidebar } from '../contexts/SidebarContext';
 import { 
   Play, 
   Pause,
@@ -12,7 +13,6 @@ import {
   Target,
   TrendingUp,
   Music,
-  Zap,
   Clock,
   Users
 } from 'lucide-react';
@@ -28,16 +28,7 @@ interface PracticeSession {
   skillsImproved: string[];
 }
 
-interface AIRecommendation {
-  id: string;
-  type: 'exercise' | 'song' | 'technique';
-  title: string;
-  description: string;
-  difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
-  estimatedTime: number;
-  skillFocus: string;
-  aiConfidence: number;
-}
+
 
 interface LeaderboardEntry {
   id: string;
@@ -57,48 +48,7 @@ interface PopularSong {
   difficulty: string;
 }
 
-const aiRecommendations: AIRecommendation[] = [
-  {
-    id: 'ai1',
-    type: 'exercise',
-    title: 'Fingerpicking Patterns',
-    description: 'Based on your recent sessions, practice these patterns to improve dexterity',
-    difficulty: 'Intermediate',
-    estimatedTime: 15,
-    skillFocus: 'Technique',
-    aiConfidence: 92
-  },
-  {
-    id: 'ai2', 
-    type: 'song',
-    title: 'Tears in Heaven - Eric Clapton',
-    description: 'Perfect for practicing the chord progressions you\'ve been working on',
-    difficulty: 'Intermediate',
-    estimatedTime: 25,
-    skillFocus: 'Chord Transitions',
-    aiConfidence: 88
-  },
-  {
-    id: 'ai3',
-    type: 'technique',
-    title: 'Rhythm Training - 4/4 Time',
-    description: 'AI detected timing inconsistencies. This will help your rhythm accuracy',
-    difficulty: 'Beginner',
-    estimatedTime: 10,
-    skillFocus: 'Timing',
-    aiConfidence: 95
-  },
-  {
-    id: 'ai4',
-    type: 'song',
-    title: 'House of the Rising Sun',
-    description: 'Great for practicing barre chords with your current skill level',
-    difficulty: 'Advanced',
-    estimatedTime: 30,
-    skillFocus: 'Barre Chords',
-    aiConfidence: 85
-  }
-];
+
 
 const leaderboardData: LeaderboardEntry[] = [
   { id: '1', name: 'Ali Hassanain', score: 98, avatar: 'https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?w=40&h=40&fit=crop&crop=face', rank: 1, badge: '🏆' },
@@ -118,11 +68,10 @@ const popularSongs: PopularSong[] = [
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const { currentTrack, isPlaying, togglePlay, progress, duration, seek, skip, playTrack } = useMusicPlayer();
+  const { isCollapsed } = useSidebar();
+  const { currentTrack, isPlaying, togglePlay } = useMusicPlayer();
 
   // Mock data with AI-enhanced features
-
   const recentSessions: PracticeSession[] = [
     {
       id: '1',
@@ -178,24 +127,6 @@ const Dashboard: React.FC = () => {
 
 
 
-  const getAIRecommendationIcon = (type: string) => {
-    switch (type) {
-      case 'exercise': return <Target className="w-5 h-5" />;
-      case 'song': return <Music className="w-5 h-5" />;
-      case 'technique': return <Zap className="w-5 h-5" />;
-      default: return <Brain className="w-5 h-5" />;
-    }
-  };
-
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
-      case 'Beginner': return 'text-green-600 bg-green-100';
-      case 'Intermediate': return 'text-brand-brown bg-orange-100';
-      case 'Advanced': return 'text-red-600 bg-red-100';
-      default: return 'text-gray-600 bg-gray-100';
-    }
-  };
-
   const getDifficultyColorDark = (difficulty: string) => {
     switch (difficulty) {
       case 'Beginner': return 'text-green-400 bg-green-900/30 border-green-700/30';
@@ -203,27 +134,6 @@ const Dashboard: React.FC = () => {
       case 'Advanced': return 'text-red-400 bg-red-900/30 border-red-700/30';
       default: return 'text-gray-400 bg-gray-800/30 border-gray-700/30';
     }
-  };
-
-  const formatTime = (seconds: number) => new Date(seconds * 1000).toISOString().substr(14, 5);
-
-  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
-    seek(Number(e.target.value));
-  };
-
-  const handleProgressBarClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!duration) return;
-    const rect = e.currentTarget.getBoundingClientRect();
-    const clickX = e.clientX - rect.left;
-    const clickRatio = clickX / rect.width;
-    const newTime = clickRatio * duration;
-    seek(newTime);
-  };
-
-  // Calculate progress for the styled seekbar
-  const progressPercentage = duration > 0 ? (progress / duration) * 100 : 0;
-  const trackStyle = {
-    background: `linear-gradient(to right, #8B4513 ${progressPercentage}%, #e2e8f0 ${progressPercentage}%)`
   };
 
   return (
@@ -235,8 +145,8 @@ const Dashboard: React.FC = () => {
         <div className="absolute bottom-1/4 left-1/3 w-64 h-64 bg-gradient-radial from-brand-brown/8 via-brand-brown/2 to-transparent rounded-full blur-3xl"></div>
       </div>
 
-      <Sidebar onCollapse={setSidebarCollapsed} />
-      <div className={`transition-all duration-300 ${sidebarCollapsed ? 'ml-20' : 'ml-64'} relative z-10`}>
+      <Sidebar />
+      <div className={`transition-all duration-300 ${isCollapsed ? 'ml-20' : 'ml-64'} relative z-10`}>
         <Navbar />
         <div className="px-4 py-8 flex flex-col gap-8">
           
@@ -246,7 +156,7 @@ const Dashboard: React.FC = () => {
             {/* Currently Playing Section with integrated Leaderboard - Takes first 9 columns */}
             <div className="lg:col-span-9 p-6">
               <div className="relative">
-                <img
+                <img 
                   src={currentTrack?.thumbnail || "/src/assets/images/bmwsong.jpeg"}
                   alt={currentTrack?.title || "No track playing"}
                   className="w-full aspect-[3/1] rounded-xl object-cover"
@@ -254,7 +164,7 @@ const Dashboard: React.FC = () => {
                 <div className="absolute top-3 right-3 bg-black/70 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-full">
                   Intermediate
                 </div>
-                
+
                 {/* Music Player Controls - Left Side */}
                 <div className="absolute bottom-3 left-6 right-3">
                   <div className="flex items-start">
@@ -268,27 +178,25 @@ const Dashboard: React.FC = () => {
                       
                       {/* Progress Bar */}
                       <div className="flex items-center gap-2 mb-3 w-64">
-                        <span className="text-xs text-gray-400">{formatTime(progress)}</span>
-                        <div className="flex-1 h-1.5 bg-gray-600 rounded-full overflow-hidden cursor-pointer"
-                             onClick={handleProgressBarClick}>
+                        <span className="text-xs text-gray-400">2:14</span>
+                        <div className="flex-1 h-1.5 bg-gray-600 rounded-full overflow-hidden cursor-pointer">
                           <div 
                             className="h-1.5 bg-brand-brown rounded-full transition-all duration-200" 
-                            style={{ width: duration > 0 ? `${(progress / duration) * 100}%` : '0%' }}
+                            style={{ width: '60%' }}
                           ></div>
                         </div>
-                        <span className="text-xs text-gray-400">{formatTime(duration)}</span>
+                        <span className="text-xs text-gray-400">4:32</span>
                       </div>
 
                       {/* Play Controls */}
                       <div className="flex items-center justify-center gap-4">
                         <button 
                           className="p-2 rounded-full hover:bg-gray-700/50 transition-colors"
-                          onClick={() => skip(-10)}
                           disabled={!currentTrack}
                         >
                           <SkipBack className="w-4 h-4 text-gray-300" />
                         </button>
-                        <button
+                        <button 
                           className="p-3 rounded-full bg-brand-brown text-white hover:bg-brand-yellow transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                           onClick={() => togglePlay()}
                           disabled={!currentTrack}
@@ -297,7 +205,6 @@ const Dashboard: React.FC = () => {
                         </button>
                         <button 
                           className="p-2 rounded-full hover:bg-gray-700/50 transition-colors"
-                          onClick={() => skip(10)}
                           disabled={!currentTrack}
                         >
                           <SkipForward className="w-4 h-4 text-gray-300" />
@@ -344,16 +251,6 @@ const Dashboard: React.FC = () => {
                   <div 
                     key={song.id} 
                     className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800/20 transition-colors cursor-pointer group"
-                    onClick={() => {
-                      // Create a mock track object for demo purposes
-                      const track = {
-                        id: song.id,
-                        title: song.title,
-                        thumbnail: song.avatar,
-                        channelTitle: song.artist
-                      };
-                      playTrack(track);
-                    }}
                   >
                     <div className="flex-shrink-0 w-6 text-center">
                       <span className="text-sm font-bold text-gray-400">{index + 1}</span>
@@ -406,8 +303,8 @@ const Dashboard: React.FC = () => {
               
               <div className="space-y-2">
                 {recentSessions.map((session) => (
-                  <div
-                    key={session.id}
+                  <div 
+                    key={session.id} 
                     className="group relative rounded-lg p-4 cursor-pointer hover:bg-gray-800/20 transition-all duration-300 hover:scale-[1.01] hover:shadow-lg"
                     onClick={() => navigate(`/practice/${session.id}`)}
                   >

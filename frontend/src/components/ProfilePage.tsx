@@ -5,6 +5,7 @@ import Navbar from './Navbar';
 import { useUserProfile } from '../hooks/useUserProfile';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import { useSidebar } from '../contexts/SidebarContext';
 
 const dummyStats = {
   totalPractice: 142,
@@ -30,9 +31,9 @@ const ProfilePage: React.FC = () => {
   const { currentUser } = useAuth();
   const { profile, loading } = useUserProfile();
   const navigate = useNavigate();
+  const { isCollapsed } = useSidebar();
   const [avatar, setAvatar] = useState<string | null>(null);
   const [privacy, setPrivacy] = useState(dummyPrivacy);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
   
   // Update avatar when profile loads
@@ -45,8 +46,8 @@ const ProfilePage: React.FC = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#101218] to-[#03020a] font-poppins">
-        <Sidebar onCollapse={setSidebarCollapsed} />
-        <div className={`transition-all duration-300 ${sidebarCollapsed ? 'ml-20' : 'ml-64'}`}>
+        <Sidebar />
+        <div className={`transition-all duration-300 ${isCollapsed ? 'ml-20' : 'ml-64'}`}>
           <Navbar />
           <div className="max-w-7xl mx-auto py-10 px-4 flex items-center justify-center min-h-[400px]">
             <div className="text-center">
@@ -62,8 +63,8 @@ const ProfilePage: React.FC = () => {
   if (!profile) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#101218] to-[#03020a] font-poppins">
-        <Sidebar onCollapse={setSidebarCollapsed} />
-        <div className={`transition-all duration-300 ${sidebarCollapsed ? 'ml-20' : 'ml-64'}`}>
+        <Sidebar />
+        <div className={`transition-all duration-300 ${isCollapsed ? 'ml-20' : 'ml-64'}`}>
           <Navbar />
           <div className="max-w-7xl mx-auto py-10 px-4 flex items-center justify-center min-h-[400px]">
             <div className="text-center">
@@ -85,8 +86,8 @@ const ProfilePage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#101218] to-[#03020a] font-poppins">
-      <Sidebar onCollapse={setSidebarCollapsed} />
-      <div className={`transition-all duration-300 ${sidebarCollapsed ? 'ml-20' : 'ml-64'}`}>
+      <Sidebar />
+      <div className={`transition-all duration-300 ${isCollapsed ? 'ml-20' : 'ml-64'}`}>
         <Navbar />
         <div className="max-w-7xl mx-auto py-8 px-4">
           <h1 className="text-3xl font-bold text-white mb-8">Profile</h1>

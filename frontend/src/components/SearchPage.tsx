@@ -1,232 +1,270 @@
-import React, { useState, useEffect, useRef } from 'react';
-import Navbar from './Navbar';
+import React, { useState } from 'react';
+import { Search, Play, Pause, Clock, Music, Headphones, Heart, ArrowRight } from 'lucide-react';
 import Sidebar from './Sidebar';
-import { useSearchParams } from 'react-router-dom';
-import { 
-  Search, 
-  Mic, 
-  X, 
-  Clock, 
-  Filter, 
-  Music, 
-  Guitar, 
-  Piano, 
-  Drum, 
-  Violin,
-  Sliders,
-  ChevronDown,
-  ChevronUp,
-  Star,
-  Users,
-  Clock as ClockIcon,
-  Play,
-  Pause,
-  TrendingUp
-} from 'lucide-react';
-import { useMusicPlayer, Track } from '../contexts/PlayerContext';
+import Navbar from './Navbar';
+import { useMusicPlayer } from '../contexts/PlayerContext';
+import { useSidebar } from '../contexts/SidebarContext';
 
-const recentSearches = [
-  { name: 'Solar', type: 'Artist', img: 'https://picsum.photos/200?random=1' },
-  { name: 'Moon Byul', type: 'Artist', img: 'https://picsum.photos/200?random=2' },
-  { name: 'MAMAMOO', type: 'Artist', img: 'https://picsum.photos/200?random=3' },
-  { name: 'TheSafehouseProject', type: 'By Ellie', img: 'https://picsum.photos/200?random=4' },
-  { name: '王嘉尔', type: 'Artist', img: 'https://picsum.photos/200?random=5' },
-  { name: 'Priscilla Chan', type: 'Artist', img: 'https://picsum.photos/200?random=6' },
-];
-
-const topGenres = [
-  { name: 'Pop', color: 'bg-gradient-to-br from-brand-brown to-brand-brown/80', img: 'https://picsum.photos/200?random=7' },
-  { name: 'K-Pop', color: 'bg-gradient-to-br from-purple-500 to-purple-600', img: 'https://picsum.photos/200?random=8' },
-  { name: 'Dance / Electronic', color: 'bg-gradient-to-br from-blue-500 to-blue-600', img: 'https://picsum.photos/200?random=9' },
-  { name: 'Rock', color: 'bg-gradient-to-br from-red-500 to-red-600', img: 'https://picsum.photos/200?random=10' },
-];
-
-const browseAll = [
-  { name: 'Podcasts', color: 'bg-gradient-to-br from-green-500 to-green-600', img: 'https://picsum.photos/200?random=11' },
-  { name: 'Made For You', color: 'bg-gradient-to-br from-yellow-500 to-yellow-600', img: 'https://picsum.photos/200?random=12' },
-  { name: 'Charts', color: 'bg-gradient-to-br from-orange-500 to-orange-600', img: 'https://picsum.photos/200?random=13' },
-  { name: 'New Releases', color: 'bg-gradient-to-br from-pink-500 to-pink-600', img: 'https://picsum.photos/200?random=14' },
-  { name: 'Discover', color: 'bg-gradient-to-br from-indigo-500 to-indigo-600', img: 'https://picsum.photos/200?random=15' },
-  { name: 'Live Events', color: 'bg-gradient-to-br from-teal-500 to-teal-600', img: 'https://picsum.photos/200?random=16' },
-  { name: 'At Home', color: 'bg-gradient-to-br from-cyan-500 to-cyan-600', img: 'https://picsum.photos/200?random=17' },
-];
+interface Track {
+  id: string;
+  title: string;
+  channelTitle: string;
+  thumbnail: string;
+  duration: string;
+  views?: string;
+}
 
 const SearchPage: React.FC = () => {
-  const [searchParams] = useSearchParams();
-  const query = searchParams.get('q');
-  const [results, setResults] = useState<Track[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const { playTrack, currentTrack, isPlaying } = useMusicPlayer();
+  const { isCollapsed } = useSidebar();
+  const { currentTrack, isPlaying, togglePlay, playTrack } = useMusicPlayer();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [searchResults, setSearchResults] = useState<Track[]>([]);
 
-  // This useEffect replaces the old mock data filtering logic.
-  useEffect(() => {
-    if (!query) {
-      setResults([]);
-      return;
+  // Mock search results
+  const mockResults: Track[] = [
+    {
+      id: '1',
+      title: 'Hotel California - Eagles',
+      channelTitle: 'Eagles',
+      thumbnail: 'https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg?w=300&h=200&fit=crop',
+      duration: '6:31',
+      views: '2.1M'
+    },
+    {
+      id: '2',
+      title: 'Wonderwall - Oasis',
+      channelTitle: 'Oasis',
+      thumbnail: 'https://images.pexels.com/photos/1763076/pexels-photo-1763076.jpeg?w=300&h=200&fit=crop',
+      duration: '4:18',
+      views: '1.8M'
+    },
+    {
+      id: '3',
+      title: 'Perfect - Ed Sheeran',
+      channelTitle: 'Ed Sheeran',
+      thumbnail: 'https://images.pexels.com/photos/1763077/pexels-photo-1763077.jpeg?w=300&h=200&fit=crop',
+      duration: '4:23',
+      views: '3.2M'
+    },
+    {
+      id: '4',
+      title: 'Blackbird - The Beatles',
+      channelTitle: 'The Beatles',
+      thumbnail: 'https://images.pexels.com/photos/1763078/pexels-photo-1763078.jpeg?w=300&h=200&fit=crop',
+      duration: '2:18',
+      views: '1.5M'
+    },
+    {
+      id: '5',
+      title: 'Stairway to Heaven - Led Zeppelin',
+      channelTitle: 'Led Zeppelin',
+      thumbnail: 'https://images.pexels.com/photos/1763079/pexels-photo-1763079.jpeg?w=300&h=200&fit=crop',
+      duration: '8:02',
+      views: '4.1M'
     }
+  ];
 
-    const fetchResults = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const response = await fetch(`http://localhost:3000/api/youtube/search?query=${encodeURIComponent(query)}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch search results.');
-        }
-        const data: Track[] = await response.json();
-        setResults(data);
-      } catch (err: any) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const recentSearches = ['Guitar tabs', 'Ed Sheeran', 'Rock ballads', 'Acoustic covers'];
+  
+  const topGenres = [
+    { name: 'Rock', count: '1.2K songs', image: 'https://images.pexels.com/photos/1190297/pexels-photo-1190297.jpeg?w=300&h=200&fit=crop' },
+    { name: 'Pop', count: '2.3K songs', image: 'https://images.pexels.com/photos/1190298/pexels-photo-1190298.jpeg?w=300&h=200&fit=crop' },
+    { name: 'Jazz', count: '800 songs', image: 'https://images.pexels.com/photos/1190299/pexels-photo-1190299.jpeg?w=300&h=200&fit=crop' },
+    { name: 'Classical', count: '600 songs', image: 'https://images.pexels.com/photos/1190300/pexels-photo-1190300.jpeg?w=300&h=200&fit=crop' }
+  ];
 
-    fetchResults();
-  }, [query]);
+  const browseCategories = [
+    { name: 'Popular Today', icon: <Heart className="w-6 h-6" />, color: 'from-red-500 to-pink-500' },
+    { name: 'New Releases', icon: <Music className="w-6 h-6" />, color: 'from-blue-500 to-purple-500' },
+    { name: 'Acoustic', icon: <Headphones className="w-6 h-6" />, color: 'from-green-500 to-emerald-500' },
+    { name: 'Rock Classics', icon: <Clock className="w-6 h-6" />, color: 'from-orange-500 to-red-500' }
+  ];
+
+  const handleSearch = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (!searchQuery.trim()) return;
+    
+    setIsLoading(true);
+    
+    // Simulate API call
+    setTimeout(() => {
+      setSearchResults(mockResults);
+      setIsLoading(false);
+    }, 500);
+  };
+
+  const handleTrackPlay = (track: Track) => {
+    playTrack(track);
+  };
+
+  const isCurrentTrack = (trackId: string) => currentTrack?.id === trackId;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#101218] to-[#03020a] font-poppins">
-      <Sidebar onCollapse={setSidebarCollapsed} />
-      <div className={`transition-all duration-300 ${sidebarCollapsed ? 'ml-20' : 'ml-64'}`}>
+      <Sidebar />
+      <div className={`transition-all duration-300 ${isCollapsed ? 'ml-20' : 'ml-64'}`}>
         <Navbar />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex justify-center pb-8">
-            <h1 className="text-3xl font-bold text-white">
-              {query ? `Search Results for "${query}"` : 'Discover Music'}
-            </h1>
+        <div className="max-w-7xl mx-auto py-8 px-4">
+          <h1 className="text-3xl font-bold text-white mb-8">Search Music</h1>
+          
+          {/* Search Bar */}
+          <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl p-6 mb-8 border border-gray-700/50">
+            <form onSubmit={handleSearch} className="relative">
+              <div className="relative">
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search for songs, artists, or albums..."
+                  className="w-full pl-12 pr-20 py-4 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-brown focus:border-transparent"
+                />
+                <button
+                  type="submit"
+                  disabled={!searchQuery.trim() || isLoading}
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-brand-brown text-white px-6 py-2 rounded-lg hover:bg-brand-brown/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isLoading ? 'Searching...' : 'Search'}
+                </button>
+              </div>
+            </form>
           </div>
 
-          {loading && (
-            <div className="flex justify-center items-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-brown"></div>
-              <p className="text-white ml-4">Searching...</p>
-            </div>
-          )}
-          
-          {error && (
-            <div className="bg-red-900/20 border border-red-500/30 rounded-xl p-6 mb-8">
-              <p className="text-red-400 text-center">{error}</p>
-            </div>
-          )}
-          
-          {!loading && !error && results.length > 0 && (
-            <div>
-              <div className="mb-6 flex items-center gap-3">
-                <div className="bg-brand-brown/20 p-2 rounded-lg">
-                  <Music className="w-6 h-6 text-brand-brown" />
-                </div>
-                <div>
-                  <h2 className="text-xl font-bold text-white">Search Results</h2>
-                  <p className="text-gray-400 text-sm">{results.length} tracks found</p>
-                </div>
+          {/* Search Results */}
+          {searchResults.length > 0 && (
+            <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl p-6 mb-8 border border-gray-700/50">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold text-white">Search Results</h2>
+                <span className="text-gray-400 text-sm">{searchResults.length} results found</span>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-                {results.map((track) => (
+              <div className="space-y-3">
+                {searchResults.map((track) => (
                   <div
                     key={track.id}
-                    onClick={() => playTrack(track)}
-                    className="group relative cursor-pointer bg-gray-800/30 backdrop-blur-sm rounded-xl overflow-hidden border border-gray-700/50 hover:bg-gray-800/50 hover:scale-105 transition-all duration-300"
+                    className="group flex items-center gap-4 p-4 bg-gray-700/30 rounded-xl hover:bg-gray-700/50 transition-all duration-300 border border-gray-600/50"
                   >
                     <div className="relative">
-                      <img src={track.thumbnail} alt={track.title} className="w-full h-40 object-cover" />
-                      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-60 transition-all flex items-center justify-center">
-                        <div className="w-12 h-12 bg-brand-brown rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transform group-hover:scale-110 transition-all">
-                          {currentTrack?.id === track.id && isPlaying ? (
-                            <Pause className="w-6 h-6" />
+                      <img src={track.thumbnail} alt={track.title} className="w-16 h-16 rounded-lg object-cover" />
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
+                        <button
+                          onClick={() => handleTrackPlay(track)}
+                          className="w-8 h-8 bg-brand-brown rounded-full flex items-center justify-center hover:bg-brand-brown/80 transition-colors"
+                        >
+                          {isCurrentTrack(track.id) && isPlaying ? (
+                            <Pause className="w-4 h-4 text-white" />
                           ) : (
-                            <Play className="w-6 h-6" />
+                            <Play className="w-4 h-4 text-white" />
                           )}
-                        </div>
+                        </button>
                       </div>
                     </div>
-                    <div className="p-4">
-                      <h3 className="font-semibold text-white truncate mb-1" title={track.title}>{track.title}</h3>
-                      <p className="text-sm text-gray-400 truncate">{track.channelTitle}</p>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-medium text-white truncate group-hover:text-brand-brown transition-colors">
+                        {track.title}
+                      </h3>
+                      <p className="text-gray-400 text-sm truncate">{track.channelTitle}</p>
                     </div>
+                    <div className="text-right">
+                      <div className="text-gray-400 text-sm">{track.duration}</div>
+                      {track.views && (
+                        <div className="text-gray-500 text-xs">{track.views} views</div>
+                      )}
+                    </div>
+                    <button
+                      onClick={() => handleTrackPlay(track)}
+                      className="opacity-0 group-hover:opacity-100 transition-opacity p-2 rounded-full hover:bg-gray-600/50"
+                    >
+                      <ArrowRight className="w-4 h-4 text-brand-brown" />
+                    </button>
                   </div>
                 ))}
               </div>
             </div>
           )}
 
-          {!loading && !error && results.length === 0 && query && (
-            <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl border border-gray-700/50 p-12 text-center">
-              <div className="bg-gray-700/30 p-4 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center">
-                <Search className="w-10 h-10 text-gray-400" />
+          {/* Discovery Section */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+            {/* Recent Searches */}
+            <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">
+              <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                <Clock className="w-5 h-5 text-brand-brown" />
+                Recent Searches
+              </h2>
+              <div className="space-y-2">
+                {recentSearches.map((search, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setSearchQuery(search)}
+                    className="w-full text-left p-3 bg-gray-700/30 rounded-lg hover:bg-gray-700/50 transition-all duration-300 text-gray-300 hover:text-white border border-gray-600/50"
+                  >
+                    {search}
+                  </button>
+                ))}
               </div>
-              <h3 className="text-xl font-medium text-white mb-2">No results found</h3>
-              <p className="text-gray-400">Try searching with different keywords or check your spelling</p>
+            </div>
+
+            {/* Top Genres */}
+            <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">
+              <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                <Music className="w-5 h-5 text-brand-brown" />
+                Top Genres
+              </h2>
+              <div className="grid grid-cols-2 gap-3">
+                {topGenres.map((genre) => (
+                  <div
+                    key={genre.name}
+                    className="relative group cursor-pointer rounded-lg overflow-hidden hover:scale-105 transition-transform duration-300"
+                  >
+                    <img src={genre.image} alt={genre.name} className="w-full h-20 object-cover" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-3">
+                      <h3 className="text-white font-medium text-sm">{genre.name}</h3>
+                      <p className="text-gray-300 text-xs">{genre.count}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Browse All */}
+            <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">
+              <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                <Headphones className="w-5 h-5 text-brand-brown" />
+                Browse All
+              </h2>
+              <div className="space-y-3">
+                {browseCategories.map((category) => (
+                  <div
+                    key={category.name}
+                    className={`relative p-4 rounded-lg cursor-pointer group overflow-hidden hover:scale-105 transition-transform duration-300 bg-gradient-to-r ${category.color}`}
+                  >
+                    <div className="flex items-center justify-between relative z-10">
+                      <span className="text-white font-medium">{category.name}</span>
+                      <div className="text-white/80">
+                        {category.icon}
+                      </div>
+                    </div>
+                    <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors"></div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Loading State */}
+          {isLoading && (
+            <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl p-12 border border-gray-700/50 text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-brown mx-auto mb-4"></div>
+              <p className="text-gray-400">Searching for music...</p>
             </div>
           )}
 
-          {!query && (
-            <div className="space-y-8">
-              {/* Recent Searches */}
-              <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl border border-gray-700/50 p-6 hover:bg-gray-800/40 transition-all duration-300">
-                <div className="mb-6 flex items-center gap-3">
-                  <div className="bg-purple-500/20 p-2 rounded-lg">
-                    <Clock className="w-6 h-6 text-purple-400" />
-                  </div>
-                  <div>
-                    <h2 className="text-xl font-bold text-white">Recent Searches</h2>
-                    <p className="text-gray-400 text-sm">Your search history</p>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                  {recentSearches.map((search, idx) => (
-                    <div key={idx} className="bg-gray-700/30 rounded-xl p-4 border border-gray-600/50 hover:bg-gray-700/50 transition-all duration-300 cursor-pointer">
-                      <img src={search.img} alt={search.name} className="w-full h-20 object-cover rounded-lg mb-3" />
-                      <h3 className="font-medium text-white text-sm truncate">{search.name}</h3>
-                      <p className="text-xs text-gray-400">{search.type}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Top Genres */}
-              <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl border border-gray-700/50 p-6 hover:bg-gray-800/40 transition-all duration-300">
-                <div className="mb-6 flex items-center gap-3">
-                  <div className="bg-brand-brown/20 p-2 rounded-lg">
-                    <TrendingUp className="w-6 h-6 text-brand-brown" />
-                  </div>
-                  <div>
-                    <h2 className="text-xl font-bold text-white">Your Top Genres</h2>
-                    <p className="text-gray-400 text-sm">Based on your listening history</p>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                  {topGenres.map((genre, idx) => (
-                    <div key={idx} className={`relative rounded-2xl h-32 flex items-end p-6 ${genre.color} cursor-pointer transition-transform hover:scale-105 shadow-lg`}>
-                      <span className="text-xl font-bold z-10 text-white drop-shadow-lg">{genre.name}</span>
-                      <img src={genre.img} alt={genre.name} className="absolute right-4 bottom-4 w-16 h-16 object-cover rounded-lg shadow-lg z-0 opacity-80" />
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Browse All */}
-              <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl border border-gray-700/50 p-6 hover:bg-gray-800/40 transition-all duration-300">
-                <div className="mb-6 flex items-center gap-3">
-                  <div className="bg-blue-500/20 p-2 rounded-lg">
-                    <Users className="w-6 h-6 text-blue-400" />
-                  </div>
-                  <div>
-                    <h2 className="text-xl font-bold text-white">Browse All</h2>
-                    <p className="text-gray-400 text-sm">Explore different categories</p>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
-                  {browseAll.map((cat, idx) => (
-                    <div key={idx} className={`relative rounded-xl h-28 flex items-end p-4 ${cat.color} cursor-pointer transition-transform hover:scale-105 shadow-lg`}>
-                      <span className="text-base font-bold z-10 text-white drop-shadow-lg">{cat.name}</span>
-                      <img src={cat.img} alt={cat.name} className="absolute right-2 bottom-2 w-12 h-12 object-cover rounded-lg shadow-lg z-0 opacity-80" />
-                    </div>
-                  ))}
-                </div>
-              </div>
+          {/* Empty State */}
+          {!isLoading && searchResults.length === 0 && searchQuery && (
+            <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl p-12 border border-gray-700/50 text-center">
+              <Search className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+              <h3 className="text-xl font-bold text-white mb-2">No results found</h3>
+              <p className="text-gray-400">Try adjusting your search terms or browse our recommendations above.</p>
             </div>
           )}
         </div>
