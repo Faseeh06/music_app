@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
+import { MusicPlayerProvider } from './contexts/PlayerContext';
 import { useAuth } from './hooks/useAuth';
 
 import LandingPage from './components/LandingPage';
@@ -85,6 +86,7 @@ function AppContent() {
               </ProtectedRoute>
             }
           />
+          
           <Route 
             path="/profile" 
             element={
@@ -148,7 +150,9 @@ function AppContent() {
 function App() {
   return (
     <AuthProvider>
-      <AppContent />
+      <MusicPlayerProvider>
+        <AppContent />
+      </MusicPlayerProvider>
     </AuthProvider>
   );
 }

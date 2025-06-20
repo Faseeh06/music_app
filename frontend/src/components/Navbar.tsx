@@ -1,12 +1,14 @@
 import React, { useState, useRef } from 'react';
-import { Settings, LogOut, User } from 'lucide-react';
+import { Settings, LogOut, User, Search, Bell } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 
 const Navbar: React.FC = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [query, setQuery] = useState('');
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();  const { logout, currentUser } = useAuth();
+  const navigate = useNavigate();
+  const { logout, currentUser } = useAuth();
 
   const handleLogout = async () => {
     try {
@@ -14,6 +16,12 @@ const Navbar: React.FC = () => {
       navigate('/signin');
     } catch (error) {
       console.error('Logout error:', error);
+    }
+  };
+
+  const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && query.trim()) {
+      navigate(`/search?q=${encodeURIComponent(query.trim())}`);
     }
   };
 
@@ -32,11 +40,17 @@ const Navbar: React.FC = () => {
     <header className="w-full bg-transparent py-6 flex items-center justify-between">
       {/* Left: Search Bar */}
       <div className="flex-1 max-w-2xl ml-32">
-        <input
-          type="text"
-          placeholder="Search songs, playlists, albums, artists, etc..."
-          className="w-full rounded-xl px-6 py-3 bg-white text-brand-dark placeholder:text-brand-brown/60 shadow-md border border-brand-brown/30 focus:outline-none focus:ring-2 focus:ring-brand-brown focus:border-transparent text-lg font-medium transition-all duration-200"
-        />
+        <div className="relative w-full max-w-xl">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Search songs, playlists, albums, artists, etc..."
+            className="w-full h-12 pl-12 pr-4 bg-gray-100 border border-transparent rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-brown"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={handleSearch}
+          />
+        </div>
       </div>
       {/* Right: Settings & Profile */}
       <div className="flex items-center gap-4 mr-32 relative">
@@ -47,7 +61,8 @@ const Navbar: React.FC = () => {
           <button
             className="flex items-center gap-2 p-1 rounded-full hover:bg-gray-100 transition-colors"
             onClick={() => setDropdownOpen((v) => !v)}
-          >            <img
+          >
+            <img
               src={currentUser?.photoURL || "https://picsum.photos/40"}
               alt="Profile"
               className="w-10 h-10 rounded-full object-cover border-2 border-brand-brown"
@@ -60,7 +75,8 @@ const Navbar: React.FC = () => {
                 onClick={() => { setDropdownOpen(false); navigate('/profile'); }}
               >
                 <User className="w-5 h-5" /> Profile
-              </button>              <button
+              </button>
+              <button
                 className="w-full flex items-center gap-2 px-4 py-3 text-red-600 hover:bg-gray-50 rounded-b-xl"
                 onClick={() => { setDropdownOpen(false); handleLogout(); }}
               >
@@ -69,9 +85,12 @@ const Navbar: React.FC = () => {
             </div>
           )}
         </div>
+        <button className="p-2 rounded-full hover:bg-gray-100">
+          <Bell className="text-gray-600" />
+        </button>
       </div>
     </header>
   );
 };
 
-export default Navbar; 
+export default Navbar;

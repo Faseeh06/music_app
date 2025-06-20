@@ -2,20 +2,21 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
+import { useMusicPlayer } from '../contexts/PlayerContext'; // Import the hook
 import { 
-  Play, 
-  Timer,
-  Flame,
+  Play,
   Pause,
-  SkipForward,
   SkipBack,
+  SkipForward,
   Brain,
   Target,
   TrendingUp,
   Music,
   Zap,
   Clock,
-  BarChart3
+  BarChart3,
+  Flame,
+  Timer
 } from 'lucide-react';
 
 interface PracticeSession {
@@ -86,7 +87,7 @@ const aiRecommendations: AIRecommendation[] = [
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(true);
+  const { currentTrack, isPlaying, togglePlay, progress, duration, seek, skip } = useMusicPlayer();
 
   // Mock data with AI-enhanced features
   const stats = {
@@ -155,16 +156,6 @@ const Dashboard: React.FC = () => {
     }
   ];
 
-  const nowPlaying = {
-    title: 'Nothing Else Matters',
-    artist: 'Metallica',
-    thumbnail: 'https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop',
-    duration: '6:28',
-    progress: 0.45,
-    difficulty: 'Intermediate',
-    aiInsight: 'Focus on clean fingerpicking transitions'
-  };
-
   const getAIRecommendationIcon = (type: string) => {
     switch (type) {
       case 'exercise': return <Target className="w-5 h-5" />;
@@ -181,6 +172,18 @@ const Dashboard: React.FC = () => {
       case 'Advanced': return 'text-red-600 bg-red-100';
       default: return 'text-gray-600 bg-gray-100';
     }
+  };
+
+  const formatTime = (seconds: number) => new Date(seconds * 1000).toISOString().substr(14, 5);
+
+  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
+    seek(Number(e.target.value));
+  };
+
+  // Calculate progress for the styled seekbar
+  const progressPercentage = duration > 0 ? (progress / duration) * 100 : 0;
+  const trackStyle = {
+    background: `linear-gradient(to right, #8B4513 ${progressPercentage}%, #e2e8f0 ${progressPercentage}%)`
   };
 
   return (
@@ -343,53 +346,59 @@ const Dashboard: React.FC = () => {
             </div>
           </div>
 
-          {/* Now Playing Widget - Enhanced with AI */}
+          {/* Now Playing Widget - Enhanced and connected to global state */}
           <div className="hidden lg:block w-full max-w-xs sticky top-24 self-start">
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 flex flex-col items-center">
-              <div className="relative mb-4">
-                <img
-                  src={nowPlaying.thumbnail}
-                  alt={nowPlaying.title}
-                  className="w-32 h-32 rounded-xl object-cover"
-                />
-                <div className="absolute -top-2 -right-2 bg-brand-brown text-white text-xs px-2 py-1 rounded-full">
-                  {nowPlaying.difficulty}
+            {currentTrack ? (
+              <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 flex flex-col items-center">
+                <div className="relative mb-4">
+                  <img
+                    src={currentTrack.thumbnail}
+                    alt={currentTrack.title}
+                    className="w-32 h-32 rounded-xl object-cover"
+                  />
                 </div>
-              </div>
-              <h4 className="text-lg font-bold text-brand-dark truncate w-full text-center">{nowPlaying.title}</h4>
-              <p className="text-sm text-gray-600 truncate w-full text-center mb-2">{nowPlaying.artist}</p>
-              
-              {/* AI Insight */}
-              <div className="w-full bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
-                <div className="flex items-center gap-2 mb-1">
-                  <Brain className="w-4 h-4 text-blue-600" />
-                  <span className="text-xs font-semibold text-blue-800">AI Insight</span>
+                <h4 className="text-lg font-bold text-brand-dark truncate w-full text-center">{currentTrack.title}</h4>
+                <p className="text-sm text-gray-600 truncate w-full text-center mb-4">{currentTrack.channelTitle}</p>
+                
+                {/* Interactive Seekbar and Time */}
+                <div className="w-full mt-2 mb-4">
+                  <input
+                    type="range"
+                    min="0"
+                    max={duration}
+                    value={progress}
+                    onChange={handleSeek}
+                    className="w-full h-1.5 bg-transparent rounded-lg appearance-none cursor-pointer"
+                    style={trackStyle}
+                  />
+                  <div className="flex justify-between text-xs text-gray-400 mt-1">
+                    <span>{formatTime(progress)}</span>
+                    <span>{formatTime(duration)}</span>
+                  </div>
                 </div>
-                <p className="text-xs text-blue-700">{nowPlaying.aiInsight}</p>
-              </div>
 
-              <div className="w-full flex items-center gap-2 mt-2 mb-4">
-                <span className="text-xs text-gray-400">0:00</span>
-                <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
-                  <div className="h-2 bg-brand-brown rounded-full" style={{ width: `${nowPlaying.progress * 100}%` }}></div>
+                {/* Player Controls with Skip Icons */}
+                <div className="flex items-center gap-4 mt-2">
+                  <button onClick={() => skip(-10)} className="p-2 rounded-full hover:bg-gray-100 transition-colors">
+                    <SkipBack className="w-5 h-5 text-brand-dark" />
+                  </button>
+                  <button
+                    className="p-3 rounded-full bg-brand-brown text-white hover:bg-brand-dark transition-colors"
+                    onClick={togglePlay}
+                  >
+                    {isPlaying ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6" />}
+                  </button>
+                  <button onClick={() => skip(10)} className="p-2 rounded-full hover:bg-gray-100 transition-colors">
+                    <SkipForward className="w-5 h-5 text-brand-dark" />
+                  </button>
                 </div>
-                <span className="text-xs text-gray-400">{nowPlaying.duration}</span>
               </div>
-              <div className="flex items-center gap-4 mt-2">
-                <button className="p-2 rounded-full hover:bg-gray-100 transition-colors">
-                  <SkipBack className="w-5 h-5 text-brand-dark" />
-                </button>
-                <button
-                  className="p-3 rounded-full bg-brand-brown text-white hover:bg-brand-dark transition-colors"
-                  onClick={() => setIsPlaying((p) => !p)}
-                >
-                  {isPlaying ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6" />}
-                </button>
-                <button className="p-2 rounded-full hover:bg-gray-100 transition-colors">
-                  <SkipForward className="w-5 h-5 text-brand-dark" />
-                </button>
+            ) : (
+              <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 text-center">
+                <h4 className="font-semibold text-brand-dark mb-2">Nothing Playing</h4>
+                <p className="text-sm text-gray-500">Search for a song to start listening.</p>
               </div>
-            </div>
+            )}
 
             {/* Quick Stats */}
             <div className="mt-6 bg-white rounded-xl shadow-sm border border-gray-200 p-4">
@@ -419,35 +428,40 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
         
-        {/* Mobile Now Playing - Enhanced */}
-        <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 p-3 flex items-center gap-3 shadow-lg lg:hidden">
-          <img
-            src={nowPlaying.thumbnail}
-            alt={nowPlaying.title}
-            className="w-12 h-12 rounded-lg object-cover"
-          />
-          <div className="flex-1 min-w-0">
-            <h4 className="font-semibold text-brand-dark truncate">{nowPlaying.title}</h4>
-            <p className="text-xs text-gray-600 truncate">{nowPlaying.artist}</p>
-            <div className="w-full flex items-center gap-2 mt-1">
-              <div className="flex-1 h-1 bg-gray-200 rounded-full overflow-hidden">
-                <div className="h-1 bg-brand-brown rounded-full" style={{ width: `${nowPlaying.progress * 100}%` }}></div>
+        {/* Mobile Now Playing - This will be replaced by the global MusicPlayerBar, but we connect it for now */}
+        {currentTrack && (
+          <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 p-3 flex items-center gap-3 shadow-lg lg:hidden">
+            <img
+              src={currentTrack.thumbnail}
+              alt={currentTrack.title}
+              className="w-12 h-12 rounded-lg object-cover"
+            />
+            <div className="flex-1 min-w-0">
+              <h4 className="font-semibold text-brand-dark truncate">{currentTrack.title}</h4>
+              <p className="text-xs text-gray-600 truncate">{currentTrack.channelTitle}</p>
+              <div className="w-full flex items-center gap-2 mt-1">
+                <div className="flex-1 h-1 bg-gray-200 rounded-full overflow-hidden">
+                  <div className="h-1 bg-brand-brown rounded-full" style={{ width: duration > 0 ? `${(progress / duration) * 100}%` : '0%' }}></div>
+                </div>
+                <span className="text-xs text-gray-400">{formatTime(duration)}</span>
               </div>
-              <span className="text-xs text-gray-400">{nowPlaying.duration}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <button onClick={() => skip(-10)} className="p-2 rounded-full hover:bg-gray-100">
+                <SkipBack className="w-5 h-5" />
+              </button>
+              <button
+                className="p-2 rounded-full bg-brand-brown text-white hover:bg-brand-dark transition-colors"
+                onClick={togglePlay}
+              >
+                {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
+              </button>
+              <button onClick={() => skip(10)} className="p-2 rounded-full hover:bg-gray-100">
+                <SkipForward className="w-5 h-5" />
+              </button>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded">
-              AI Tips
-            </div>
-            <button
-              className="p-2 rounded-full bg-brand-brown text-white hover:bg-brand-dark transition-colors"
-              onClick={() => setIsPlaying((p) => !p)}
-            >
-              {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
-            </button>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );
