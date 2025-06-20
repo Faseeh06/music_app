@@ -220,27 +220,27 @@ const SettingsPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 font-poppins">
+    <div className="min-h-screen bg-gradient-to-br from-[#101218] to-[#03020a] font-poppins">
       <Sidebar onCollapse={setSidebarCollapsed} />
       <div className={`transition-all duration-300 ${sidebarCollapsed ? 'ml-20' : 'ml-64'}`}>
         <Navbar />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Header */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
+          <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl border border-gray-700/50 p-6 mb-8">
             <div className="flex items-center gap-3">
-              <div className="bg-brand-brown/10 p-3 rounded-lg">
+              <div className="bg-brand-brown/20 p-3 rounded-lg border border-brand-brown/30">
                 <Settings className="w-6 h-6 text-brand-brown" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-brand-dark">Settings</h1>
-                <p className="text-gray-600">Manage your account and preferences</p>
+                <h1 className="text-2xl font-bold text-white">Settings</h1>
+                <p className="text-gray-400">Manage your account and preferences</p>
               </div>
             </div>
           </div>
 
           {/* Tabs */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 mb-8">
-            <div className="border-b border-gray-200">
+          <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl border border-gray-700/50 mb-8">
+            <div className="border-b border-gray-700/50">
               <nav className="flex space-x-8 px-6">
                 {[
                   { id: 'profile', label: 'Profile', icon: User },
@@ -255,7 +255,7 @@ const SettingsPage: React.FC = () => {
                       className={`flex items-center gap-2 py-4 border-b-2 font-medium text-sm transition-colors ${
                         activeTab === tab.id
                           ? 'border-brand-brown text-brand-brown'
-                          : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                          : 'border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-600'
                       }`}
                     >
                       <Icon className="w-4 h-4" />
@@ -271,10 +271,10 @@ const SettingsPage: React.FC = () => {
                 <form onSubmit={handleSubmit} className="space-y-8">
                   {/* Personal Information */}
                   <div>
-                    <h3 className="text-lg font-semibold text-brand-dark mb-4">Personal Information</h3>
+                    <h3 className="text-lg font-semibold text-white mb-4">Personal Information</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
-                        <label htmlFor="firstName" className="block text-sm font-medium text-brand-dark mb-2">
+                        <label htmlFor="firstName" className="block text-sm font-medium text-gray-300 mb-2">
                           First Name
                         </label>
                         <input
@@ -283,13 +283,13 @@ const SettingsPage: React.FC = () => {
                           id="firstName"
                           value={profileData.firstName}
                           onChange={handleInputChange}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-brown focus:border-transparent"
+                          className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-brown focus:border-brand-brown"
                           placeholder="Enter your first name"
                         />
                       </div>
 
                       <div>
-                        <label htmlFor="lastName" className="block text-sm font-medium text-brand-dark mb-2">
+                        <label htmlFor="lastName" className="block text-sm font-medium text-gray-300 mb-2">
                           Last Name
                         </label>
                         <input
@@ -298,14 +298,14 @@ const SettingsPage: React.FC = () => {
                           id="lastName"
                           value={profileData.lastName}
                           onChange={handleInputChange}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-brown focus:border-transparent"
+                          className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-brown focus:border-brand-brown"
                           placeholder="Enter your last name"
                         />
                       </div>
 
                       <div>
-                        <label htmlFor="username" className="block text-sm font-medium text-brand-dark mb-2">
-                          Username <span className="text-red-500">*</span>
+                        <label htmlFor="username" className="block text-sm font-medium text-gray-300 mb-2">
+                          Username <span className="text-red-400">*</span>
                         </label>
                         <div className="relative">
                           <input
@@ -314,25 +314,25 @@ const SettingsPage: React.FC = () => {
                             id="username"
                             value={profileData.username}
                             onChange={handleInputChange}
-                            className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-brown focus:border-transparent ${
-                              errors.username ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                            className={`w-full px-4 py-3 bg-gray-700/50 border rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-brown focus:border-brand-brown ${
+                              errors.username ? 'border-red-500 bg-red-900/20' : 'border-gray-600'
                             }`}
                             placeholder="your_username"
                             required
                           />
                           {usernameStatus && (
                             <div className={`absolute right-3 top-1/2 transform -translate-y-1/2 ${
-                              usernameStatus === 'available' ? 'text-green-500' : 'text-red-500'
+                              usernameStatus === 'available' ? 'text-green-400' : 'text-red-400'
                             }`}>
                               {usernameStatus === 'available' ? '✓' : usernameStatus === 'taken' ? '✗' : '...'}
                             </div>
                           )}
                         </div>
-                        {errors.username && <p className="text-red-500 text-sm mt-1">{errors.username}</p>}
+                        {errors.username && <p className="text-red-400 text-sm mt-1">{errors.username}</p>}
                       </div>
 
                       <div>
-                        <label htmlFor="dateOfBirth" className="block text-sm font-medium text-brand-dark mb-2">
+                        <label htmlFor="dateOfBirth" className="block text-sm font-medium text-gray-300 mb-2">
                           Date of Birth
                         </label>
                         <div className="relative">
@@ -343,13 +343,13 @@ const SettingsPage: React.FC = () => {
                             id="dateOfBirth"
                             value={profileData.dateOfBirth}
                             onChange={handleInputChange}
-                            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-brown focus:border-transparent"
+                            className="w-full pl-10 pr-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-brand-brown focus:border-brand-brown"
                           />
                         </div>
                       </div>
 
                       <div className="md:col-span-2">
-                        <label htmlFor="location" className="block text-sm font-medium text-brand-dark mb-2">
+                        <label htmlFor="location" className="block text-sm font-medium text-gray-300 mb-2">
                           Location
                         </label>
                         <div className="relative">
@@ -360,14 +360,14 @@ const SettingsPage: React.FC = () => {
                             id="location"
                             value={profileData.location}
                             onChange={handleInputChange}
-                            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-brown focus:border-transparent"
+                            className="w-full pl-10 pr-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-brown focus:border-brand-brown"
                             placeholder="City, Country"
                           />
                         </div>
                       </div>
 
                       <div className="md:col-span-2">
-                        <label htmlFor="bio" className="block text-sm font-medium text-brand-dark mb-2">
+                        <label htmlFor="bio" className="block text-sm font-medium text-gray-300 mb-2">
                           Bio
                         </label>
                         <textarea
@@ -376,13 +376,13 @@ const SettingsPage: React.FC = () => {
                           value={profileData.bio}
                           onChange={handleInputChange}
                           rows={3}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-brown focus:border-transparent resize-none"
+                          className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-brown focus:border-brand-brown resize-none"
                           placeholder="Tell us about your musical journey..."
                         />
                       </div>
 
                       <div className="md:col-span-2">
-                        <label htmlFor="skillLevel" className="block text-sm font-medium text-brand-dark mb-2">
+                        <label htmlFor="skillLevel" className="block text-sm font-medium text-gray-300 mb-2">
                           Skill Level
                         </label>
                         <select
@@ -390,7 +390,7 @@ const SettingsPage: React.FC = () => {
                           id="skillLevel"
                           value={profileData.skillLevel}
                           onChange={handleInputChange}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-brown focus:border-transparent"
+                          className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-brand-brown focus:border-brand-brown"
                         >
                           <option value="beginner">🌱 Beginner</option>
                           <option value="intermediate">🎵 Intermediate</option>
@@ -403,11 +403,11 @@ const SettingsPage: React.FC = () => {
 
                   {/* Musical Preferences */}
                   <div>
-                    <h3 className="text-lg font-semibold text-brand-dark mb-4">Musical Preferences</h3>
+                    <h3 className="text-lg font-semibold text-white mb-4">Musical Preferences</h3>
                     
                     {/* Instruments */}
                     <div className="mb-6">
-                      <label className="block text-sm font-medium text-brand-dark mb-3">
+                      <label className="block text-sm font-medium text-gray-300 mb-3">
                         Instruments You Play
                       </label>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -416,10 +416,10 @@ const SettingsPage: React.FC = () => {
                             key={instrument}
                             type="button"
                             onClick={() => handleArrayToggle('instruments', instrument)}
-                            className={`p-3 rounded-xl border-2 text-sm font-medium transition-all ${
+                            className={`p-3 rounded-xl border text-sm font-medium transition-all ${
                               profileData.instruments.includes(instrument)
-                                ? 'bg-brand-brown text-white border-brand-brown'
-                                : 'bg-white text-gray-700 border-gray-300 hover:border-brand-brown'
+                                ? 'bg-brand-brown/20 border-brand-brown text-brand-brown'
+                                : 'bg-gray-700/30 border-gray-600 text-gray-300 hover:bg-gray-700/50'
                             }`}
                           >
                             {instrument}
@@ -430,7 +430,7 @@ const SettingsPage: React.FC = () => {
 
                     {/* Genres */}
                     <div className="mb-6">
-                      <label className="block text-sm font-medium text-brand-dark mb-3">
+                      <label className="block text-sm font-medium text-gray-300 mb-3">
                         Favorite Genres
                       </label>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -439,10 +439,10 @@ const SettingsPage: React.FC = () => {
                             key={genre}
                             type="button"
                             onClick={() => handleArrayToggle('favoriteGenres', genre)}
-                            className={`p-3 rounded-xl border-2 text-sm font-medium transition-all ${
+                            className={`p-3 rounded-xl border text-sm font-medium transition-all ${
                               profileData.favoriteGenres.includes(genre)
-                                ? 'bg-brand-yellow text-brand-dark border-brand-yellow'
-                                : 'bg-white text-gray-700 border-gray-300 hover:border-brand-yellow'
+                                ? 'bg-purple-500/20 border-purple-500 text-purple-400'
+                                : 'bg-gray-700/30 border-gray-600 text-gray-300 hover:bg-gray-700/50'
                             }`}
                           >
                             {genre}
@@ -453,7 +453,7 @@ const SettingsPage: React.FC = () => {
 
                     {/* Goals */}
                     <div>
-                      <label className="block text-sm font-medium text-brand-dark mb-3">
+                      <label className="block text-sm font-medium text-gray-300 mb-3">
                         Musical Goals
                       </label>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -462,10 +462,10 @@ const SettingsPage: React.FC = () => {
                             key={goal}
                             type="button"
                             onClick={() => handleArrayToggle('goals', goal)}
-                            className={`p-3 rounded-xl border-2 text-sm font-medium transition-all ${
+                            className={`p-3 rounded-xl border text-sm font-medium transition-all ${
                               profileData.goals.includes(goal)
-                                ? 'bg-gradient-to-r from-brand-brown to-brand-yellow text-white border-brand-brown'
-                                : 'bg-white text-gray-700 border-gray-300 hover:border-brand-brown'
+                                ? 'bg-blue-500/20 border-blue-500 text-blue-400'
+                                : 'bg-gray-700/30 border-gray-600 text-gray-300 hover:bg-gray-700/50'
                             }`}
                           >
                             {goal}
@@ -476,109 +476,110 @@ const SettingsPage: React.FC = () => {
                   </div>
 
                   {/* Submit Button */}
-                  <div className="flex justify-end">
+                  <div className="flex justify-end pt-6 border-t border-gray-700/50">
                     <button
                       type="submit"
                       disabled={loading}
-                      className="flex items-center gap-2 bg-brand-brown text-white px-6 py-3 rounded-xl hover:bg-brand-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="bg-brand-brown text-white px-8 py-3 rounded-xl font-medium hover:bg-brand-brown/80 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
                     >
-                      <Save className="w-5 h-5" />
-                      {loading ? 'Saving...' : 'Save Changes'}
+                      {loading ? (
+                        <>
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                          Saving...
+                        </>
+                      ) : (
+                        <>
+                          <Save className="w-4 h-4" />
+                          Save Changes
+                        </>
+                      )}
                     </button>
                   </div>
 
                   {errors.submit && (
-                    <div className="text-red-500 text-sm mt-2 text-center">{errors.submit}</div>
+                    <div className="text-red-400 text-sm mt-2 p-4 bg-red-900/20 border border-red-500/30 rounded-xl">
+                      {errors.submit}
+                    </div>
                   )}
                 </form>
               )}
 
               {activeTab === 'privacy' && (
                 <div className="space-y-6">
-                  <h3 className="text-lg font-semibold text-brand-dark">Privacy Settings</h3>
+                  <h3 className="text-lg font-semibold text-white mb-4">Privacy Settings</h3>
+                  
                   <div className="space-y-4">
-                    <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                    <label className="flex items-center justify-between p-4 bg-gray-700/30 rounded-xl border border-gray-600 hover:bg-gray-700/50 transition-all cursor-pointer">
                       <div className="flex items-center gap-3">
                         <Eye className="w-5 h-5 text-gray-400" />
                         <div>
-                          <div className="font-medium text-brand-dark">Profile Visibility</div>
-                          <div className="text-sm text-gray-600">Make your profile visible to other users</div>
+                          <div className="text-white font-medium">Profile Visibility</div>
+                          <div className="text-gray-400 text-sm">Allow others to view your profile</div>
                         </div>
                       </div>
-                      <label className="relative inline-flex items-center cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={privacySettings.profileVisible}
-                          onChange={(e) => setPrivacySettings(prev => ({ ...prev, profileVisible: e.target.checked }))}
-                          className="sr-only peer"
-                        />
-                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-brand-brown/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-brown"></div>
-                      </label>
-                    </div>
+                      <input
+                        type="checkbox"
+                        checked={privacySettings.profileVisible}
+                        onChange={e => setPrivacySettings(p => ({ ...p, profileVisible: e.target.checked }))}
+                        className="w-5 h-5 text-brand-brown rounded focus:ring-brand-brown focus:ring-2"
+                      />
+                    </label>
 
-                    <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                    <label className="flex items-center justify-between p-4 bg-gray-700/30 rounded-xl border border-gray-600 hover:bg-gray-700/50 transition-all cursor-pointer">
                       <div className="flex items-center gap-3">
                         <Lock className="w-5 h-5 text-gray-400" />
                         <div>
-                          <div className="font-medium text-brand-dark">Share Practice Stats</div>
-                          <div className="text-sm text-gray-600">Allow others to see your practice statistics</div>
+                          <div className="text-white font-medium">Share Practice Stats</div>
+                          <div className="text-gray-400 text-sm">Share your practice statistics publicly</div>
                         </div>
                       </div>
-                      <label className="relative inline-flex items-center cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={privacySettings.shareStats}
-                          onChange={(e) => setPrivacySettings(prev => ({ ...prev, shareStats: e.target.checked }))}
-                          className="sr-only peer"
-                        />
-                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-brand-brown/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-brown"></div>
-                      </label>
-                    </div>
+                      <input
+                        type="checkbox"
+                        checked={privacySettings.shareStats}
+                        onChange={e => setPrivacySettings(p => ({ ...p, shareStats: e.target.checked }))}
+                        className="w-5 h-5 text-brand-brown rounded focus:ring-brand-brown focus:ring-2"
+                      />
+                    </label>
                   </div>
                 </div>
               )}
 
               {activeTab === 'notifications' && (
                 <div className="space-y-6">
-                  <h3 className="text-lg font-semibold text-brand-dark">Notification Preferences</h3>
+                  <h3 className="text-lg font-semibold text-white mb-4">Notification Preferences</h3>
+                  
                   <div className="space-y-4">
-                    <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                    <label className="flex items-center justify-between p-4 bg-gray-700/30 rounded-xl border border-gray-600 hover:bg-gray-700/50 transition-all cursor-pointer">
                       <div className="flex items-center gap-3">
                         <Bell className="w-5 h-5 text-gray-400" />
                         <div>
-                          <div className="font-medium text-brand-dark">Email Notifications</div>
-                          <div className="text-sm text-gray-600">Receive updates and reminders via email</div>
+                          <div className="text-white font-medium">Email Notifications</div>
+                          <div className="text-gray-400 text-sm">Receive updates via email</div>
                         </div>
                       </div>
-                      <label className="relative inline-flex items-center cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={privacySettings.emailNotifications}
-                          onChange={(e) => setPrivacySettings(prev => ({ ...prev, emailNotifications: e.target.checked }))}
-                          className="sr-only peer"
-                        />
-                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-brand-brown/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-brown"></div>
-                      </label>
-                    </div>
+                      <input
+                        type="checkbox"
+                        checked={privacySettings.emailNotifications}
+                        onChange={e => setPrivacySettings(p => ({ ...p, emailNotifications: e.target.checked }))}
+                        className="w-5 h-5 text-brand-brown rounded focus:ring-brand-brown focus:ring-2"
+                      />
+                    </label>
 
-                    <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                    <label className="flex items-center justify-between p-4 bg-gray-700/30 rounded-xl border border-gray-600 hover:bg-gray-700/50 transition-all cursor-pointer">
                       <div className="flex items-center gap-3">
                         <Bell className="w-5 h-5 text-gray-400" />
                         <div>
-                          <div className="font-medium text-brand-dark">Push Notifications</div>
-                          <div className="text-sm text-gray-600">Receive real-time notifications in your browser</div>
+                          <div className="text-white font-medium">Push Notifications</div>
+                          <div className="text-gray-400 text-sm">Receive push notifications in browser</div>
                         </div>
                       </div>
-                      <label className="relative inline-flex items-center cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={privacySettings.pushNotifications}
-                          onChange={(e) => setPrivacySettings(prev => ({ ...prev, pushNotifications: e.target.checked }))}
-                          className="sr-only peer"
-                        />
-                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-brand-brown/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-brown"></div>
-                      </label>
-                    </div>
+                      <input
+                        type="checkbox"
+                        checked={privacySettings.pushNotifications}
+                        onChange={e => setPrivacySettings(p => ({ ...p, pushNotifications: e.target.checked }))}
+                        className="w-5 h-5 text-brand-brown rounded focus:ring-brand-brown focus:ring-2"
+                      />
+                    </label>
                   </div>
                 </div>
               )}

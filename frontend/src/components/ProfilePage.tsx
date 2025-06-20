@@ -34,6 +34,7 @@ const ProfilePage: React.FC = () => {
   const [privacy, setPrivacy] = useState(dummyPrivacy);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
+  
   // Update avatar when profile loads
   React.useEffect(() => {
     if (profile) {
@@ -43,14 +44,14 @@ const ProfilePage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 font-poppins">
+      <div className="min-h-screen bg-gradient-to-br from-[#101218] to-[#03020a] font-poppins">
         <Sidebar onCollapse={setSidebarCollapsed} />
         <div className={`transition-all duration-300 ${sidebarCollapsed ? 'ml-20' : 'ml-64'}`}>
           <Navbar />
-          <div className="max-w-3xl mx-auto py-10 px-4 flex items-center justify-center min-h-[400px]">
+          <div className="max-w-7xl mx-auto py-10 px-4 flex items-center justify-center min-h-[400px]">
             <div className="text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-brown mx-auto mb-4"></div>
-              <p className="text-gray-600">Loading profile...</p>
+              <p className="text-gray-400">Loading profile...</p>
             </div>
           </div>
         </div>
@@ -60,18 +61,19 @@ const ProfilePage: React.FC = () => {
 
   if (!profile) {
     return (
-      <div className="min-h-screen bg-gray-50 font-poppins">
+      <div className="min-h-screen bg-gradient-to-br from-[#101218] to-[#03020a] font-poppins">
         <Sidebar onCollapse={setSidebarCollapsed} />
         <div className={`transition-all duration-300 ${sidebarCollapsed ? 'ml-20' : 'ml-64'}`}>
           <Navbar />
-          <div className="max-w-3xl mx-auto py-10 px-4 flex items-center justify-center min-h-[400px]">
+          <div className="max-w-7xl mx-auto py-10 px-4 flex items-center justify-center min-h-[400px]">
             <div className="text-center">
-              <p className="text-gray-600">Profile not found</p>
+              <p className="text-gray-400">Profile not found</p>
             </div>
           </div>
         </div>
       </div>
-    );  }
+    );
+  }
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -82,200 +84,192 @@ const ProfilePage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 font-poppins">
+    <div className="min-h-screen bg-gradient-to-br from-[#101218] to-[#03020a] font-poppins">
       <Sidebar onCollapse={setSidebarCollapsed} />
       <div className={`transition-all duration-300 ${sidebarCollapsed ? 'ml-20' : 'ml-64'}`}>
         <Navbar />
-        <div className="max-w-3xl mx-auto py-10 px-4">
-        {/* Profile Header */}
-        <div className="bg-white rounded-2xl shadow-lg p-8 flex flex-col sm:flex-row items-center gap-8 mb-8">
-          <div className="relative group">
-            <img
-              src={avatar || 'https://picsum.photos/200'}
-              alt="Avatar"
-              className="w-32 h-32 rounded-full object-cover border-4 border-brand-brown shadow"
-            />
-            <button
-              className="absolute bottom-2 right-2 bg-brand-brown text-white p-2 rounded-full shadow hover:bg-brand-dark transition-colors"
-              onClick={() => fileInput.current?.click()}
-              title="Change Avatar"
-            >
-              <Upload className="w-5 h-5" />
-            </button>
-            <input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              ref={fileInput}
-              onChange={handleAvatarChange}
-            />
-          </div>          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-2">
-              <h2 className="text-3xl font-bold text-brand-dark truncate">
-                {profile.displayName || profile.username || 'User'}
-              </h2>              <button 
-                className="p-1 rounded-full hover:bg-gray-100 transition-colors" 
-                title="Edit Profile"
-                onClick={() => navigate('/settings')}
+        <div className="max-w-7xl mx-auto py-8 px-4">
+          <h1 className="text-3xl font-bold text-white mb-8">Profile</h1>
+          
+          {/* Profile Header */}
+          <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl p-8 flex flex-col sm:flex-row items-center gap-8 mb-8 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">
+            <div className="relative group">
+              <img
+                src={avatar || 'https://picsum.photos/200'}
+                alt="Avatar"
+                className="w-32 h-32 rounded-full object-cover border-4 border-brand-brown shadow-lg"
+              />
+              <button
+                className="absolute bottom-2 right-2 bg-brand-brown text-white p-2 rounded-full shadow-lg hover:bg-brand-brown/80 transition-colors"
+                onClick={() => fileInput.current?.click()}
+                title="Change Avatar"
               >
-                <Edit3 className="w-4 h-4 text-brand-brown" />
+                <Upload className="w-5 h-5" />
               </button>
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                ref={fileInput}
+                onChange={handleAvatarChange}
+              />
             </div>
-            <p className="text-gray-500 mb-2">@{profile.username}</p>
-            <p className="text-gray-600 mb-2">{currentUser?.email}</p>
             
-            {profile.bio && (
-              <p className="text-gray-700 mb-2">{profile.bio}</p>
-            )}
-            
-            {profile.location && (
-              <div className="flex items-center gap-1 text-gray-600 mb-2">
-                <MapPin className="w-4 h-4" />
-                <span className="text-sm">{profile.location}</span>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-2">
+                <h2 className="text-3xl font-bold text-white truncate">
+                  {profile.displayName || profile.username || 'User'}
+                </h2>
+                <button 
+                  className="p-1 rounded-full hover:bg-gray-700/50 transition-colors" 
+                  title="Edit Profile"
+                  onClick={() => navigate('/settings')}
+                >
+                  <Edit3 className="w-4 h-4 text-brand-brown" />
+                </button>
               </div>
-            )}
-            
-            {profile.dateOfBirth && (
-              <div className="flex items-center gap-1 text-gray-600 mb-2">
-                <Calendar className="w-4 h-4" />
-                <span className="text-sm">Born {new Date(profile.dateOfBirth).toLocaleDateString()}</span>
+              <p className="text-gray-400 mb-2">@{profile.username}</p>
+              <p className="text-gray-300 mb-2">{currentUser?.email}</p>
+              
+              {profile.bio && (
+                <p className="text-gray-300 mb-2">{profile.bio}</p>
+              )}
+              
+              {profile.location && (
+                <div className="flex items-center gap-1 text-gray-400 mb-2">
+                  <MapPin className="w-4 h-4" />
+                  <span className="text-sm">{profile.location}</span>
+                </div>
+              )}
+              
+              {profile.dateOfBirth && (
+                <div className="flex items-center gap-1 text-gray-400 mb-2">
+                  <Calendar className="w-4 h-4" />
+                  <span className="text-sm">Born {new Date(profile.dateOfBirth).toLocaleDateString()}</span>
+                </div>
+              )}
+              
+              <div className="flex flex-wrap gap-4 mt-2">
+                <span className="bg-brand-brown/20 text-brand-brown px-3 py-1 rounded-full text-sm font-medium border border-brand-brown/30">
+                  {profile.skillLevel.charAt(0).toUpperCase() + profile.skillLevel.slice(1)}
+                </span>
+                <span className="bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded-full text-sm font-medium border border-yellow-500/30">
+                  {dummyStats.streak} Day Streak
+                </span>
               </div>
-            )}
-            
-            <div className="flex flex-wrap gap-4 mt-2">
-              <span className="bg-brand-brown/10 text-brand-brown px-3 py-1 rounded-full text-sm font-medium">
-                {profile.skillLevel.charAt(0).toUpperCase() + profile.skillLevel.slice(1)}
-              </span>
-              <span className="bg-brand-yellow/20 text-brand-dark px-3 py-1 rounded-full text-sm font-medium">
-                {dummyStats.streak} Day Streak
-              </span>
             </div>
           </div>
-        </div>
 
-        {/* User Info Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          {/* Instruments */}
-          <div className="bg-white rounded-xl shadow p-6">
-            <h3 className="text-lg font-bold text-brand-dark mb-4 flex items-center gap-2">
-              <Guitar className="w-5 h-5" />
-              Instruments
+          {/* Stats Section */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">
+              <div className="text-2xl font-bold text-white mb-1">{dummyStats.totalPractice}h</div>
+              <div className="text-gray-400 text-sm">Total Practice</div>
+            </div>
+            <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">
+              <div className="text-2xl font-bold text-white mb-1">{dummyStats.sessions}</div>
+              <div className="text-gray-400 text-sm">Sessions</div>
+            </div>
+            <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">
+              <div className="text-2xl font-bold text-white mb-1">{dummyStats.level}</div>
+              <div className="text-gray-400 text-sm">Level</div>
+            </div>
+            <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">
+              <div className="text-2xl font-bold text-white mb-1">{dummyStats.xp}</div>
+              <div className="text-gray-400 text-sm">XP Points</div>
+            </div>
+          </div>
+
+          {/* User Info Section */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            {/* Instruments */}
+            <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">
+              <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                <Guitar className="w-5 h-5 text-brand-brown" />
+                Instruments
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {profile.instruments.map((instrument) => (
+                  <span 
+                    key={instrument}
+                    className="bg-brand-brown/20 text-brand-brown px-3 py-1 rounded-full text-sm font-medium border border-brand-brown/30"
+                  >
+                    {instrument}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Favorite Genres */}
+            <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">
+              <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                <Music className="w-5 h-5 text-brand-brown" />
+                Favorite Genres
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {profile.favoriteGenres.map((genre) => (
+                  <span 
+                    key={genre}
+                    className="bg-purple-500/20 text-purple-400 px-3 py-1 rounded-full text-sm font-medium border border-purple-500/30"
+                  >
+                    {genre}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Goals Section */}
+          {profile.goals && profile.goals.length > 0 && (
+            <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl p-6 mb-8 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">
+              <h3 className="text-lg font-bold text-white mb-4">Musical Goals</h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {profile.goals.map((goal) => (
+                  <div key={goal} className="bg-blue-500/20 text-blue-400 px-3 py-2 rounded-lg text-sm font-medium border border-blue-500/30 text-center">
+                    {goal}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Achievements Section */}
+          <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl p-6 mb-8 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">
+            <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+              <Award className="w-5 h-5 text-yellow-400" />
+              Achievements
             </h3>
-            <div className="flex flex-wrap gap-2">
-              {profile.instruments.map((instrument) => (
-                <span 
-                  key={instrument}
-                  className="bg-brand-brown/10 text-brand-brown px-3 py-1 rounded-full text-sm font-medium"
-                >
-                  {instrument}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          {/* Favorite Genres */}
-          <div className="bg-white rounded-xl shadow p-6">
-            <h3 className="text-lg font-bold text-brand-dark mb-4 flex items-center gap-2">
-              <Music className="w-5 h-5" />
-              Favorite Genres
-            </h3>
-            <div className="flex flex-wrap gap-2">
-              {profile.favoriteGenres.map((genre) => (
-                <span 
-                  key={genre}
-                  className="bg-brand-yellow/20 text-brand-dark px-3 py-1 rounded-full text-sm font-medium"
-                >
-                  {genre}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Goals Section */}
-        {profile.goals && profile.goals.length > 0 && (
-          <div className="bg-white rounded-xl shadow p-6 mb-8">
-            <h3 className="text-lg font-bold text-brand-dark mb-4">Musical Goals</h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              {profile.goals.map((goal) => (
-                <div 
-                  key={goal}
-                  className="bg-gradient-to-r from-brand-brown/10 to-brand-yellow/10 border border-brand-brown/20 rounded-lg p-3 text-center"
-                >
-                  <span className="text-sm font-medium text-brand-dark">{goal}</span>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {dummyAchievements.map((achievement, index) => (
+                <div key={index} className="bg-gray-700/30 p-4 rounded-lg text-center border border-gray-600/50 hover:bg-gray-700/50 transition-all duration-300">
+                  <div className="mb-2">{achievement.icon}</div>
+                  <div className="font-medium text-white text-sm">{achievement.label}</div>
+                  <div className="text-xs text-gray-400">{achievement.desc}</div>
                 </div>
               ))}
             </div>
           </div>
-        )}
 
-        {/* Stats Dashboard */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
-          <div className="bg-white rounded-xl shadow p-6 flex flex-col items-center">
-            <BarChart3 className="w-8 h-8 text-brand-brown mb-2" />
-            <div className="text-2xl font-bold text-brand-dark">{dummyStats.totalPractice}h</div>
-            <div className="text-gray-500">Total Practice</div>
+          {/* Level Progress */}
+          <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">
+            <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+              <BarChart3 className="w-5 h-5 text-brand-brown" />
+              Level Progress
+            </h3>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-white font-medium">Level {dummyStats.level}</span>
+              <span className="text-gray-400 text-sm">{dummyStats.xp} / {dummyStats.nextLevelXp} XP</span>
+            </div>
+            <div className="w-full bg-gray-700 rounded-full h-3">
+              <div 
+                className="bg-gradient-to-r from-brand-brown to-yellow-500 h-3 rounded-full transition-all duration-300"
+                style={{ width: `${(dummyStats.xp / dummyStats.nextLevelXp) * 100}%` }}
+              ></div>
+            </div>
+            <p className="text-gray-400 text-sm mt-2">
+              {dummyStats.nextLevelXp - dummyStats.xp} XP to next level
+            </p>
           </div>
-          <div className="bg-white rounded-xl shadow p-6 flex flex-col items-center">
-            <User className="w-8 h-8 text-brand-brown mb-2" />
-            <div className="text-2xl font-bold text-brand-dark">{dummyStats.sessions}</div>
-            <div className="text-gray-500">Sessions</div>
-          </div>
-        </div>
-
-        {/* Progress Chart (dummy) */}
-        <div className="bg-white rounded-xl shadow p-6 mb-8">
-          <h3 className="text-lg font-bold text-brand-dark mb-4">Practice Progress</h3>
-          <div className="w-full h-32 flex items-end gap-2">
-            {[40, 60, 80, 50, 90, 70, 100].map((v, i) => (
-              <div key={i} className="flex-1 flex flex-col items-center">
-                <div className="w-6 rounded-t-lg bg-brand-brown" style={{ height: `${v}%` }}></div>
-                <span className="text-xs text-gray-400 mt-1">{['M', 'T', 'W', 'T', 'F', 'S', 'S'][i]}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Achievements */}
-        <div className="bg-white rounded-xl shadow p-6 mb-8">
-          <h3 className="text-lg font-bold text-brand-dark mb-4">Achievements</h3>
-          <div className="flex flex-wrap gap-6">
-            {dummyAchievements.map((ach, i) => (
-              <div key={i} className="flex flex-col items-center bg-brand-yellow/10 rounded-lg p-4 min-w-[120px]">
-                {ach.icon}
-                <div className="font-semibold text-brand-dark mt-2">{ach.label}</div>
-                <div className="text-xs text-gray-500 text-center mt-1">{ach.desc}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Privacy Controls */}
-        <div className="bg-white rounded-xl shadow p-6 mb-8">
-          <h3 className="text-lg font-bold text-brand-dark mb-4">Privacy Controls</h3>
-          <div className="flex flex-col gap-4">
-            <label className="flex items-center gap-3 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={privacy.profileVisible}
-                onChange={e => setPrivacy(p => ({ ...p, profileVisible: e.target.checked }))}
-                className="accent-brand-brown w-5 h-5"
-              />
-              <span className="text-brand-dark font-medium">Profile Visible</span>
-              <Eye className="w-5 h-5 text-gray-400" />
-            </label>
-            <label className="flex items-center gap-3 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={privacy.shareStats}
-                onChange={e => setPrivacy(p => ({ ...p, shareStats: e.target.checked }))}
-                className="accent-brand-brown w-5 h-5"
-              />
-              <span className="text-brand-dark font-medium">Share Practice Stats</span>
-              <Lock className="w-5 h-5 text-gray-400" />
-            </label>
-          </div>
-        </div>
         </div>
       </div>
     </div>
