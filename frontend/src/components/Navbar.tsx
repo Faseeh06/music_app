@@ -1,6 +1,6 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Settings, LogOut, User, Search, Mic, Filter, X, History, TrendingUp, Bell } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 
 const Navbar: React.FC = () => {
@@ -12,7 +12,19 @@ const Navbar: React.FC = () => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const location = useLocation();
   const { logout, currentUser } = useAuth();
+
+  // Sync search query with URL parameters when on search page
+  useEffect(() => {
+    if (location.pathname === '/search') {
+      const query = searchParams.get('q');
+      if (query && query !== searchQuery) {
+        setSearchQuery(query);
+      }
+    }
+  }, [location.pathname, searchParams, searchQuery]);
 
   // Mock recent searches and trending
   const recentSearches = ['Perfect - Ed Sheeran', 'Hotel California', 'Wonderwall'];
@@ -30,6 +42,8 @@ const Navbar: React.FC = () => {
   const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && searchQuery.trim()) {
       navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      setShowSuggestions(false);
+      setSearchFocused(false);
     }
   };
 
@@ -146,7 +160,11 @@ const Navbar: React.FC = () => {
                         <button
                           key={index}
                           className="w-full text-left p-2 rounded-lg hover:bg-gray-800/50 transition-colors duration-150 text-white flex items-center gap-3"
-                          onClick={() => setSearchQuery(search)}
+                          onClick={() => {
+                            setSearchQuery(search);
+                            navigate(`/search?q=${encodeURIComponent(search)}`);
+                            setShowSuggestions(false);
+                          }}
                         >
                           <History className="w-4 h-4 text-gray-400" />
                           <span>{search}</span>
@@ -167,7 +185,11 @@ const Navbar: React.FC = () => {
                       <button
                         key={index}
                         className="w-full text-left p-2 rounded-lg hover:bg-gray-800/50 transition-colors duration-150 text-white flex items-center gap-3"
-                        onClick={() => setSearchQuery(search)}
+                        onClick={() => {
+                          setSearchQuery(search);
+                          navigate(`/search?q=${encodeURIComponent(search)}`);
+                          setShowSuggestions(false);
+                        }}
                       >
                         <TrendingUp className="w-4 h-4 text-brand-brown" />
                         <span>{search}</span>

@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, Play, Pause, Clock, Music, Headphones, Heart, ArrowRight } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
 import { useMusicPlayer } from '../contexts/PlayerContext';
@@ -17,7 +18,8 @@ interface Track {
 const SearchPage: React.FC = () => {
   const { isCollapsed } = useSidebar();
   const { currentTrack, isPlaying, togglePlay, playTrack } = useMusicPlayer();
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchParams] = useSearchParams();
+  const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
   const [isLoading, setIsLoading] = useState(false);
   const [searchResults, setSearchResults] = useState<Track[]>([]);
 
@@ -81,9 +83,17 @@ const SearchPage: React.FC = () => {
     { name: 'Rock Classics', icon: <Clock className="w-6 h-6" />, color: 'from-orange-500 to-red-500' }
   ];
 
-  const handleSearch = async (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
-    if (!searchQuery.trim()) return;
+  // Load search results when query parameter changes
+  useEffect(() => {
+    const query = searchParams.get('q');
+    if (query) {
+      setSearchQuery(query);
+      performSearch(query);
+    }
+  }, [searchParams]);
+
+  const performSearch = async (query: string) => {
+    if (!query.trim()) return;
     
     setIsLoading(true);
     
@@ -106,29 +116,15 @@ const SearchPage: React.FC = () => {
       <div className={`transition-all duration-300 ${isCollapsed ? 'ml-20' : 'ml-64'}`}>
         <Navbar />
         <div className="max-w-7xl mx-auto py-8 px-4">
-          <h1 className="text-3xl font-bold text-white mb-8">Search Music</h1>
-          
-          {/* Search Bar */}
-          <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl p-6 mb-8 border border-gray-700/50">
-            <form onSubmit={handleSearch} className="relative">
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search for songs, artists, or albums..."
-                  className="w-full pl-12 pr-20 py-4 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-brown focus:border-transparent"
-                />
-                <button
-                  type="submit"
-                  disabled={!searchQuery.trim() || isLoading}
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-brand-brown text-white px-6 py-2 rounded-lg hover:bg-brand-brown/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isLoading ? 'Searching...' : 'Search'}
-                </button>
-              </div>
-            </form>
+          <div className="flex items-center justify-between mb-8">
+            <h1 className="text-3xl font-bold text-white">
+              {searchQuery ? `Search results for "${searchQuery}"` : 'Discover Music'}
+            </h1>
+            {searchQuery && (
+              <span className="text-gray-400 text-sm">
+                {isLoading ? 'Searching...' : `${searchResults.length} results found`}
+              </span>
+            )}
           </div>
 
           {/* Search Results */}
@@ -195,7 +191,9 @@ const SearchPage: React.FC = () => {
                 {recentSearches.map((search, index) => (
                   <button
                     key={index}
-                    onClick={() => setSearchQuery(search)}
+                    onClick={() => {
+                      window.location.href = `/search?q=${encodeURIComponent(search)}`;
+                    }}
                     className="w-full text-left p-3 bg-gray-700/30 rounded-lg hover:bg-gray-700/50 transition-all duration-300 text-gray-300 hover:text-white border border-gray-600/50"
                   >
                     {search}
