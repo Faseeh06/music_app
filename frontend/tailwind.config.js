@@ -18,6 +18,10 @@ export default {
         'gradient-brand': 'linear-gradient(135deg, #bd5c2b 0%, #232323 100%)',
         'gradient-brand-reverse': 'linear-gradient(135deg, #232323 0%, #bd5c2b 100%)',
         'gradient-accent': 'linear-gradient(135deg, #bd5c2b 0%, #fbfd82 100%)',
+        'gradient-radial': 'radial-gradient(circle, var(--tw-gradient-stops))',
+      },
+      animation: {
+        'spin-slow': 'spin 3s linear infinite',
       }
     },
   },

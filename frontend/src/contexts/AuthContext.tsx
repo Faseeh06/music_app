@@ -25,7 +25,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export { AuthContext };
+export default AuthContext;
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -48,7 +48,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // For now, we log it and proceed, as the auth user is created.
       }
     }
-    // Firestore profile creation is now handled in ProfileSetupPage
+    // Firestore profile creation is now handled in Settings page
     return result;
   };
 
@@ -59,7 +59,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const provider = new GoogleAuthProvider();
     const result = await signInWithPopup(auth, provider);
     
-    // Firestore profile creation/update is now handled in ProfileSetupPage
+    // Firestore profile creation/update is now handled in Settings page
     // We ensure the Firebase Auth user exists and has basic info (displayName, email)
     // from Google.
     console.log('Google Sign-In successful, Firebase Auth user:', result.user.uid);
