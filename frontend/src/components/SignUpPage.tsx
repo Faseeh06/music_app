@@ -1,9 +1,73 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Music, ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Eye, EyeOff } from 'lucide-react';
+import { useAuth } from '../hooks/useAuth';
 
 const SignUpPage: React.FC = () => {
   const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: ''
+  });
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [showPassword, setShowPassword] = useState(false);
+  const { signup, loginWithGoogle } = useAuth();
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: '' }));
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.firstName || !formData.lastName || !formData.email || !formData.password) {
+      setErrors({ submit: 'Please fill in all fields' });
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      setErrors({ submit: 'Password must be at least 6 characters' });
+      return;
+    }
+
+    setLoading(true);
+    setErrors({});
+
+    try {
+      const fullName = `${formData.firstName} ${formData.lastName}`;
+      await signup(formData.email, formData.password, fullName);
+      navigate('/dashboard');
+    } catch (error: unknown) {
+      console.error('Sign up error:', error);
+      const errorMessage = error instanceof Error && 'code' in error && (error as Error & { code?: string }).code === 'auth/email-already-in-use'
+        ? 'An account with this email already exists'
+        : 'Failed to create account. Please try again.';
+      setErrors({ submit: errorMessage });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleSignUp = async () => {
+    setLoading(true);
+    setErrors({});
+
+    try {
+      await loginWithGoogle();
+      navigate('/dashboard');
+    } catch (error: unknown) {
+      console.error('Google sign up error:', error);
+      setErrors({ submit: 'Failed to sign up with Google. Please try again.' });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#101218] text-white relative overflow-hidden flex items-center justify-center">
@@ -37,7 +101,7 @@ const SignUpPage: React.FC = () => {
                     alt="Zenic Logo" 
                     className="w-16 h-16"
                   />
-                  <h1 className="text-3xl font-bold text-white ml-0.">
+                  <h1 className="text-3xl font-bold text-white ml-0.5">
                     ZENIC
                   </h1>
                 </div>
@@ -54,52 +118,82 @@ const SignUpPage: React.FC = () => {
               {/* Form Header */}
               <div className="text-center mb-8">
                 <div className="w-12 h-12 bg-gradient-to-br from-brand-brown to-brand-yellow rounded-xl flex items-center justify-center mx-auto mb-4">
-                  <Music className="w-6 h-6 text-white" />
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                  </svg>
                 </div>
                 <h2 className="text-2xl font-bold text-white mb-2">Create Account</h2>
-                <p className="text-gray-400">Start your musical journey</p>
+                <p className="text-gray-400">Start your musical journey today</p>
               </div>
 
-              {/* Email/Password Form */}
-              <div className="space-y-4">
-                <div>
-                  <input
-                    type="text"
-                    placeholder="Full name"
-                    className="w-full px-4 py-3 bg-gray-800/30 border border-gray-700/50 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-brand-brown focus:ring-1 focus:ring-brand-brown/50 transition-all"
-                  />
+              {/* Error Message */}
+              {errors.submit && (
+                <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm">
+                  {errors.submit}
+                </div>
+              )}
+
+              {/* Name/Email/Password Form */}
+              <form onSubmit={handleSubmit} className="space-y-4">
+                {/* First Name and Last Name Row */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <input
+                      type="text"
+                      name="firstName"
+                      placeholder="First name"
+                      value={formData.firstName}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 bg-gray-800/30 border border-gray-700/50 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-brand-brown focus:ring-1 focus:ring-brand-brown/50 transition-all"
+                    />
+                  </div>
+                  <div>
+                    <input
+                      type="text"
+                      name="lastName"
+                      placeholder="Last name"
+                      value={formData.lastName}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 bg-gray-800/30 border border-gray-700/50 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-brand-brown focus:ring-1 focus:ring-brand-brown/50 transition-all"
+                    />
+                  </div>
                 </div>
                 <div>
                   <input
                     type="email"
+                    name="email"
                     placeholder="Email address"
+                    value={formData.email}
+                    onChange={handleInputChange}
                     className="w-full px-4 py-3 bg-gray-800/30 border border-gray-700/50 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-brand-brown focus:ring-1 focus:ring-brand-brown/50 transition-all"
                   />
                 </div>
-                <div>
+                <div className="relative">
                   <input
-                    type="password"
+                    type={showPassword ? "text" : "password"}
+                    name="password"
                     placeholder="Password"
-                    className="w-full px-4 py-3 bg-gray-800/30 border border-gray-700/50 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-brand-brown focus:ring-1 focus:ring-brand-brown/50 transition-all"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 pr-12 bg-gray-800/30 border border-gray-700/50 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-brand-brown focus:ring-1 focus:ring-brand-brown/50 transition-all"
                   />
-                </div>
-
-                {/* Terms */}
-                <div className="text-sm text-gray-400">
-                  By creating an account, you agree to our{' '}
-                  <button className="text-brand-brown hover:text-brand-yellow transition-colors">
-                    Terms of Service
-                  </button>{' '}
-                  and{' '}
-                  <button className="text-brand-brown hover:text-brand-yellow transition-colors">
-                    Privacy Policy
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300 transition-colors"
+                  >
+                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
                 </div>
 
-                <button className="w-full bg-gradient-to-r from-brand-brown to-brand-yellow text-white font-semibold py-3 px-4 rounded-xl hover:opacity-90 transition-opacity">
-                  Create Account
+                <button 
+                  type="submit"
+                  disabled={loading}
+                  className="w-full bg-gradient-to-r from-brand-brown to-brand-yellow text-white font-semibold py-3 px-4 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50"
+                >
+                  {loading ? 'Creating Account...' : 'Create Account'}
                 </button>
-              </div>
+              </form>
 
               {/* Divider */}
               <div className="flex items-center my-6">
@@ -109,7 +203,11 @@ const SignUpPage: React.FC = () => {
               </div>
 
               {/* Google Sign Up */}
-              <button className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white text-gray-800 font-medium rounded-xl hover:bg-gray-50 transition-colors mb-6 group">
+              <button 
+                onClick={handleGoogleSignUp}
+                disabled={loading}
+                className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white text-gray-800 font-medium rounded-xl hover:bg-gray-50 transition-colors mb-6 group disabled:opacity-50"
+              >
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                   <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -119,8 +217,16 @@ const SignUpPage: React.FC = () => {
                 <span>Continue with Google</span>
               </button>
 
+              {/* Terms */}
+              <p className="text-xs text-gray-500 text-center mb-6">
+                By creating an account, you agree to our{' '}
+                <button className="text-brand-brown hover:underline">Terms of Service</button>
+                {' '}and{' '}
+                <button className="text-brand-brown hover:underline">Privacy Policy</button>
+              </p>
+
               {/* Sign In Link */}
-              <div className="mt-6 text-center">
+              <div className="text-center">
                 <p className="text-gray-400">
                   Already have an account?{' '}
                   <button

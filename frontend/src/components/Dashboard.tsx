@@ -4,8 +4,6 @@ import Sidebar from './Sidebar';
 import Navbar from './Navbar';
 import { 
   Play, 
-  Timer,
-  Flame,
   Pause,
   SkipForward,
   SkipBack,
@@ -15,7 +13,7 @@ import {
   Music,
   Zap,
   Clock,
-  BarChart3
+  Users
 } from 'lucide-react';
 
 interface PracticeSession {
@@ -38,6 +36,24 @@ interface AIRecommendation {
   estimatedTime: number;
   skillFocus: string;
   aiConfidence: number;
+}
+
+interface LeaderboardEntry {
+  id: string;
+  name: string;
+  score: number;
+  avatar: string;
+  rank: number;
+  badge?: string;
+}
+
+interface PopularSong {
+  id: string;
+  title: string;
+  artist: string;
+  avatar: string;
+  plays: string;
+  difficulty: string;
 }
 
 const aiRecommendations: AIRecommendation[] = [
@@ -83,24 +99,28 @@ const aiRecommendations: AIRecommendation[] = [
   }
 ];
 
+const leaderboardData: LeaderboardEntry[] = [
+  { id: '1', name: 'Ali Hassanain', score: 98, avatar: 'https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?w=40&h=40&fit=crop&crop=face', rank: 1, badge: '🏆' },
+  { id: '2', name: 'Hamza', score: 95, avatar: 'https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg?w=40&h=40&fit=crop&crop=face', rank: 2, badge: '🥈' },
+  { id: '3', name: 'Fahad', score: 92, avatar: 'https://images.pexels.com/photos/1484794/pexels-photo-1484794.jpeg?w=40&h=40&fit=crop&crop=face', rank: 3, badge: '🥉' },
+  { id: '4', name: 'Raza', score: 89, avatar: 'https://images.pexels.com/photos/1040881/pexels-photo-1040881.jpeg?w=40&h=40&fit=crop&crop=face', rank: 4 },
+  { id: '5', name: 'Sara', score: 87, avatar: 'https://images.pexels.com/photos/1040882/pexels-photo-1040882.jpeg?w=40&h=40&fit=crop&crop=face', rank: 5 }
+];
+
+const popularSongs: PopularSong[] = [
+  { id: '1', title: 'Perfect', artist: 'Ed Sheeran', avatar: 'https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg?w=40&h=40&fit=crop', plays: '2.1M', difficulty: 'Intermediate' },
+  { id: '2', title: 'Wonderwall', artist: 'Oasis', avatar: 'https://images.pexels.com/photos/1763076/pexels-photo-1763076.jpeg?w=40&h=40&fit=crop', plays: '1.8M', difficulty: 'Beginner' },
+  { id: '3', title: 'Hotel California', artist: 'Eagles', avatar: 'https://images.pexels.com/photos/1763077/pexels-photo-1763077.jpeg?w=40&h=40&fit=crop', plays: '1.5M', difficulty: 'Advanced' },
+  { id: '4', title: 'Blackbird', artist: 'Beatles', avatar: 'https://images.pexels.com/photos/1763078/pexels-photo-1763078.jpeg?w=40&h=40&fit=crop', plays: '1.2M', difficulty: 'Intermediate' },
+  { id: '5', title: 'Stairway to Heaven', artist: 'Led Zeppelin', avatar: 'https://images.pexels.com/photos/1763079/pexels-photo-1763079.jpeg?w=40&h=40&fit=crop', plays: '1.0M', difficulty: 'Advanced' }
+];
+
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isPlaying, setIsPlaying] = useState(true);
 
   // Mock data with AI-enhanced features
-  const stats = {
-    totalTime: 127, // hours
-    sessionCount: 45,
-    weeklyProgress: 85, // percentage
-    streak: 12, // days
-    level: 8,
-    xp: 2450,
-    nextLevelXp: 3000,
-    aiAccuracyScore: 87, // AI-assessed overall accuracy
-    technicalProgress: 74, // AI-assessed technical improvement
-    musicTheoryScore: 68 // AI-assessed music theory understanding
-  };
 
   const recentSessions: PracticeSession[] = [
     {
@@ -156,13 +176,16 @@ const Dashboard: React.FC = () => {
   ];
 
   const nowPlaying = {
-    title: 'Nothing Else Matters',
-    artist: 'Metallica',
-    thumbnail: 'https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop',
-    duration: '6:28',
+    title: 'Perfect',
+    artist: 'Ed Sheeran',
+    thumbnail: 'https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop',
+    duration: '4:23',
+    currentTime: '1:58',
     progress: 0.45,
     difficulty: 'Intermediate',
-    aiInsight: 'Focus on clean fingerpicking transitions'
+    aiInsight: 'Focus on smooth chord transitions in the chorus',
+    yourScore: 87,
+    yourRank: 6
   };
 
   const getAIRecommendationIcon = (type: string) => {
@@ -183,265 +206,302 @@ const Dashboard: React.FC = () => {
     }
   };
 
+  const getDifficultyColorDark = (difficulty: string) => {
+    switch (difficulty) {
+      case 'Beginner': return 'text-green-400 bg-green-900/30 border-green-700/30';
+      case 'Intermediate': return 'text-orange-400 bg-orange-900/30 border-orange-700/30';
+      case 'Advanced': return 'text-red-400 bg-red-900/30 border-red-700/30';
+      default: return 'text-gray-400 bg-gray-800/30 border-gray-700/30';
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 font-poppins">
+    <div className="min-h-screen bg-[#101218] text-white font-poppins relative">
+      {/* Background Effects */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-gradient-radial from-brand-brown/10 via-brand-brown/2 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute top-1/3 right-1/4 w-80 h-80 bg-gradient-radial from-brand-yellow/6 via-brand-yellow/1 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute bottom-1/4 left-1/3 w-64 h-64 bg-gradient-radial from-brand-brown/8 via-brand-brown/2 to-transparent rounded-full blur-3xl"></div>
+      </div>
+
       <Sidebar onCollapse={setSidebarCollapsed} />
-      <div className={`transition-all duration-300 ${sidebarCollapsed ? 'ml-20' : 'ml-64'}`}>
+      <div className={`transition-all duration-300 ${sidebarCollapsed ? 'ml-20' : 'ml-64'} relative z-10`}>
         <Navbar />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col lg:flex-row gap-8">
-          {/* Main Content */}
-          <div className="flex-1 flex flex-col gap-8">
-            {/* AI Stats Row */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* Practice Streak */}
-              <div className="bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl p-6 text-white shadow-lg">
-                <div className="flex items-center gap-3 mb-4">
-                  <Flame className="w-8 h-8" />
-                  <div>
-                    <h3 className="text-2xl font-bold">{stats.streak} Days</h3>
-                    <p className="text-orange-100">Practice Streak</p>
-                  </div>
+        <div className="px-4 py-8 flex flex-col gap-8">
+          
+          {/* Hero Section - Currently Playing and AI Recommendations */}
+          <div className="grid lg:grid-cols-12 gap-6">
+            
+            {/* Currently Playing Section with integrated Leaderboard - Takes first 9 columns */}
+            <div className="lg:col-span-9 p-6">
+              <div className="relative">
+                <img
+                  src="/src/assets/images/bmwsong.jpeg"
+                  alt={nowPlaying.title}
+                  className="w-full aspect-[3/1] rounded-xl object-cover"
+                />
+                <div className="absolute top-3 right-3 bg-black/70 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-full">
+                  {nowPlaying.difficulty}
                 </div>
-                <div className="flex items-center gap-1">
-                  {[...Array(7)].map((_, i) => (
-                    <span key={i} className={`w-3 h-3 rounded-full ${i < stats.streak % 7 ? 'bg-white' : 'bg-white/30'}`}></span>
-                  ))}
-                </div>
-              </div>
-
-              {/* AI Accuracy Score */}
-              <div className="bg-gradient-to-br from-brand-brown to-brand-yellow rounded-2xl p-6 text-white shadow-lg">
-                <div className="flex items-center gap-3 mb-4">
-                  <Brain className="w-8 h-8" />
-                  <div>
-                    <h3 className="text-2xl font-bold">{stats.aiAccuracyScore}%</h3>
-                    <p className="text-yellow-100">AI Accuracy Score</p>
-                  </div>
-                </div>
-                <div className="w-full bg-white/20 rounded-full h-2">
-                  <div className="bg-white h-2 rounded-full" style={{ width: `${stats.aiAccuracyScore}%` }}></div>
-                </div>
-              </div>
-
-              {/* Technical Progress */}
-              <div className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl p-6 text-white shadow-lg">
-                <div className="flex items-center gap-3 mb-4">
-                  <TrendingUp className="w-8 h-8" />
-                  <div>
-                    <h3 className="text-2xl font-bold">{stats.technicalProgress}%</h3>
-                    <p className="text-blue-100">Technical Progress</p>
-                  </div>
-                </div>
-                <div className="w-full bg-white/20 rounded-full h-2">
-                  <div className="bg-white h-2 rounded-full" style={{ width: `${stats.technicalProgress}%` }}></div>
-                </div>
-              </div>
-            </div>
-
-            {/* AI Recommendations */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-gradient-to-br from-brand-brown to-brand-yellow rounded-lg flex items-center justify-center">
-                    <Brain className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-brand-dark">AI Recommendations</h3>
-                    <p className="text-sm text-gray-600">Personalized practice suggestions based on your performance</p>
-                  </div>
-                </div>
-                <button className="btn-secondary text-brand-brown hover:text-brand-dark font-medium text-sm">View All</button>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {aiRecommendations.slice(0, 4).map((rec) => (
-                  <div key={rec.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer group">
-                    <div className="flex items-start gap-3 mb-3">
-                      <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-brand-brown group-hover:text-white transition-colors">
-                        {getAIRecommendationIcon(rec.type)}
-                      </div>
-                      <div className="flex-1">
-                        <h4 className="font-semibold text-brand-dark mb-1">{rec.title}</h4>
-                        <p className="text-sm text-gray-600 mb-2">{rec.description}</p>
-                        <div className="flex items-center gap-2 text-xs">
-                          <span className={`px-2 py-1 rounded-full ${getDifficultyColor(rec.difficulty)}`}>
-                            {rec.difficulty}
-                          </span>
-                          <span className="text-gray-500 flex items-center gap-1">
-                            <Clock className="w-3 h-3" />
-                            {rec.estimatedTime}min
-                          </span>
-                          <span className="text-brand-brown font-medium">{rec.aiConfidence}% AI match</span>
+                
+                {/* Music Player Controls - Left Side */}
+                <div className="absolute bottom-3 left-6 right-3">
+                  <div className="flex items-start">
+                    <div className="flex flex-col items-center">
+                      <h3 className="text-xl font-bold text-white mb-1 text-center">Zenso</h3>
+                      <p className="text-sm text-gray-300 mb-3 text-center">{nowPlaying.artist}</p>
+                      
+                      {/* Progress Bar */}
+                      <div className="flex items-center gap-2 mb-3 w-64">
+                        <span className="text-xs text-gray-400">{nowPlaying.currentTime}</span>
+                        <div className="flex-1 h-1.5 bg-gray-600 rounded-full overflow-hidden">
+                          <div className="h-1.5 bg-brand-brown rounded-full" style={{ width: `${nowPlaying.progress * 100}%` }}></div>
                         </div>
+                        <span className="text-xs text-gray-400">{nowPlaying.duration}</span>
+                      </div>
+
+                      {/* Play Controls */}
+                      <div className="flex items-center justify-center gap-4">
+                        <button className="p-2 rounded-full hover:bg-gray-700/50 transition-colors">
+                          <SkipBack className="w-4 h-4 text-gray-300" />
+                        </button>
+                        <button
+                          className="p-3 rounded-full bg-brand-brown text-white hover:bg-brand-yellow transition-colors"
+                          onClick={() => setIsPlaying((p) => !p)}
+                        >
+                          {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
+                        </button>
+                        <button className="p-2 rounded-full hover:bg-gray-700/50 transition-colors">
+                          <SkipForward className="w-4 h-4 text-gray-300" />
+                        </button>
                       </div>
                     </div>
-                    <div className="text-xs text-gray-500">Focus: {rec.skillFocus}</div>
                   </div>
-                ))}
+                </div>
+
+                {/* Leaderboard - Right Side within the image */}
+                <div className="absolute top-3 right-16 bottom-3 flex flex-col justify-start w-56">
+                  <div className="p-4">
+                    <h3 className="text-lg font-light text-white mb-4">Leader Board</h3>
+                    <div className="space-y-3">
+                      {leaderboardData.slice(0, 5).map((player) => (
+                        <div key={player.id} className="flex items-center gap-3 text-sm">
+                          <div className="flex-shrink-0 w-5 text-center">
+                            <span className="text-sm font-light text-white">{player.rank}.</span>
+                          </div>
+                          <img
+                            src={player.avatar}
+                            alt={player.name}
+                            className="w-10 h-10 rounded-full object-cover"
+                          />
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-light text-white truncate text-sm">{player.name}</h4>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* Recent Practice Sessions */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-bold text-brand-dark">Recent Practice Sessions</h3>
-                <button className="btn-secondary text-brand-brown hover:text-brand-dark font-medium text-sm">View All</button>
+            {/* Popular Songs Section - Takes 3 columns */}
+            <div className="lg:col-span-3 p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <TrendingUp className="w-5 h-5 text-brand-brown" />
+                <h3 className="text-lg font-bold text-white">Popular Songs</h3>
               </div>
-              <div className="divide-y divide-gray-100">
-                {recentSessions.map((session) => (
-                  <div
-                    key={session.id}
-                    className="flex items-center gap-4 py-4 cursor-pointer hover:bg-gray-50 transition-colors"
-                    onClick={() => navigate(`/practice/${session.id}`)}
-                  >
+              <div className="space-y-3">
+                {popularSongs.map((song, index) => (
+                  <div key={song.id} className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800/20 transition-colors cursor-pointer">
+                    <div className="flex-shrink-0 w-6 text-center">
+                      <span className="text-sm font-bold text-gray-400">{index + 1}</span>
+                    </div>
                     <img
-                      src={`https://picsum.photos/seed/${session.id}/56/56`}
-                      alt={session.songTitle}
-                      className="w-14 h-14 rounded-lg object-cover"
+                      src={song.avatar}
+                      alt={song.title}
+                      className="w-10 h-10 rounded-lg object-cover"
                     />
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-brand-dark truncate">{session.songTitle}</h4>
-                      <p className="text-sm text-gray-600 truncate">{session.artist}</p>
-                      <div className="flex items-center gap-2 mt-1">
-                        <span className="text-xs text-gray-500">{session.duration}min practice</span>
-                        <span className="text-xs text-brand-brown font-medium">AI Score: {session.aiScore}%</span>
-                      </div>
+                      <h4 className="font-semibold text-white truncate text-sm">{song.title}</h4>
+                      <p className="text-xs text-gray-400 truncate">{song.artist}</p>
                     </div>
                     <div className="text-right">
-                      <div className="text-xs text-gray-400 mb-1">{session.date}</div>
-                      <div className="flex flex-wrap gap-1">
-                        {session.skillsImproved.map((skill, idx) => (
-                          <span key={idx} className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded">
-                            {skill}
-                          </span>
-                        ))}
+                      <div className="flex items-center gap-1 mb-1">
+                        <Users className="w-3 h-3 text-gray-400" />
+                        <span className="text-xs text-gray-400">{song.plays}</span>
                       </div>
+                      <span className={`text-xs px-2 py-0.5 rounded border ${getDifficultyColorDark(song.difficulty)}`}>
+                        {song.difficulty}
+                      </span>
                     </div>
                   </div>
                 ))}
               </div>
-            </div>
-
-            {/* Today's Practice Goal */}
-            <div className="bg-gradient-to-br from-brand-brown via-brand-yellow to-yellow-100 rounded-2xl p-6 text-white shadow-lg">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <Timer className="w-8 h-8" />
-                  <div>
-                    <h3 className="text-2xl font-bold">Today's Practice Goal</h3>
-                    <p className="text-yellow-100">Stay consistent to improve faster</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="text-2xl font-bold">22/30</div>
-                  <div className="text-yellow-100 text-sm">minutes</div>
-                </div>
-              </div>
-              <div className="w-full bg-white/20 rounded-full h-3 mb-2">
-                <div className="bg-white h-3 rounded-full" style={{ width: '73%' }}></div>
-              </div>
-              <p className="text-yellow-100 text-sm">8 more minutes to reach your daily goal! 🎯</p>
             </div>
           </div>
 
-          {/* Now Playing Widget - Enhanced with AI */}
-          <div className="hidden lg:block w-full max-w-xs sticky top-24 self-start">
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 flex flex-col items-center">
-              <div className="relative mb-4">
-                <img
-                  src={nowPlaying.thumbnail}
-                  alt={nowPlaying.title}
-                  className="w-32 h-32 rounded-xl object-cover"
-                />
-                <div className="absolute -top-2 -right-2 bg-brand-brown text-white text-xs px-2 py-1 rounded-full">
-                  {nowPlaying.difficulty}
+          <div className="grid lg:grid-cols-12 gap-8">
+            {/* Recent Practice Sessions - Takes first 9 columns */}
+            <div className="lg:col-span-9 p-6">
+              <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-gradient-to-br from-brand-brown to-brand-yellow rounded-xl flex items-center justify-center">
+                    <Music className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold text-white">Recent Practice Sessions</h3>
+                    <p className="text-sm text-gray-400">Your musical journey continues</p>
+                  </div>
                 </div>
+                <button className="px-6 py-2 bg-brand-brown/20 text-brand-brown hover:bg-brand-brown hover:text-white font-medium text-sm transition-all duration-300 rounded-lg border border-brand-brown/30 hover:border-brand-brown">
+                  View All Sessions
+                </button>
               </div>
-              <h4 className="text-lg font-bold text-brand-dark truncate w-full text-center">{nowPlaying.title}</h4>
-              <p className="text-sm text-gray-600 truncate w-full text-center mb-2">{nowPlaying.artist}</p>
               
-              {/* AI Insight */}
-              <div className="w-full bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
-                <div className="flex items-center gap-2 mb-1">
-                  <Brain className="w-4 h-4 text-blue-600" />
-                  <span className="text-xs font-semibold text-blue-800">AI Insight</span>
-                </div>
-                <p className="text-xs text-blue-700">{nowPlaying.aiInsight}</p>
-              </div>
+              <div className="space-y-2">
+                {recentSessions.map((session) => (
+                  <div
+                    key={session.id}
+                    className="group relative rounded-lg p-4 cursor-pointer hover:bg-gray-800/20 transition-all duration-300 hover:scale-[1.01] hover:shadow-lg"
+                    onClick={() => navigate(`/practice/${session.id}`)}
+                  >
+                    <div className="flex items-center gap-4">
+                      {/* Album Art with Play Overlay */}
+                      <div className="relative">
+                        <img
+                          src={`https://picsum.photos/seed/${session.id}/48/48`}
+                          alt={session.songTitle}
+                          className="w-12 h-12 rounded-lg object-cover shadow-md"
+                        />
+                        <div className="absolute inset-0 bg-black/40 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                          <Play className="w-4 h-4 text-white" />
+                        </div>
+                        {/* Progress Ring */}
+                        <div className="absolute -top-1 -right-1 w-5 h-5">
+                          <div className="w-full h-full rounded-full border-2 border-brand-brown bg-[#101218] flex items-center justify-center">
+                            <span className="text-xs font-bold text-brand-brown">{session.progress}%</span>
+                          </div>
+                        </div>
+                      </div>
 
-              <div className="w-full flex items-center gap-2 mt-2 mb-4">
-                <span className="text-xs text-gray-400">0:00</span>
-                <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
-                  <div className="h-2 bg-brand-brown rounded-full" style={{ width: `${nowPlaying.progress * 100}%` }}></div>
-                </div>
-                <span className="text-xs text-gray-400">{nowPlaying.duration}</span>
-              </div>
-              <div className="flex items-center gap-4 mt-2">
-                <button className="p-2 rounded-full hover:bg-gray-100 transition-colors">
-                  <SkipBack className="w-5 h-5 text-brand-dark" />
-                </button>
-                <button
-                  className="p-3 rounded-full bg-brand-brown text-white hover:bg-brand-dark transition-colors"
-                  onClick={() => setIsPlaying((p) => !p)}
-                >
-                  {isPlaying ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6" />}
-                </button>
-                <button className="p-2 rounded-full hover:bg-gray-100 transition-colors">
-                  <SkipForward className="w-5 h-5 text-brand-dark" />
-                </button>
+                      {/* Song Info */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between">
+                          <div className="flex-1 min-w-0">
+                            <h4 className="text-base font-bold text-white truncate group-hover:text-brand-yellow transition-colors">
+                              {session.songTitle}
+                            </h4>
+                            <p className="text-sm text-gray-400 truncate">{session.artist}</p>
+                          </div>
+
+                          {/* Practice Stats */}
+                          <div className="flex items-center gap-3 text-xs text-gray-300 mx-4">
+                            <div className="flex items-center gap-1">
+                              <Clock className="w-3 h-3" />
+                              <span>{session.duration}m</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <Target className="w-3 h-3" />
+                              <span>{session.progress}%</span>
+                            </div>
+                          </div>
+
+                          {/* Date and Skills */}
+                          <div className="text-right">
+                            <div className="text-xs text-gray-500 mb-1">{session.date}</div>
+                            <div className="flex gap-1 justify-end">
+                              {session.skillsImproved.slice(0, 1).map((skill, idx) => (
+                                <span key={idx} className="text-xs bg-gradient-to-r from-green-900/40 to-emerald-900/40 text-green-300 px-2 py-0.5 rounded-full border border-green-700/30 font-medium">
+                                  {skill}
+                                </span>
+                              ))}
+                              {session.skillsImproved.length > 1 && (
+                                <span className="text-xs bg-gray-700/30 text-gray-400 px-2 py-0.5 rounded-full border border-gray-600/30">
+                                  +{session.skillsImproved.length - 1}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Hover Effect Arrow */}
+                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-2 group-hover:translate-x-0">
+                      <div className="w-6 h-6 rounded-full bg-brand-brown/20 flex items-center justify-center">
+                        <Play className="w-3 h-3 text-brand-brown" />
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
 
-            {/* Quick Stats */}
-            <div className="mt-6 bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-              <h4 className="font-semibold text-brand-dark mb-3 flex items-center gap-2">
-                <BarChart3 className="w-5 h-5" />
-                Week Summary
-              </h4>
+            {/* AI Recommendations Section - Takes 3 columns */}
+            <div className="lg:col-span-3 p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-gradient-to-br from-brand-brown to-brand-yellow rounded-lg flex items-center justify-center">
+                    <Brain className="w-4 h-4 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-white">AI Recommendations</h3>
+                    <p className="text-xs text-gray-400">Personalized suggestions</p>
+                  </div>
+                </div>
+              </div>
               <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Practice Time</span>
-                  <span className="font-semibold text-brand-dark">12.5 hrs</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Songs Practiced</span>
-                  <span className="font-semibold text-brand-dark">18</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Avg AI Score</span>
-                  <span className="font-semibold text-brand-brown">{stats.aiAccuracyScore}%</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Skills Improved</span>
-                  <span className="font-semibold text-green-600">7</span>
-                </div>
+                {aiRecommendations.slice(0, 3).map((rec) => (
+                  <div key={rec.id} className="rounded-lg p-3 hover:bg-gray-800/20 hover:shadow-lg transition-all cursor-pointer group">
+                    <div className="flex items-start gap-2 mb-2">
+                      <div className="w-6 h-6 bg-gray-700/50 rounded flex items-center justify-center group-hover:bg-brand-brown group-hover:text-white transition-colors">
+                        {getAIRecommendationIcon(rec.type)}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-semibold text-white text-sm truncate">{rec.title}</h4>
+                        <p className="text-xs text-gray-400 truncate">{rec.description}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs">
+                      <span className={`px-1.5 py-0.5 rounded-full text-xs ${getDifficultyColor(rec.difficulty)}`}>
+                        {rec.difficulty}
+                      </span>
+                      <span className="text-gray-500 flex items-center gap-1">
+                        <Clock className="w-3 h-3" />
+                        {rec.estimatedTime}min
+                      </span>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
         </div>
         
         {/* Mobile Now Playing - Enhanced */}
-        <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 p-3 flex items-center gap-3 shadow-lg lg:hidden">
+        <div className="fixed bottom-0 left-0 right-0 z-50 bg-gray-900/90 backdrop-blur-sm border-t border-gray-700/50 p-3 flex items-center gap-3 shadow-xl lg:hidden">
           <img
             src={nowPlaying.thumbnail}
             alt={nowPlaying.title}
             className="w-12 h-12 rounded-lg object-cover"
           />
           <div className="flex-1 min-w-0">
-            <h4 className="font-semibold text-brand-dark truncate">{nowPlaying.title}</h4>
-            <p className="text-xs text-gray-600 truncate">{nowPlaying.artist}</p>
+            <h4 className="font-semibold text-white truncate">{nowPlaying.title}</h4>
+            <p className="text-xs text-gray-400 truncate">{nowPlaying.artist}</p>
             <div className="w-full flex items-center gap-2 mt-1">
-              <div className="flex-1 h-1 bg-gray-200 rounded-full overflow-hidden">
+              <div className="flex-1 h-1 bg-gray-700 rounded-full overflow-hidden">
                 <div className="h-1 bg-brand-brown rounded-full" style={{ width: `${nowPlaying.progress * 100}%` }}></div>
               </div>
               <span className="text-xs text-gray-400">{nowPlaying.duration}</span>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <div className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded">
+            <div className="text-xs bg-blue-900/30 text-blue-400 px-2 py-1 rounded border border-blue-700/30">
               AI Tips
             </div>
             <button
-              className="p-2 rounded-full bg-brand-brown text-white hover:bg-brand-dark transition-colors"
+              className="p-2 rounded-full bg-brand-brown text-white hover:bg-brand-yellow transition-colors"
               onClick={() => setIsPlaying((p) => !p)}
             >
               {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
