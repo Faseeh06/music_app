@@ -50,8 +50,8 @@ const Sidebar: React.FC = () => {
             <div className={`transition-all duration-500 ease-in-out ${isCollapsed ? 'opacity-0 scale-75 -translate-x-4 pointer-events-none' : 'opacity-100 scale-100 translate-x-0'}`}>
               <span className="font-extrabold text-2xl tracking-wide flex items-center gap-2 whitespace-nowrap">
                 <img src={logo} alt="Logo" className="w-10 h-10 object-contain transition-transform duration-300 hover:scale-110" />
-                Zenic
-              </span>
+              Zenic
+            </span>
             </div>
             <div className={`absolute transition-all duration-500 ease-in-out ${isCollapsed ? 'opacity-100 scale-100 translate-x-0' : 'opacity-0 scale-75 translate-x-4 pointer-events-none'}`}>
               <img src={logo} alt="Logo" className="w-10 h-10 object-contain transition-transform duration-300 hover:scale-110" />
@@ -72,7 +72,7 @@ const Sidebar: React.FC = () => {
               }}
             >
               <div className="transition-transform duration-200 hover:scale-110">
-                {item.icon}
+              {item.icon}
               </div>
               <span className={`transition-all duration-500 ease-in-out overflow-hidden whitespace-nowrap ${
                 isCollapsed ? 'opacity-0 w-0 translate-x-4' : 'opacity-100 w-auto translate-x-0'
@@ -92,7 +92,7 @@ const Sidebar: React.FC = () => {
           title={isCollapsed ? 'Profile' : ''}
         >
           <div className="transition-transform duration-200 hover:scale-110">
-            <User className="w-5 h-5" />
+          <User className="w-5 h-5" />
           </div>
           <span className={`transition-all duration-500 ease-in-out overflow-hidden whitespace-nowrap ${
             isCollapsed ? 'opacity-0 w-0 translate-x-4' : 'opacity-100 w-auto translate-x-0'
@@ -108,7 +108,7 @@ const Sidebar: React.FC = () => {
           title={isCollapsed ? 'Settings' : ''}
         >
           <div className="transition-transform duration-200 hover:scale-110">
-            <Settings className="w-5 h-5" />
+          <Settings className="w-5 h-5" />
           </div>
           <span className={`transition-all duration-500 ease-in-out overflow-hidden whitespace-nowrap ${
             isCollapsed ? 'opacity-0 w-0 translate-x-4' : 'opacity-100 w-auto translate-x-0'
@@ -122,7 +122,7 @@ const Sidebar: React.FC = () => {
           title={isCollapsed ? 'Logout' : ''}
         >
           <div className="transition-transform duration-200 hover:scale-110">
-            <LogOut className="w-5 h-5" />
+          <LogOut className="w-5 h-5" />
           </div>
           <span className={`transition-all duration-500 ease-in-out overflow-hidden whitespace-nowrap ${
             isCollapsed ? 'opacity-0 w-0 translate-x-4' : 'opacity-100 w-auto translate-x-0'
@@ -137,11 +137,11 @@ const Sidebar: React.FC = () => {
         title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
       >
         <div className={`transition-transform duration-300 ease-in-out ${isCollapsed ? 'rotate-0' : 'rotate-180'}`}>
-          {isCollapsed ? (
-            <ChevronRight className="w-4 h-4" />
-          ) : (
-            <ChevronLeft className="w-4 h-4" />
-          )}
+        {isCollapsed ? (
+          <ChevronRight className="w-4 h-4" />
+        ) : (
+          <ChevronLeft className="w-4 h-4" />
+        )}
         </div>
       </button>
     </aside>

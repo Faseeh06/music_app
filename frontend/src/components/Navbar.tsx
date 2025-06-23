@@ -101,14 +101,14 @@ const Navbar: React.FC = () => {
               <Search className={`w-5 h-5 ${searchFocused ? 'text-brand-brown' : 'text-gray-400'}`} />
             </div>
             
-            <input
-              type="text"
+        <input
+          type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onFocus={handleSearchFocus}
               onBlur={handleSearchBlur}
               onKeyDown={handleSearch}
-              placeholder="Search songs, playlists, albums, artists, etc..."
+          placeholder="Search songs, playlists, albums, artists, etc..."
               className={`w-full rounded-2xl pl-12 pr-32 py-3 bg-[#101218]/90 backdrop-blur-sm text-white placeholder:text-gray-400 border transition-all duration-300 ease-in-out text-base font-medium ${
                 searchFocused 
                   ? 'border-brand-brown bg-[#101218] focus:outline-none' 
@@ -256,10 +256,10 @@ const Navbar: React.FC = () => {
               </div>
               
               <div className="py-2">
-                <button
+              <button
                   className="w-full flex items-center gap-3 px-4 py-3 text-white hover:bg-gray-800/50 transition-colors"
-                  onClick={() => { setDropdownOpen(false); navigate('/profile'); }}
-                >
+                onClick={() => { setDropdownOpen(false); navigate('/profile'); }}
+              >
                   <User className="w-5 h-5" /> 
                   <span>Profile Settings</span>
                 </button>
@@ -275,11 +275,11 @@ const Navbar: React.FC = () => {
               <div className="border-t border-gray-700 py-2">
                 <button
                   className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-900/20 transition-colors rounded-b-xl"
-                  onClick={() => { setDropdownOpen(false); handleLogout(); }}
-                >
+                onClick={() => { setDropdownOpen(false); handleLogout(); }}
+              >
                   <LogOut className="w-5 h-5" /> 
                   <span>Sign Out</span>
-                </button>
+              </button>
               </div>
             </div>
           )}
@@ -289,4 +289,4 @@ const Navbar: React.FC = () => {
   );
 };
 
-export default Navbar;
+export default Navbar; 

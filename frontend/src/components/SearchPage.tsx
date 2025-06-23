@@ -97,11 +97,60 @@ const SearchPage: React.FC = () => {
     
     setIsLoading(true);
     
-    // Simulate API call
-    setTimeout(() => {
-      setSearchResults(mockResults);
+    try {
+      const response = await fetch(`http://localhost:3000/api/youtube/search?query=${encodeURIComponent(query)}&maxResults=20`);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Backend error: ${response.status} - ${errorText}`);
+      }
+      
+      const data = await response.json();
+      
+      if (data.error) {
+        throw new Error(data.error);
+      }
+      
+      // Transform YouTube API data to our Track interface
+      const transformedResults: Track[] = data.map((item: any) => ({
+        id: item.id,
+        title: item.title,
+        channelTitle: item.channelTitle,
+        thumbnail: item.thumbnail,
+        duration: item.duration || 'N/A',
+        views: item.views
+      }));
+      
+      setSearchResults(transformedResults);
+      
+      // Show success message if this is the first successful API call
+      if (transformedResults.length > 0) {
+        console.log(`✅ Successfully fetched ${transformedResults.length} results from YouTube API`);
+      }
+    } catch (error) {
+      console.error('Error searching videos:', error);
+      
+      // Show helpful error message
+      if (error.message.includes('fetch')) {
+        console.warn('⚠️ Backend server not running. Please start the backend server and configure YouTube API key. See backend/YOUTUBE_API_SETUP.md for setup instructions.');
+      } else if (error.message.includes('YouTube API key is not configured')) {
+        console.warn('⚠️ YouTube API key not configured. Please see backend/YOUTUBE_API_SETUP.md for setup instructions.');
+      }
+      
+      // Fallback to filtered mock results
+      const filteredMockResults = mockResults.filter(track => 
+        track.title.toLowerCase().includes(query.toLowerCase()) ||
+        track.channelTitle.toLowerCase().includes(query.toLowerCase())
+      );
+      
+      setSearchResults(filteredMockResults);
+      
+      if (filteredMockResults.length > 0) {
+        console.log(`📝 Using ${filteredMockResults.length} filtered mock results as fallback`);
+      }
+    } finally {
       setIsLoading(false);
-    }, 500);
+    }
   };
 
   const handleTrackPlay = (track: Track) => {

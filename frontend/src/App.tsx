@@ -42,7 +42,7 @@ function AppContent() {
   
   return (
     <Router>
-      <div className="min-h-screen bg-gray-50 font-poppins">        <Routes>
+      <div className="min-h-screen bg-[#101218] font-poppins">        <Routes>
           <Route 
             path="/auth" 
             element={<Navigate to="/signin" replace />} 

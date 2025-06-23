@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Security, Bell, Save, Edit3 } from 'lucide-react';
+import { User, Shield, Bell, Save, Edit3 } from 'lucide-react';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
 import { useUserProfile } from '../hooks/useUserProfile';
@@ -150,7 +150,7 @@ const SettingsPage: React.FC = () => {
                     : 'text-gray-400 hover:text-white hover:bg-gray-700/30'
                 }`}
               >
-                <Security className="w-5 h-5" />
+                <Shield className="w-5 h-5" />
                 Privacy
               </button>
               <button

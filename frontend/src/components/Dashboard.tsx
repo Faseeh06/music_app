@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
+import MusicPlayerBar from './MusicBar';
 import { useMusicPlayer } from '../contexts/PlayerContext';
 import { useSidebar } from '../contexts/SidebarContext';
 import { 
@@ -69,7 +70,7 @@ const popularSongs: PopularSong[] = [
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const { isCollapsed } = useSidebar();
-  const { currentTrack, isPlaying, togglePlay } = useMusicPlayer();
+  const { currentTrack, isPlaying, togglePlay, progress, duration, skip, playTrack } = useMusicPlayer();
 
   // Mock data with AI-enhanced features
   const recentSessions: PracticeSession[] = [
@@ -84,7 +85,7 @@ const Dashboard: React.FC = () => {
       skillsImproved: ['Chord Transitions', 'Strumming Patterns']
     },
     {
-      id: '2', 
+      id: '2',
       songTitle: 'Hotel California',
       artist: 'Eagles',
       duration: 35,
@@ -96,7 +97,7 @@ const Dashboard: React.FC = () => {
     {
       id: '3',
       songTitle: 'Stairway to Heaven',
-      artist: 'Led Zeppelin', 
+      artist: 'Led Zeppelin',
       duration: 42,
       date: '2 days ago',
       progress: 65,
@@ -108,7 +109,7 @@ const Dashboard: React.FC = () => {
       songTitle: 'Sweet Child O Mine',
       artist: 'Guns N Roses',
       duration: 28,
-      date: '3 days ago', 
+      date: '3 days ago',
       progress: 88,
       aiScore: 89,
       skillsImproved: ['Lead Guitar', 'Timing']
@@ -178,14 +179,18 @@ const Dashboard: React.FC = () => {
                       
                       {/* Progress Bar */}
                       <div className="flex items-center gap-2 mb-3 w-64">
-                        <span className="text-xs text-gray-400">2:14</span>
+                        <span className="text-xs text-gray-400">
+                          {Math.floor(progress / 60)}:{(Math.floor(progress) % 60).toString().padStart(2, '0')}
+                        </span>
                         <div className="flex-1 h-1.5 bg-gray-600 rounded-full overflow-hidden cursor-pointer">
                           <div 
                             className="h-1.5 bg-brand-brown rounded-full transition-all duration-200" 
-                            style={{ width: '60%' }}
+                            style={{ width: duration > 0 ? `${(progress / duration) * 100}%` : '0%' }}
                           ></div>
                         </div>
-                        <span className="text-xs text-gray-400">4:32</span>
+                        <span className="text-xs text-gray-400">
+                          {Math.floor(duration / 60)}:{(Math.floor(duration) % 60).toString().padStart(2, '0')}
+                        </span>
                       </div>
 
                       {/* Play Controls */}
@@ -193,6 +198,7 @@ const Dashboard: React.FC = () => {
                         <button 
                           className="p-2 rounded-full hover:bg-gray-700/50 transition-colors"
                           disabled={!currentTrack}
+                          onClick={() => skip(-10)}
                         >
                           <SkipBack className="w-4 h-4 text-gray-300" />
                         </button>
@@ -206,11 +212,12 @@ const Dashboard: React.FC = () => {
                         <button 
                           className="p-2 rounded-full hover:bg-gray-700/50 transition-colors"
                           disabled={!currentTrack}
+                          onClick={() => skip(10)}
                         >
                           <SkipForward className="w-4 h-4 text-gray-300" />
                         </button>
                       </div>
-                    </div>
+                  </div>
                   </div>
                 </div>
 
@@ -233,8 +240,8 @@ const Dashboard: React.FC = () => {
                             <h4 className="font-light text-white truncate text-sm">{player.name}</h4>
                           </div>
                         </div>
-                      ))}
-                    </div>
+                  ))}
+                </div>
                   </div>
                 </div>
               </div>
@@ -251,6 +258,18 @@ const Dashboard: React.FC = () => {
                   <div 
                     key={song.id} 
                     className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800/20 transition-colors cursor-pointer group"
+                    onClick={() => {
+                      const track = {
+                        id: song.id,
+                        title: song.title,
+                        channelTitle: song.artist,
+                        thumbnail: song.avatar
+                      };
+                      // For mock data, we'll use YouTube video IDs for real songs
+                      const youtubeIds = ['2Vv-BfVoq4g', 'bx1Bh8ZvH84', 'BciS5krYL80', 'Man4t8eIOh0', 'QkF3oxziUI4'];
+                      track.id = youtubeIds[parseInt(song.id) - 1] || song.id;
+                      playTrack(track);
+                    }}
                   >
                     <div className="flex-shrink-0 w-6 text-center">
                       <span className="text-sm font-bold text-gray-400">{index + 1}</span>
@@ -274,14 +293,28 @@ const Dashboard: React.FC = () => {
                       </span>
                     </div>
                     {/* Play button overlay */}
-                    <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div 
+                      className="opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent triggering the parent onClick
+                        const track = {
+                          id: song.id,
+                          title: song.title,
+                          channelTitle: song.artist,
+                          thumbnail: song.avatar
+                        };
+                        const youtubeIds = ['2Vv-BfVoq4g', 'bx1Bh8ZvH84', 'BciS5krYL80', 'Man4t8eIOh0', 'QkF3oxziUI4'];
+                        track.id = youtubeIds[parseInt(song.id) - 1] || song.id;
+                        playTrack(track);
+                      }}
+                    >
                       <Play className="w-4 h-4 text-brand-brown" />
                     </div>
                   </div>
                 ))}
               </div>
+              </div>
             </div>
-          </div>
 
           <div className="grid lg:grid-cols-12 gap-8">
             {/* Recent Practice Sessions - Takes first 9 columns */}
@@ -303,19 +336,19 @@ const Dashboard: React.FC = () => {
               
               <div className="space-y-2">
                 {recentSessions.map((session) => (
-                  <div 
-                    key={session.id} 
+                  <div
+                    key={session.id}
                     className="group relative rounded-lg p-4 cursor-pointer hover:bg-gray-800/20 transition-all duration-300 hover:scale-[1.01] hover:shadow-lg"
                     onClick={() => navigate(`/practice/${session.id}`)}
                   >
                     <div className="flex items-center gap-4">
                       {/* Album Art with Play Overlay */}
                       <div className="relative">
-                        <img
+                    <img
                           src={`https://picsum.photos/seed/${session.id}/48/48`}
-                          alt={session.songTitle}
+                      alt={session.songTitle}
                           className="w-12 h-12 rounded-lg object-cover shadow-md"
-                        />
+                    />
                         <div className="absolute inset-0 bg-black/40 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                           <Play className="w-4 h-4 text-white" />
                         </div>
@@ -330,7 +363,7 @@ const Dashboard: React.FC = () => {
                       {/* Song Info */}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between">
-                          <div className="flex-1 min-w-0">
+                    <div className="flex-1 min-w-0">
                             <h4 className="text-base font-bold text-white truncate group-hover:text-brand-yellow transition-colors">
                               {session.songTitle}
                             </h4>
@@ -390,12 +423,12 @@ const Dashboard: React.FC = () => {
                   <div>
                     <h3 className="text-lg font-bold text-white">AI Recommendations</h3>
                     <p className="text-xs text-gray-400">Personalized suggestions</p>
-                  </div>
+          </div>
                 </div>
                 <div className="text-right">
                   <div className="text-2xl font-bold">22/30</div>
                   <div className="text-yellow-100 text-sm">minutes</div>
-                </div>
+              </div>
               </div>
               <div className="w-full bg-white/20 rounded-full h-3 mb-2">
                 <div className="bg-white h-3 rounded-full" style={{ width: '73%' }}></div>
@@ -409,6 +442,8 @@ const Dashboard: React.FC = () => {
         
 
       </div>
+      {/* Music Player Bar */}
+      <MusicPlayerBar />
     </div>
   );
 };
