@@ -1,10 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Search, Play, Pause, Clock, Music, Headphones, Heart, ArrowRight } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
 import { useMusicPlayer } from '../contexts/PlayerContext';
 import { useSidebar } from '../contexts/SidebarContext';
+
+interface YoutubeApiItem {
+  id: string;
+  title: string;
+  channelTitle: string;
+  thumbnail: string;
+  duration?: string;
+  views?: string;
+}
 
 interface Track {
   id: string;
@@ -15,58 +24,57 @@ interface Track {
   views?: string;
 }
 
+// Mock search results - moved outside component to avoid re-creation
+const mockResults: Track[] = [
+  {
+    id: '1',
+    title: 'Hotel California - Eagles',
+    channelTitle: 'Eagles',
+    thumbnail: 'https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg?w=300&h=200&fit=crop',
+    duration: '6:31',
+    views: '2.1M'
+  },
+  {
+    id: '2',
+    title: 'Wonderwall - Oasis',
+    channelTitle: 'Oasis',
+    thumbnail: 'https://images.pexels.com/photos/1763076/pexels-photo-1763076.jpeg?w=300&h=200&fit=crop',
+    duration: '4:18',
+    views: '1.8M'
+  },
+  {
+    id: '3',
+    title: 'Perfect - Ed Sheeran',
+    channelTitle: 'Ed Sheeran',
+    thumbnail: 'https://images.pexels.com/photos/1763077/pexels-photo-1763077.jpeg?w=300&h=200&fit=crop',
+    duration: '4:23',
+    views: '3.2M'
+  },
+  {
+    id: '4',
+    title: 'Blackbird - The Beatles',
+    channelTitle: 'The Beatles',
+    thumbnail: 'https://images.pexels.com/photos/1763078/pexels-photo-1763078.jpeg?w=300&h=200&fit=crop',
+    duration: '2:18',
+    views: '1.5M'
+  },
+  {
+    id: '5',
+    title: 'Stairway to Heaven - Led Zeppelin',
+    channelTitle: 'Led Zeppelin',
+    thumbnail: 'https://images.pexels.com/photos/1763079/pexels-photo-1763079.jpeg?w=300&h=200&fit=crop',
+    duration: '8:02',
+    views: '4.1M'
+  }
+];
+
 const SearchPage: React.FC = () => {
   const { isCollapsed } = useSidebar();
-  const { currentTrack, isPlaying, togglePlay, playTrack } = useMusicPlayer();
+  const { currentTrack, isPlaying, playTrack } = useMusicPlayer();
   const [searchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
   const [isLoading, setIsLoading] = useState(false);
   const [searchResults, setSearchResults] = useState<Track[]>([]);
-
-  // Mock search results
-  const mockResults: Track[] = [
-    {
-      id: '1',
-      title: 'Hotel California - Eagles',
-      channelTitle: 'Eagles',
-      thumbnail: 'https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg?w=300&h=200&fit=crop',
-      duration: '6:31',
-      views: '2.1M'
-    },
-    {
-      id: '2',
-      title: 'Wonderwall - Oasis',
-      channelTitle: 'Oasis',
-      thumbnail: 'https://images.pexels.com/photos/1763076/pexels-photo-1763076.jpeg?w=300&h=200&fit=crop',
-      duration: '4:18',
-      views: '1.8M'
-    },
-    {
-      id: '3',
-      title: 'Perfect - Ed Sheeran',
-      channelTitle: 'Ed Sheeran',
-      thumbnail: 'https://images.pexels.com/photos/1763077/pexels-photo-1763077.jpeg?w=300&h=200&fit=crop',
-      duration: '4:23',
-      views: '3.2M'
-    },
-    {
-      id: '4',
-      title: 'Blackbird - The Beatles',
-      channelTitle: 'The Beatles',
-      thumbnail: 'https://images.pexels.com/photos/1763078/pexels-photo-1763078.jpeg?w=300&h=200&fit=crop',
-      duration: '2:18',
-      views: '1.5M'
-    },
-    {
-      id: '5',
-      title: 'Stairway to Heaven - Led Zeppelin',
-      channelTitle: 'Led Zeppelin',
-      thumbnail: 'https://images.pexels.com/photos/1763079/pexels-photo-1763079.jpeg?w=300&h=200&fit=crop',
-      duration: '8:02',
-      views: '4.1M'
-    }
-  ];
-
   const recentSearches = ['Guitar tabs', 'Ed Sheeran', 'Rock ballads', 'Acoustic covers'];
   
   const topGenres = [
@@ -81,21 +89,11 @@ const SearchPage: React.FC = () => {
     { name: 'New Releases', icon: <Music className="w-6 h-6" />, color: 'from-blue-500 to-purple-500' },
     { name: 'Acoustic', icon: <Headphones className="w-6 h-6" />, color: 'from-green-500 to-emerald-500' },
     { name: 'Rock Classics', icon: <Clock className="w-6 h-6" />, color: 'from-orange-500 to-red-500' }
-  ];
-
-  // Load search results when query parameter changes
-  useEffect(() => {
-    const query = searchParams.get('q');
-    if (query) {
-      setSearchQuery(query);
-      performSearch(query);
-    }
-  }, [searchParams]);
-
-  const performSearch = async (query: string) => {
+  ];  const performSearch = useCallback(async (query: string) => {
     if (!query.trim()) return;
     
     setIsLoading(true);
+    setSearchResults([]); // Clear previous results immediately
     
     try {
       const response = await fetch(`http://localhost:3000/api/youtube/search?query=${encodeURIComponent(query)}&maxResults=20`);
@@ -110,9 +108,8 @@ const SearchPage: React.FC = () => {
       if (data.error) {
         throw new Error(data.error);
       }
-      
-      // Transform YouTube API data to our Track interface
-      const transformedResults: Track[] = data.map((item: any) => ({
+        // Transform YouTube API data to our Track interface
+      const transformedResults: Track[] = data.map((item: YoutubeApiItem) => ({
         id: item.id,
         title: item.title,
         channelTitle: item.channelTitle,
@@ -131,9 +128,9 @@ const SearchPage: React.FC = () => {
       console.error('Error searching videos:', error);
       
       // Show helpful error message
-      if (error.message.includes('fetch')) {
+      if (error instanceof Error && error.message.includes('fetch')) {
         console.warn('⚠️ Backend server not running. Please start the backend server and configure YouTube API key. See backend/YOUTUBE_API_SETUP.md for setup instructions.');
-      } else if (error.message.includes('YouTube API key is not configured')) {
+      } else if (error instanceof Error && error.message.includes('YouTube API key is not configured')) {
         console.warn('⚠️ YouTube API key not configured. Please see backend/YOUTUBE_API_SETUP.md for setup instructions.');
       }
       
@@ -151,7 +148,19 @@ const SearchPage: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
+
+  // Load search results when query parameter changes
+  useEffect(() => {
+    const query = searchParams.get('q');
+    if (query) {
+      setSearchQuery(query);
+      performSearch(query);
+    } else {
+      // Clear results when no query
+      setSearchResults([]);
+    }
+  }, [searchParams, performSearch]);
 
   const handleTrackPlay = (track: Track) => {
     playTrack(track);

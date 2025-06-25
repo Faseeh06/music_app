@@ -5,26 +5,24 @@ import { useAuth } from '../hooks/useAuth';
 
 const Navbar: React.FC = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [searchFocused, setSearchFocused] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchFocused, setSearchFocused] = useState(false);  const [searchQuery, setSearchQuery] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const location = useLocation();
-  const { logout, currentUser } = useAuth();
-
-  // Sync search query with URL parameters when on search page
+  const { logout, currentUser } = useAuth();  // Sync search query with URL parameters when on search page
   useEffect(() => {
     if (location.pathname === '/search') {
       const query = searchParams.get('q');
-      if (query && query !== searchQuery) {
+      if (query) {
         setSearchQuery(query);
       }
     }
-  }, [location.pathname, searchParams, searchQuery]);
+  }, [location.pathname, searchParams]);
 
   // Mock recent searches and trending
   const recentSearches = ['Perfect - Ed Sheeran', 'Hotel California', 'Wonderwall'];
@@ -54,26 +52,26 @@ const Navbar: React.FC = () => {
       setIsListening(false);
       setSearchQuery('Perfect by Ed Sheeran');
     }, 2000);
-  };
-
-  const clearSearch = () => {
+  };  const clearSearch = () => {
     setSearchQuery('');
     setShowSuggestions(false);
+    setSearchFocused(true);
+    // Focus back to input
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
   };
 
   const handleSearchFocus = () => {
     setSearchFocused(true);
     setShowSuggestions(true);
-  };
-
-  const handleSearchBlur = () => {
-    // Delay to allow clicking on suggestions
+  };  const handleSearchBlur = () => {
+    // Simple delay to allow for suggestion clicks
     setTimeout(() => {
       setSearchFocused(false);
       setShowSuggestions(false);
-    }, 200);
+    }, 150);
   };
-
   // Close dropdown on outside click
   React.useEffect(() => {
     function handleClick(e: MouseEvent) {
@@ -82,6 +80,7 @@ const Navbar: React.FC = () => {
       }
       if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
         setShowSuggestions(false);
+        setSearchFocused(false);
       }
     }
     if (dropdownOpen || showSuggestions) document.addEventListener('mousedown', handleClick);
@@ -97,38 +96,38 @@ const Navbar: React.FC = () => {
           <div className={`relative transition-all duration-300 ease-in-out ${
             searchFocused ? 'transform scale-105 shadow-2xl' : 'shadow-lg'
           }`}>
-            <div className="absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-200">
-              <Search className={`w-5 h-5 ${searchFocused ? 'text-brand-brown' : 'text-gray-400'}`} />
-            </div>
-            
-        <input
+        <div className="absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-200">
+          <Search className={`w-5 h-5 ${searchFocused ? 'text-brand-brown' : 'text-gray-400'}`} />
+        </div>        <input
+          ref={inputRef}
           type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onFocus={handleSearchFocus}
-              onBlur={handleSearchBlur}
-              onKeyDown={handleSearch}
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          onFocus={handleSearchFocus}
+          onBlur={handleSearchBlur}
+          onKeyDown={handleSearch}
           placeholder="Search songs, playlists, albums, artists, etc..."
-              className={`w-full rounded-2xl pl-12 pr-32 py-3 bg-[#101218]/90 backdrop-blur-sm text-white placeholder:text-gray-400 border transition-all duration-300 ease-in-out text-base font-medium ${
-                searchFocused 
-                  ? 'border-brand-brown bg-[#101218] focus:outline-none' 
-                  : 'border-white hover:border-gray-300'
-              }`}
-            />
+          className={`w-full rounded-2xl pl-12 pr-32 py-3 bg-[#101218]/90 backdrop-blur-sm text-white placeholder:text-gray-400 border transition-all duration-300 ease-in-out text-base font-medium ${
+            searchFocused 
+              ? 'border-brand-brown bg-[#101218] focus:outline-none' 
+              : 'border-white hover:border-gray-300'
+          }`}
+          autoComplete="off"
+        />
 
             {/* Right side buttons */}
-            <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
-              {searchQuery && (
+            <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">              {searchQuery && (
                 <button
                   onClick={clearSearch}
+                  onMouseDown={(e) => e.preventDefault()} // Prevent input blur
                   className="p-2 rounded-full hover:bg-gray-700/50 transition-all duration-200 group"
                 >
                   <X className="w-4 h-4 text-gray-400 group-hover:text-white" />
                 </button>
               )}
-              
-              <button
+                <button
                 onClick={handleVoiceSearch}
+                onMouseDown={(e) => e.preventDefault()} // Prevent input blur
                 className={`p-2 rounded-full transition-all duration-200 ${
                   isListening 
                     ? 'bg-red-600/20 text-red-400 animate-pulse' 
@@ -138,7 +137,10 @@ const Navbar: React.FC = () => {
                 <Mic className="w-4 h-4" />
               </button>
               
-              <button className="p-2 rounded-full hover:bg-gray-700/50 transition-all duration-200 text-gray-400 hover:text-brand-brown">
+              <button 
+                onMouseDown={(e) => e.preventDefault()} // Prevent input blur
+                className="p-2 rounded-full hover:bg-gray-700/50 transition-all duration-200 text-gray-400 hover:text-brand-brown"
+              >
                 <Filter className="w-4 h-4" />
               </button>
             </div>
