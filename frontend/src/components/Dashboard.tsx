@@ -60,11 +60,11 @@ const leaderboardData: LeaderboardEntry[] = [
 ];
 
 const popularSongs: PopularSong[] = [
-  { id: '1', title: 'Perfect', artist: 'Ed Sheeran', avatar: 'https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg?w=40&h=40&fit=crop', plays: '2.1M', difficulty: 'Intermediate' },
-  { id: '2', title: 'Wonderwall', artist: 'Oasis', avatar: 'https://images.pexels.com/photos/1763076/pexels-photo-1763076.jpeg?w=40&h=40&fit=crop', plays: '1.8M', difficulty: 'Beginner' },
-  { id: '3', title: 'Hotel California', artist: 'Eagles', avatar: 'https://images.pexels.com/photos/1763077/pexels-photo-1763077.jpeg?w=40&h=40&fit=crop', plays: '1.5M', difficulty: 'Advanced' },
-  { id: '4', title: 'Blackbird', artist: 'Beatles', avatar: 'https://images.pexels.com/photos/1763078/pexels-photo-1763078.jpeg?w=40&h=40&fit=crop', plays: '1.2M', difficulty: 'Intermediate' },
-  { id: '5', title: 'Stairway to Heaven', artist: 'Led Zeppelin', avatar: 'https://images.pexels.com/photos/1763079/pexels-photo-1763079.jpeg?w=40&h=40&fit=crop', plays: '1.0M', difficulty: 'Advanced' }
+  { id: '1', title: 'パーフェクト', artist: 'エド・シーラン', avatar: 'https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg?w=40&h=40&fit=crop', plays: '2.1M', difficulty: '中級者' },
+  { id: '2', title: 'ワンダーウォール', artist: 'オアシス', avatar: 'https://images.pexels.com/photos/1763076/pexels-photo-1763076.jpeg?w=40&h=40&fit=crop', plays: '1.8M', difficulty: '初心者' },
+  { id: '3', title: 'ホテル・カリフォルニア', artist: 'イーグルス', avatar: 'https://images.pexels.com/photos/1763077/pexels-photo-1763077.jpeg?w=40&h=40&fit=crop', plays: '1.5M', difficulty: '上級者' },
+  { id: '4', title: 'ブラックバード', artist: 'ビートルズ', avatar: 'https://images.pexels.com/photos/1763078/pexels-photo-1763078.jpeg?w=40&h=40&fit=crop', plays: '1.2M', difficulty: '中級者' },
+  { id: '5', title: '天国への階段', artist: 'レッド・ツェッペリン', avatar: 'https://images.pexels.com/photos/1763079/pexels-photo-1763079.jpeg?w=40&h=40&fit=crop', plays: '1.0M', difficulty: '上級者' }
 ];
 
 const Dashboard: React.FC = () => {
@@ -75,64 +75,58 @@ const Dashboard: React.FC = () => {
   // Mock data with AI-enhanced features
   const recentSessions: PracticeSession[] = [
     {
-      id: '1',
-      songTitle: 'Wonderwall',
-      artist: 'Oasis',
+      id: '1',      songTitle: 'ワンダーウォール',
+      artist: 'オアシス',
       duration: 25,
-      date: '2 hours ago',
+      date: '2時間前',
       progress: 78,
       aiScore: 85,
-      skillsImproved: ['Chord Transitions', 'Strumming Patterns']
+      skillsImproved: ['コード移行', 'ストラミングパターン']
     },
     {
-      id: '2',
-      songTitle: 'Hotel California',
-      artist: 'Eagles',
+      id: '2',      songTitle: 'ホテル・カリフォルニア',
+      artist: 'イーグルス',
       duration: 35,
-      date: '1 day ago',
+      date: '1日前',
       progress: 92,
       aiScore: 91,
-      skillsImproved: ['Fingerpicking', 'Tempo Control']
+      skillsImproved: ['フィンガーピッキング', 'テンポコントロール']
     },
     {
-      id: '3',
-      songTitle: 'Stairway to Heaven',
-      artist: 'Led Zeppelin',
+      id: '3',      songTitle: '天国への階段',
+      artist: 'レッド・ツェッペリン',
       duration: 42,
-      date: '2 days ago',
+      date: '2日前',
       progress: 65,
       aiScore: 72,
-      skillsImproved: ['Barre Chords', 'Dynamics']
+      skillsImproved: ['バレーコード', 'ダイナミクス']
     },
     {
-      id: '4',
-      songTitle: 'Sweet Child O Mine',
-      artist: 'Guns N Roses',
+      id: '4',      songTitle: 'スウィート・チャイルド・オ・マイン',
+      artist: 'ガンズ・アンド・ローゼズ',
       duration: 28,
-      date: '3 days ago',
+      date: '3日前',
       progress: 88,
       aiScore: 89,
-      skillsImproved: ['Lead Guitar', 'Timing']
+      skillsImproved: ['リードギター', 'タイミング']
     },
     {
-      id: '5',
-      songTitle: 'Blackbird',
-      artist: 'The Beatles',
+      id: '5',      songTitle: 'ブラックバード',
+      artist: 'ザ・ビートルズ',
       duration: 18,
-      date: '4 days ago',
+      date: '4日前',
       progress: 95,
       aiScore: 94,
-      skillsImproved: ['Fingerpicking', 'Melody']
+      skillsImproved: ['フィンガーピッキング', 'メロディー']
     }
   ];
 
 
-
   const getDifficultyColorDark = (difficulty: string) => {
     switch (difficulty) {
-      case 'Beginner': return 'text-green-400 bg-green-900/30 border-green-700/30';
-      case 'Intermediate': return 'text-orange-400 bg-orange-900/30 border-orange-700/30';
-      case 'Advanced': return 'text-red-400 bg-red-900/30 border-red-700/30';
+      case '初心者': return 'text-green-400 bg-green-900/30 border-green-700/30';
+      case '中級者': return 'text-orange-400 bg-orange-900/30 border-orange-700/30';
+      case '上級者': return 'text-red-400 bg-red-900/30 border-red-700/30';
       default: return 'text-gray-400 bg-gray-800/30 border-gray-700/30';
     }
   };
@@ -161,20 +155,18 @@ const Dashboard: React.FC = () => {
                   src={currentTrack?.thumbnail || "/src/assets/images/bmwsong.jpeg"}
                   alt={currentTrack?.title || "No track playing"}
                   className="w-full aspect-[3/1] rounded-xl object-cover"
-                />
-                <div className="absolute top-3 right-3 bg-black/70 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-full">
-                  Intermediate
+                />                <div className="absolute top-3 right-3 bg-black/70 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-full">
+                  中級者
                 </div>
 
                 {/* Music Player Controls - Left Side */}
                 <div className="absolute bottom-3 left-6 right-3">
                   <div className="flex items-start">
-                    <div className="flex flex-col items-center">
-                      <h3 className="text-xl font-bold text-white mb-1 text-center">
-                        {currentTrack?.title || "No Song Playing"}
+                    <div className="flex flex-col items-center">                      <h3 className="text-xl font-bold text-white mb-1 text-center">
+                        {currentTrack?.title || "再生中の楽曲なし"}
                       </h3>
                       <p className="text-sm text-gray-300 mb-3 text-center">
-                        {currentTrack?.channelTitle || "Select a song to start"}
+                        {currentTrack?.channelTitle || "楽曲を選択して開始"}
                       </p>
                       
                       {/* Progress Bar */}
@@ -224,7 +216,7 @@ const Dashboard: React.FC = () => {
                 {/* Leaderboard - Right Side within the image */}
                 <div className="absolute top-3 right-16 bottom-3 flex flex-col justify-start w-56">
                   <div className="p-4">
-                    <h3 className="text-lg font-light text-white mb-4">Leader Board</h3>
+                    <h3 className="text-lg font-light text-white mb-4">リーダーボード</h3>
                     <div className="space-y-3">
                       {leaderboardData.slice(0, 5).map((player) => (
                         <div key={player.id} className="flex items-center gap-3 text-sm">
@@ -251,7 +243,7 @@ const Dashboard: React.FC = () => {
             <div className="lg:col-span-3 p-6">
               <div className="flex items-center gap-2 mb-4">
                 <TrendingUp className="w-5 h-5 text-brand-brown" />
-                <h3 className="text-lg font-bold text-white">Popular Songs</h3>
+                <h3 className="text-lg font-bold text-white">人気の楽曲</h3>
               </div>
               <div className="space-y-3">
                 {popularSongs.map((song, index) => (
@@ -324,13 +316,11 @@ const Dashboard: React.FC = () => {
                   <div className="w-10 h-10 bg-gradient-to-br from-brand-brown to-brand-yellow rounded-xl flex items-center justify-center">
                     <Music className="w-5 h-5 text-white" />
                   </div>
-                  <div>
-                    <h3 className="text-2xl font-bold text-white">Recent Practice Sessions</h3>
-                    <p className="text-sm text-gray-400">Your musical journey continues</p>
+                  <div>                    <h3 className="text-2xl font-bold text-white">最近の練習セッション</h3>
+                    <p className="text-sm text-gray-400">あなたの音楽の旅は続きます</p>
                   </div>
-                </div>
-                <button className="px-6 py-2 bg-brand-brown/20 text-brand-brown hover:bg-brand-brown hover:text-white font-medium text-sm transition-all duration-300 rounded-lg border border-brand-brown/30 hover:border-brand-brown">
-                  View All Sessions
+                </div>                <button className="px-6 py-2 bg-brand-brown/20 text-brand-brown hover:bg-brand-brown hover:text-white font-medium text-sm transition-all duration-300 rounded-lg border border-brand-brown/30 hover:border-brand-brown">
+                  すべてのセッションを表示
                 </button>
               </div>
               
@@ -420,20 +410,18 @@ const Dashboard: React.FC = () => {
                   <div className="w-8 h-8 bg-gradient-to-br from-brand-brown to-brand-yellow rounded-lg flex items-center justify-center">
                     <Brain className="w-4 h-4 text-white" />
                   </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-white">AI Recommendations</h3>
-                    <p className="text-xs text-gray-400">Personalized suggestions</p>
+                  <div>                    <h3 className="text-lg font-bold text-white">AIおすすめ</h3>
+                    <p className="text-xs text-gray-400">パーソナライズされた提案</p>
           </div>
                 </div>
-                <div className="text-right">
-                  <div className="text-2xl font-bold">22/30</div>
-                  <div className="text-yellow-100 text-sm">minutes</div>
+                <div className="text-right">                  <div className="text-2xl font-bold">22/30</div>
+                  <div className="text-yellow-100 text-sm">分</div>
               </div>
               </div>
               <div className="w-full bg-white/20 rounded-full h-3 mb-2">
                 <div className="bg-white h-3 rounded-full" style={{ width: '73%' }}></div>
               </div>
-              <p className="text-yellow-100 text-sm">8 more minutes to reach your daily goal! 🎯</p>
+              <p className="text-yellow-100 text-sm">1日の目標達成まであと8分！🎯</p>
             </div>
           </div>
 

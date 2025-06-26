@@ -17,9 +17,9 @@ const dummyStats = {
 };
 
 const dummyAchievements = [
-  { icon: <Award className="w-7 h-7 text-yellow-400" />, label: '7 Day Streak', desc: 'Practiced 7 days in a row' },
-  { icon: <Award className="w-7 h-7 text-brand-brown" />, label: 'Level 5', desc: 'Reached Level 5' },
-  { icon: <Award className="w-7 h-7 text-blue-400" />, label: 'First Practice', desc: 'Completed your first session' },
+  { icon: <Award className="w-7 h-7 text-yellow-400" />, label: '7日連続', desc: '7日間連続で練習' },
+  { icon: <Award className="w-7 h-7 text-brand-brown" />, label: 'レベル5', desc: 'レベル5に到達' },
+  { icon: <Award className="w-7 h-7 text-blue-400" />, label: '初回練習', desc: '最初のセッションを完了' },
 ];
 
 const dummyPrivacy = {
@@ -52,7 +52,7 @@ const ProfilePage: React.FC = () => {
           <div className="max-w-7xl mx-auto py-10 px-4 flex items-center justify-center min-h-[400px]">
             <div className="text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-brown mx-auto mb-4"></div>
-              <p className="text-gray-400">Loading profile...</p>
+              <p className="text-gray-400">プロフィールを読み込み中...</p>
             </div>
           </div>
         </div>
@@ -68,7 +68,7 @@ const ProfilePage: React.FC = () => {
           <Navbar />
           <div className="max-w-7xl mx-auto py-10 px-4 flex items-center justify-center min-h-[400px]">
             <div className="text-center">
-              <p className="text-gray-400">Profile not found</p>
+              <p className="text-gray-400">プロフィールが見つかりません</p>
             </div>
           </div>
         </div>
@@ -90,7 +90,7 @@ const ProfilePage: React.FC = () => {
       <div className={`transition-all duration-300 ${isCollapsed ? 'ml-20' : 'ml-64'}`}>
         <Navbar />
         <div className="max-w-7xl mx-auto py-8 px-4">
-          <h1 className="text-3xl font-bold text-white mb-8">Profile</h1>
+          <h1 className="text-3xl font-bold text-white mb-8">プロフィール</h1>
           
           {/* Profile Header */}
           <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl p-8 flex flex-col sm:flex-row items-center gap-8 mb-8 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">
@@ -103,7 +103,7 @@ const ProfilePage: React.FC = () => {
               <button
                 className="absolute bottom-2 right-2 bg-brand-brown text-white p-2 rounded-full shadow-lg hover:bg-brand-brown/80 transition-colors"
                 onClick={() => fileInput.current?.click()}
-                title="Change Avatar"
+                title="アバターを変更"
               >
                 <Upload className="w-5 h-5" />
               </button>
@@ -123,7 +123,7 @@ const ProfilePage: React.FC = () => {
                 </h2>
                 <button 
                   className="p-1 rounded-full hover:bg-gray-700/50 transition-colors" 
-                  title="Edit Profile"
+                  title="プロフィール編集"
                   onClick={() => navigate('/settings')}
                 >
                   <Edit3 className="w-4 h-4 text-brand-brown" />
@@ -146,7 +146,7 @@ const ProfilePage: React.FC = () => {
               {profile.dateOfBirth && (
                 <div className="flex items-center gap-1 text-gray-400 mb-2">
                   <Calendar className="w-4 h-4" />
-                  <span className="text-sm">Born {new Date(profile.dateOfBirth).toLocaleDateString()}</span>
+                  <span className="text-sm">生年月日 {new Date(profile.dateOfBirth).toLocaleDateString()}</span>
                 </div>
               )}
               
@@ -155,7 +155,7 @@ const ProfilePage: React.FC = () => {
                   {profile.skillLevel.charAt(0).toUpperCase() + profile.skillLevel.slice(1)}
                 </span>
                 <span className="bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded-full text-sm font-medium border border-yellow-500/30">
-                  {dummyStats.streak} Day Streak
+                  {dummyStats.streak} 日連続
                 </span>
               </div>
             </div>
@@ -165,19 +165,19 @@ const ProfilePage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
             <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">
               <div className="text-2xl font-bold text-white mb-1">{dummyStats.totalPractice}h</div>
-              <div className="text-gray-400 text-sm">Total Practice</div>
+              <div className="text-gray-400 text-sm">総練習時間</div>
             </div>
             <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">
               <div className="text-2xl font-bold text-white mb-1">{dummyStats.sessions}</div>
-              <div className="text-gray-400 text-sm">Sessions</div>
+              <div className="text-gray-400 text-sm">セッション</div>
             </div>
             <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">
               <div className="text-2xl font-bold text-white mb-1">{dummyStats.level}</div>
-              <div className="text-gray-400 text-sm">Level</div>
+              <div className="text-gray-400 text-sm">レベル</div>
             </div>
             <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">
               <div className="text-2xl font-bold text-white mb-1">{dummyStats.xp}</div>
-              <div className="text-gray-400 text-sm">XP Points</div>
+              <div className="text-gray-400 text-sm">経験値ポイント</div>
             </div>
           </div>
 
@@ -187,7 +187,7 @@ const ProfilePage: React.FC = () => {
             <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">
               <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                 <Guitar className="w-5 h-5 text-brand-brown" />
-                Instruments
+                楽器
               </h3>
               <div className="flex flex-wrap gap-2">
                 {profile.instruments.map((instrument) => (
@@ -205,7 +205,7 @@ const ProfilePage: React.FC = () => {
             <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">
               <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                 <Music className="w-5 h-5 text-brand-brown" />
-                Favorite Genres
+                好きなジャンル
               </h3>
               <div className="flex flex-wrap gap-2">
                 {profile.favoriteGenres.map((genre) => (
@@ -223,7 +223,7 @@ const ProfilePage: React.FC = () => {
           {/* Goals Section */}
           {profile.goals && profile.goals.length > 0 && (
             <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl p-6 mb-8 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">
-              <h3 className="text-lg font-bold text-white mb-4">Musical Goals</h3>
+              <h3 className="text-lg font-bold text-white mb-4">音楽の目標</h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {profile.goals.map((goal) => (
                   <div key={goal} className="bg-blue-500/20 text-blue-400 px-3 py-2 rounded-lg text-sm font-medium border border-blue-500/30 text-center">
@@ -238,7 +238,7 @@ const ProfilePage: React.FC = () => {
           <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl p-6 mb-8 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">
             <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
               <Award className="w-5 h-5 text-yellow-400" />
-              Achievements
+              実績
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {dummyAchievements.map((achievement, index) => (
@@ -252,23 +252,20 @@ const ProfilePage: React.FC = () => {
           </div>
 
           {/* Level Progress */}
-          <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">
-            <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+          <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">            <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
               <BarChart3 className="w-5 h-5 text-brand-brown" />
-              Level Progress
-            </h3>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-white font-medium">Level {dummyStats.level}</span>
-              <span className="text-gray-400 text-sm">{dummyStats.xp} / {dummyStats.nextLevelXp} XP</span>
+              レベル進行
+            </h3>            <div className="flex items-center justify-between mb-2">
+              <span className="text-white font-medium">レベル {dummyStats.level}</span>
+              <span className="text-gray-400 text-sm">{dummyStats.xp} / {dummyStats.nextLevelXp} 経験値</span>
             </div>
             <div className="w-full bg-gray-700 rounded-full h-3">
               <div 
                 className="bg-gradient-to-r from-brand-brown to-yellow-500 h-3 rounded-full transition-all duration-300"
                 style={{ width: `${(dummyStats.xp / dummyStats.nextLevelXp) * 100}%` }}
               ></div>
-            </div>
-            <p className="text-gray-400 text-sm mt-2">
-              {dummyStats.nextLevelXp - dummyStats.xp} XP to next level
+            </div>            <p className="text-gray-400 text-sm mt-2">
+              次のレベルまで{dummyStats.nextLevelXp - dummyStats.xp}経験値
             </p>
           </div>
         </div>

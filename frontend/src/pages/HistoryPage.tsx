@@ -1,86 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Calendar, Clock, Play, Star, BarChart3, TrendingUp, Target, Award } from 'lucide-react';
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
 import { useSidebar } from '../contexts/SidebarContext';
 
-const dummySessions = [
-  {
-    date: '2024-01-15',
-    time: '14:30-15:15',
-    duration: '45:00',
-    song: 'Wonderwall - Oasis',
-    instrument: 'Guitar',
-    rating: 5,
-    notes: 'Worked on the chorus transition',
-    cover: 'https://picsum.photos/60?random=1',
-    progress: 85
-  },
-  {
-    date: '2024-01-14',
-    time: '19:00-19:25',
-    duration: '25:00',
-    song: 'Hotel California - Eagles',
-    instrument: 'Guitar',
-    rating: 4,
-    notes: 'Solo section needs more work',
-    cover: 'https://picsum.photos/60?random=2',
-    progress: 70
-  },
-  {
-    date: '2024-01-13',
-    time: '16:15-17:00',
-    duration: '45:00',
-    song: 'Stairway to Heaven - Led Zeppelin',
-    instrument: 'Guitar',
-    rating: 5,
-    notes: 'Mastered the intro riff',
-    cover: 'https://picsum.photos/60?random=3',
-    progress: 90
-  },
-  {
-    date: '2024-01-12',
-    time: '20:00-20:30',
-    duration: '30:00',
-    song: 'Bohemian Rhapsody - Queen',
-    instrument: 'Piano',
-    rating: 3,
-    notes: 'Complex chord progressions',
-    cover: 'https://picsum.photos/60?random=4',
-    progress: 55
-  },
-];
-
-const insights = [
-  'Most active day: Tuesday (avg 2.3 sessions)',
-  'Longest streak: 7 days (Jan 10-16)',
-  'Most improved song: Stairway to Heaven (+40% accuracy)',
-  'Recommendation: Try practicing in shorter, focused chunks',
-];
-
-const weeklyStats = [
-  { day: 'Mon', minutes: 45, sessions: 2 },
-  { day: 'Tue', minutes: 60, sessions: 3 },
-  { day: 'Wed', minutes: 30, sessions: 1 },
-  { day: 'Thu', minutes: 75, sessions: 3 },
-  { day: 'Fri', minutes: 90, sessions: 4 },
-  { day: 'Sat', minutes: 45, sessions: 2 },
-  { day: 'Sun', minutes: 0, sessions: 0 },
-];
+// TODO: Implement these data structures when backend is connected
+// const dummySessions = [...];
+// const insights = [...];
+// const weeklyStats = [...];
 
 const HistoryPage: React.FC = () => {
   const { isCollapsed } = useSidebar();
-
-  const renderStars = (rating: number) => {
-    return [...Array(5)].map((_, i) => (
-      <Star
-        key={i}
-        className={`w-4 h-4 ${i < rating ? 'text-yellow-400 fill-current' : 'text-gray-500'}`}
-      />
-    ));
-  };
-
-  const maxMinutes = Math.max(...weeklyStats.map(s => s.minutes));
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#101218] to-[#03020a] font-poppins">
@@ -88,7 +18,7 @@ const HistoryPage: React.FC = () => {
       <div className={`transition-all duration-300 ${isCollapsed ? 'ml-20' : 'ml-64'}`}>
         <Navbar />
         <div className="max-w-7xl mx-auto py-8 px-4">
-          <h1 className="text-3xl font-bold text-white mb-8">Practice History</h1>
+          <h1 className="text-3xl font-bold text-white mb-8">練習履歴</h1>
           
           {/* Stats Overview */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
@@ -97,7 +27,7 @@ const HistoryPage: React.FC = () => {
                 <div className="bg-blue-500/20 p-2 rounded-lg">
                   <Clock className="w-5 h-5 text-blue-400" />
                 </div>
-                <span className="text-gray-400 text-sm">Total Practice</span>
+                <span className="text-gray-400 text-sm">総練習時間</span>
               </div>
               <div className="text-2xl font-bold text-white">142h 30m</div>
             </div>
@@ -107,7 +37,7 @@ const HistoryPage: React.FC = () => {
                 <div className="bg-green-500/20 p-2 rounded-lg">
                   <Calendar className="w-5 h-5 text-green-400" />
                 </div>
-                <span className="text-gray-400 text-sm">Sessions</span>
+                <span className="text-gray-400 text-sm">セッション数</span>
               </div>
               <div className="text-2xl font-bold text-white">89</div>
             </div>
@@ -117,7 +47,7 @@ const HistoryPage: React.FC = () => {
                 <div className="bg-yellow-500/20 p-2 rounded-lg">
                   <TrendingUp className="w-5 h-5 text-yellow-400" />
                 </div>
-                <span className="text-gray-400 text-sm">Average Score</span>
+                <span className="text-gray-400 text-sm">平均スコア</span>
               </div>
               <div className="text-2xl font-bold text-white">87%</div>
             </div>
@@ -127,9 +57,9 @@ const HistoryPage: React.FC = () => {
                 <div className="bg-purple-500/20 p-2 rounded-lg">
                   <Target className="w-5 h-5 text-purple-400" />
                 </div>
-                <span className="text-gray-400 text-sm">Streak</span>
+                <span className="text-gray-400 text-sm">連続日数</span>
               </div>
-              <div className="text-2xl font-bold text-white">12 days</div>
+              <div className="text-2xl font-bold text-white">12日</div>
             </div>
           </div>
 
@@ -139,10 +69,9 @@ const HistoryPage: React.FC = () => {
             <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">
               <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
                 <Calendar className="w-5 h-5 text-brand-brown" />
-                Practice Calendar
-              </h2>
-              <div className="grid grid-cols-7 gap-2 text-center">
-                {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day) => (
+                練習カレンダー
+              </h2>              <div className="grid grid-cols-7 gap-2 text-center">
+                {['日', '月', '火', '水', '木', '金', '土'].map((day) => (
                   <div key={day} className="text-gray-400 font-medium py-2">{day}</div>
                 ))}
                 {Array.from({ length: 35 }, (_, i) => {
@@ -167,20 +96,19 @@ const HistoryPage: React.FC = () => {
             </div>
 
             {/* Weekly Stats */}
-            <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">
-              <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+            <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">              <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
                 <BarChart3 className="w-5 h-5 text-brand-brown" />
-                Weekly Practice
+                週間練習
               </h2>
               <div className="space-y-4">
                 {[
-                  { day: 'Monday', minutes: 45, color: 'from-blue-500 to-blue-600' },
-                  { day: 'Tuesday', minutes: 30, color: 'from-green-500 to-green-600' },
-                  { day: 'Wednesday', minutes: 60, color: 'from-purple-500 to-purple-600' },
-                  { day: 'Thursday', minutes: 25, color: 'from-yellow-500 to-yellow-600' },
-                  { day: 'Friday', minutes: 50, color: 'from-red-500 to-red-600' },
-                  { day: 'Saturday', minutes: 75, color: 'from-indigo-500 to-indigo-600' },
-                  { day: 'Sunday', minutes: 40, color: 'from-pink-500 to-pink-600' }
+                  { day: '月曜日', minutes: 45, color: 'from-blue-500 to-blue-600' },
+                  { day: '火曜日', minutes: 30, color: 'from-green-500 to-green-600' },
+                  { day: '水曜日', minutes: 60, color: 'from-purple-500 to-purple-600' },
+                  { day: '木曜日', minutes: 25, color: 'from-yellow-500 to-yellow-600' },
+                  { day: '金曜日', minutes: 50, color: 'from-red-500 to-red-600' },
+                  { day: '土曜日', minutes: 75, color: 'from-indigo-500 to-indigo-600' },
+                  { day: '日曜日', minutes: 40, color: 'from-pink-500 to-pink-600' }
                 ].map((stat) => (
                   <div key={stat.day} className="flex items-center gap-4">
                     <div className="w-16 text-gray-400 text-sm">{stat.day.slice(0, 3)}</div>
@@ -198,10 +126,9 @@ const HistoryPage: React.FC = () => {
           </div>
 
           {/* Recent Sessions */}
-          <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl p-6 mb-8 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">
-            <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+          <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl p-6 mb-8 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">            <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
               <Clock className="w-5 h-5 text-brand-brown" />
-              Recent Practice Sessions
+              最近の練習セッション
             </h2>
             <div className="space-y-4">
               {[
@@ -275,15 +202,14 @@ const HistoryPage: React.FC = () => {
                         style={{ width: `${session.progress}%` }}
                       />
                     </div>
-                    <div className="text-gray-400 text-xs">{session.progress}% complete</div>
+                    <div className="text-gray-400 text-xs">{session.progress}% 完了</div>
                   </div>
-                  
-                  <div className="flex gap-2">
+                    <div className="flex gap-2">
                     <button className="px-3 py-1 bg-brand-brown text-white rounded-lg text-sm hover:bg-brand-brown/80 transition-colors">
-                      Practice Again
+                      再練習
                     </button>
                     <button className="px-3 py-1 bg-gray-600 text-white rounded-lg text-sm hover:bg-gray-500 transition-colors">
-                      View Stats
+                      統計表示
                     </button>
                   </div>
                 </div>
@@ -292,52 +218,50 @@ const HistoryPage: React.FC = () => {
           </div>
 
           {/* Practice Insights */}
-          <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">
-            <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+          <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">            <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
               <Award className="w-5 h-5 text-brand-brown" />
-              Practice Insights
+              練習インサイト
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">              {[
                 {
-                  title: 'Most Practiced Song',
-                  content: 'Hotel California',
-                  subtitle: '12 sessions this month',
+                  title: '最も練習した楽曲',
+                  content: 'ホテル・カリフォルニア',
+                  subtitle: '今月12セッション',
                   icon: <Play className="w-5 h-5 text-blue-400" />,
                   color: 'bg-blue-500/20'
                 },
                 {
-                  title: 'Favorite Genre',
-                  content: 'Rock',
-                  subtitle: '68% of your practice time',
+                  title: '好きなジャンル',
+                  content: 'ロック',
+                  subtitle: '練習時間の68%',
                   icon: <TrendingUp className="w-5 h-5 text-green-400" />,
                   color: 'bg-green-500/20'
                 },
                 {
-                  title: 'Best Practice Day',
-                  content: 'Saturday',
-                  subtitle: 'Average 75 minutes',
+                  title: 'ベスト練習日',
+                  content: '土曜日',
+                  subtitle: '平均75分',
                   icon: <Calendar className="w-5 h-5 text-purple-400" />,
                   color: 'bg-purple-500/20'
                 },
                 {
-                  title: 'Skill Improvement',
+                  title: 'スキル向上',
                   content: '+15%',
-                  subtitle: 'This month vs last month',
+                  subtitle: '今月 対 前月',
                   icon: <Target className="w-5 h-5 text-yellow-400" />,
                   color: 'bg-yellow-500/20'
                 },
                 {
-                  title: 'Streak Record',
-                  content: '21 days',
-                  subtitle: 'Your longest practice streak',
+                  title: '連続記録',
+                  content: '21日',
+                  subtitle: '最長の練習連続記録',
                   icon: <Award className="w-5 h-5 text-red-400" />,
                   color: 'bg-red-500/20'
                 },
                 {
-                  title: 'Next Goal',
-                  content: '150 hours',
-                  subtitle: '8 hours to milestone',
+                  title: '次の目標',
+                  content: '150時間',
+                  subtitle: 'マイルストーンまで8時間',
                   icon: <Clock className="w-5 h-5 text-indigo-400" />,
                   color: 'bg-indigo-500/20'
                 }

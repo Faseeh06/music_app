@@ -18,7 +18,7 @@ const SearchBar: React.FC = () => {
       <div className="relative">
         <input
           type="text"
-          placeholder="Search songs, artists, or genres..."
+          placeholder="楽曲、アーティスト、ジャンルを検索..."
           className="w-full h-14 pl-12 pr-24 bg-white border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-brown focus:border-transparent text-lg shadow-sm"
           value={query}
           onChange={(e) => setQuery(e.target.value)}

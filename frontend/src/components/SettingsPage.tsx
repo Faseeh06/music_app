@@ -69,13 +69,13 @@ const SettingsPage: React.FC = () => {
     const newErrors: Record<string, string> = {};
     
     if (!formData.displayName.trim()) {
-      newErrors.displayName = 'Display name is required';
+      newErrors.displayName = '表示名は必須です';
     }
     
     if (!formData.username.trim()) {
-      newErrors.username = 'Username is required';
+      newErrors.username = 'ユーザー名は必須です';
     } else if (formData.username.length < 3) {
-      newErrors.username = 'Username must be at least 3 characters';
+      newErrors.username = 'ユーザー名は3文字以上である必要があります';
     }
 
     setErrors(newErrors);
@@ -93,15 +93,14 @@ const SettingsPage: React.FC = () => {
       setIsEditing(false);
     } catch (error) {
       console.error('Error updating profile:', error);
-      setErrors({ submit: 'Failed to update profile. Please try again.' });
+      setErrors({ submit: 'プロフィールの更新に失敗しました。もう一度お試しください。' });
     } finally {
       setIsSubmitting(false);
     }
   };
-
-  const instrumentOptions = ['Guitar', 'Piano', 'Drums', 'Bass', 'Violin', 'Saxophone', 'Trumpet', 'Flute'];
-  const genreOptions = ['Rock', 'Pop', 'Jazz', 'Blues', 'Country', 'Classical', 'Electronic', 'Hip Hop', 'R&B', 'Folk'];
-  const goalOptions = ['Learn songs', 'Improve technique', 'Write music', 'Play with others', 'Perform live', 'Record music'];
+  const instrumentOptions = ['ギター', 'ピアノ', 'ドラム', 'ベース', 'バイオリン', 'サクソフォン', 'トランペット', 'フルート'];
+  const genreOptions = ['ロック', 'ポップ', 'ジャズ', 'ブルース', 'カントリー', 'クラシック', 'エレクトロニック', 'ヒップホップ', 'R&B', 'フォーク'];
+  const goalOptions = ['楽曲を学ぶ', 'テクニックを向上', '作曲する', '他者と演奏', 'ライブ演奏', '録音する'];
 
   if (loading) {
     return (
@@ -112,7 +111,7 @@ const SettingsPage: React.FC = () => {
           <div className="max-w-7xl mx-auto py-10 px-4 flex items-center justify-center min-h-[400px]">
             <div className="text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-brown mx-auto mb-4"></div>
-              <p className="text-gray-400">Loading settings...</p>
+              <p className="text-gray-400">設定を読み込み中...</p>
             </div>
           </div>
         </div>
@@ -126,7 +125,7 @@ const SettingsPage: React.FC = () => {
       <div className={`transition-all duration-300 ${isCollapsed ? 'ml-20' : 'ml-64'}`}>
         <Navbar />
         <div className="max-w-7xl mx-auto py-8 px-4">
-          <h1 className="text-3xl font-bold text-white mb-8">Settings</h1>
+          <h1 className="text-3xl font-bold text-white mb-8">設定</h1>
           
           {/* Tab Navigation */}
           <div className="bg-gray-800/30 backdrop-blur-sm rounded-t-2xl border border-gray-700/50 border-b-0">
@@ -138,9 +137,8 @@ const SettingsPage: React.FC = () => {
                     ? 'bg-gray-700/50 text-white border-b-2 border-brand-brown' 
                     : 'text-gray-400 hover:text-white hover:bg-gray-700/30'
                 }`}
-              >
-                <User className="w-5 h-5" />
-                Profile
+              >                <User className="w-5 h-5" />
+                プロフィール
               </button>
               <button
                 onClick={() => setActiveTab('privacy')}
@@ -149,9 +147,8 @@ const SettingsPage: React.FC = () => {
                     ? 'bg-gray-700/50 text-white border-b-2 border-brand-brown' 
                     : 'text-gray-400 hover:text-white hover:bg-gray-700/30'
                 }`}
-              >
-                <Shield className="w-5 h-5" />
-                Privacy
+              >                <Shield className="w-5 h-5" />
+                プライバシー
               </button>
               <button
                 onClick={() => setActiveTab('notifications')}
@@ -160,9 +157,8 @@ const SettingsPage: React.FC = () => {
                     ? 'bg-gray-700/50 text-white border-b-2 border-brand-brown' 
                     : 'text-gray-400 hover:text-white hover:bg-gray-700/30'
                 }`}
-              >
-                <Bell className="w-5 h-5" />
-                Notifications
+              >                <Bell className="w-5 h-5" />
+                通知
               </button>
             </div>
           </div>
@@ -172,15 +168,14 @@ const SettingsPage: React.FC = () => {
             {activeTab === 'profile' && (
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-bold text-white">Profile Information</h2>
+                  <h2 className="text-xl font-bold text-white">プロフィール情報</h2>
                   {!isEditing ? (
                     <button
                       type="button"
                       onClick={() => setIsEditing(true)}
                       className="flex items-center gap-2 px-4 py-2 bg-brand-brown text-white rounded-lg hover:bg-brand-brown/80 transition-colors"
-                    >
-                      <Edit3 className="w-4 h-4" />
-                      Edit Profile
+                    >                      <Edit3 className="w-4 h-4" />
+                      プロフィール編集
                     </button>
                   ) : (
                     <div className="flex gap-2">
@@ -192,15 +187,14 @@ const SettingsPage: React.FC = () => {
                         }}
                         className="px-4 py-2 text-gray-400 hover:text-white transition-colors"
                       >
-                        Cancel
+                        キャンセル
                       </button>
                       <button
                         type="submit"
                         disabled={isSubmitting}
                         className="flex items-center gap-2 px-4 py-2 bg-brand-brown text-white rounded-lg hover:bg-brand-brown/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        <Save className="w-4 h-4" />
-                        {isSubmitting ? 'Saving...' : 'Save Changes'}
+                      >                        <Save className="w-4 h-4" />
+                        {isSubmitting ? '保存中...' : '変更を保存'}
                       </button>
                     </div>
                   )}
@@ -213,9 +207,8 @@ const SettingsPage: React.FC = () => {
                 )}
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Display Name
+                  <div>                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      表示名
                     </label>
                     <input
                       type="text"
@@ -223,16 +216,15 @@ const SettingsPage: React.FC = () => {
                       onChange={(e) => handleInputChange('displayName', e.target.value)}
                       disabled={!isEditing}
                       className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-brown focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
-                      placeholder="Enter your display name"
+                      placeholder="表示名を入力してください"
                     />
                     {errors.displayName && (
                       <p className="text-red-400 text-sm mt-1">{errors.displayName}</p>
                     )}
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Username
+                  <div>                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      ユーザー名
                     </label>
                     <input
                       type="text"
@@ -240,16 +232,15 @@ const SettingsPage: React.FC = () => {
                       onChange={(e) => handleInputChange('username', e.target.value)}
                       disabled={!isEditing}
                       className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-brown focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
-                      placeholder="Enter your username"
+                      placeholder="ユーザー名を入力してください"
                     />
                     {errors.username && (
                       <p className="text-red-400 text-sm mt-1">{errors.username}</p>
                     )}
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Email
+                  <div>                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      メールアドレス
                     </label>
                     <input
                       type="email"
@@ -257,12 +248,11 @@ const SettingsPage: React.FC = () => {
                       disabled
                       className="w-full px-4 py-3 bg-gray-700/30 border border-gray-600/30 rounded-lg text-gray-400 opacity-50 cursor-not-allowed"
                     />
-                    <p className="text-gray-500 text-xs mt-1">Email cannot be changed</p>
+                    <p className="text-gray-500 text-xs mt-1">メールアドレスは変更できません</p>
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Skill Level
+                  <div>                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      スキルレベル
                     </label>
                     <select
                       value={formData.skillLevel}
@@ -270,15 +260,14 @@ const SettingsPage: React.FC = () => {
                       disabled={!isEditing}
                       className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-brand-brown focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      <option value="beginner">Beginner</option>
-                      <option value="intermediate">Intermediate</option>
-                      <option value="advanced">Advanced</option>
+                      <option value="beginner">初心者</option>
+                      <option value="intermediate">中級者</option>
+                      <option value="advanced">上級者</option>
                     </select>
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Location
+                  <div>                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      場所
                     </label>
                     <input
                       type="text"
@@ -286,13 +275,12 @@ const SettingsPage: React.FC = () => {
                       onChange={(e) => handleInputChange('location', e.target.value)}
                       disabled={!isEditing}
                       className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-brown focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
-                      placeholder="Enter your location"
+                      placeholder="場所を入力してください"
                     />
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Date of Birth
+                  <div>                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      生年月日
                     </label>
                     <input
                       type="date"
@@ -304,9 +292,8 @@ const SettingsPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Bio
+                <div>                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    自己紹介
                   </label>
                   <textarea
                     value={formData.bio}
@@ -314,13 +301,12 @@ const SettingsPage: React.FC = () => {
                     disabled={!isEditing}
                     rows={4}
                     className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-brown focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed resize-none"
-                    placeholder="Tell us about yourself..."
+                    placeholder="あなたについて教えてください..."
                   />
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-4">
-                    Instruments
+                <div>                  <label className="block text-sm font-medium text-gray-300 mb-4">
+                    楽器
                   </label>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     {instrumentOptions.map((instrument) => (
@@ -341,9 +327,8 @@ const SettingsPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-4">
-                    Favorite Genres
+                <div>                  <label className="block text-sm font-medium text-gray-300 mb-4">
+                    好きなジャンル
                   </label>
                   <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
                     {genreOptions.map((genre) => (
@@ -364,9 +349,8 @@ const SettingsPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-4">
-                    Musical Goals
+                <div>                  <label className="block text-sm font-medium text-gray-300 mb-4">
+                    音楽の目標
                   </label>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {goalOptions.map((goal) => (
@@ -391,13 +375,12 @@ const SettingsPage: React.FC = () => {
 
             {activeTab === 'privacy' && (
               <div className="space-y-6">
-                <h2 className="text-xl font-bold text-white mb-6">Privacy Settings</h2>
+                <h2 className="text-xl font-bold text-white mb-6">プライバシー設定</h2>
                 
                 <div className="space-y-4">
                   <div className="flex items-center justify-between p-4 bg-gray-700/30 rounded-lg border border-gray-600/50">
-                    <div>
-                      <h3 className="font-medium text-white">Profile Visibility</h3>
-                      <p className="text-sm text-gray-400">Allow others to view your profile</p>
+                    <div>                      <h3 className="font-medium text-white">プロフィールの公開</h3>
+                      <p className="text-sm text-gray-400">他のユーザーがあなたのプロフィールを表示できるようにする</p>
                     </div>
                     <input
                       type="checkbox"
@@ -407,20 +390,17 @@ const SettingsPage: React.FC = () => {
                   </div>
 
                   <div className="flex items-center justify-between p-4 bg-gray-700/30 rounded-lg border border-gray-600/50">
-                    <div>
-                      <h3 className="font-medium text-white">Show Practice Stats</h3>
-                      <p className="text-sm text-gray-400">Display your practice statistics publicly</p>
+                    <div>                      <h3 className="font-medium text-white">練習統計の表示</h3>
+                      <p className="text-sm text-gray-400">あなたの練習統計を公開表示する</p>
                     </div>
                     <input
                       type="checkbox"
                       className="w-4 h-4 text-brand-brown bg-gray-700 border-gray-600 rounded focus:ring-brand-brown focus:ring-2"
                     />
-                  </div>
-
-                  <div className="flex items-center justify-between p-4 bg-gray-700/30 rounded-lg border border-gray-600/50">
+                  </div>                  <div className="flex items-center justify-between p-4 bg-gray-700/30 rounded-lg border border-gray-600/50">
                     <div>
-                      <h3 className="font-medium text-white">Show Achievements</h3>
-                      <p className="text-sm text-gray-400">Let others see your achievements</p>
+                      <h3 className="font-medium text-white">実績の表示</h3>
+                      <p className="text-sm text-gray-400">他のユーザーがあなたの実績を見ることができる</p>
                     </div>
                     <input
                       type="checkbox"
@@ -430,41 +410,34 @@ const SettingsPage: React.FC = () => {
                   </div>
                 </div>
               </div>
-            )}
-
-            {activeTab === 'notifications' && (
+            )}            {activeTab === 'notifications' && (
               <div className="space-y-6">
-                <h2 className="text-xl font-bold text-white mb-6">Notification Preferences</h2>
+                <h2 className="text-xl font-bold text-white mb-6">通知設定</h2>
                 
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between p-4 bg-gray-700/30 rounded-lg border border-gray-600/50">
+                <div className="space-y-4">                  <div className="flex items-center justify-between p-4 bg-gray-700/30 rounded-lg border border-gray-600/50">
                     <div>
-                      <h3 className="font-medium text-white">Practice Reminders</h3>
-                      <p className="text-sm text-gray-400">Get reminded to practice daily</p>
+                      <h3 className="font-medium text-white">練習リマインダー</h3>
+                      <p className="text-sm text-gray-400">毎日の練習をリマインドする</p>
                     </div>
                     <input
                       type="checkbox"
                       defaultChecked
                       className="w-4 h-4 text-brand-brown bg-gray-700 border-gray-600 rounded focus:ring-brand-brown focus:ring-2"
                     />
-                  </div>
-
-                  <div className="flex items-center justify-between p-4 bg-gray-700/30 rounded-lg border border-gray-600/50">
+                  </div>                  <div className="flex items-center justify-between p-4 bg-gray-700/30 rounded-lg border border-gray-600/50">
                     <div>
-                      <h3 className="font-medium text-white">Achievement Notifications</h3>
-                      <p className="text-sm text-gray-400">Be notified when you unlock achievements</p>
+                      <h3 className="font-medium text-white">実績通知</h3>
+                      <p className="text-sm text-gray-400">実績を解除したときに通知する</p>
                     </div>
                     <input
                       type="checkbox"
                       defaultChecked
                       className="w-4 h-4 text-brand-brown bg-gray-700 border-gray-600 rounded focus:ring-brand-brown focus:ring-2"
                     />
-                  </div>
-
-                  <div className="flex items-center justify-between p-4 bg-gray-700/30 rounded-lg border border-gray-600/50">
+                  </div>                  <div className="flex items-center justify-between p-4 bg-gray-700/30 rounded-lg border border-gray-600/50">
                     <div>
-                      <h3 className="font-medium text-white">Email Updates</h3>
-                      <p className="text-sm text-gray-400">Receive weekly progress summaries via email</p>
+                      <h3 className="font-medium text-white">メール更新</h3>
+                      <p className="text-sm text-gray-400">週次の進捗サマリーをメールで受信する</p>
                     </div>
                     <input
                       type="checkbox"

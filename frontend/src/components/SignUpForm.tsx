@@ -32,16 +32,14 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSignUp }) => {
   };
 
   const validateForm = () => {
-    const newErrors: Record<string, string> = {};
-
-    if (!formData.firstName.trim()) newErrors.firstName = 'First name is required';
-    if (!formData.lastName.trim()) newErrors.lastName = 'Last name is required';
-    if (!formData.email.trim()) newErrors.email = 'Email is required';
-    else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Email is invalid';
-    if (!formData.password) newErrors.password = 'Password is required';
-    else if (formData.password.length < 8) newErrors.password = 'Password must be at least 8 characters';
-    if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
-    if (!agreeTerms) newErrors.terms = 'You must agree to the terms';
+    const newErrors: Record<string, string> = {};    if (!formData.firstName.trim()) newErrors.firstName = '名前は必須です';
+    if (!formData.lastName.trim()) newErrors.lastName = '姓は必須です';
+    if (!formData.email.trim()) newErrors.email = 'メールアドレスは必須です';
+    else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'メールアドレスが無効です';
+    if (!formData.password) newErrors.password = 'パスワードは必須です';
+    else if (formData.password.length < 8) newErrors.password = 'パスワードは8文字以上である必要があります';
+    if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = 'パスワードが一致しません';
+    if (!agreeTerms) newErrors.terms = '利用規約に同意する必要があります';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -74,16 +72,15 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSignUp }) => {
           } 
         }); 
         // Or navigate('/'); if profile setup is part of the initial signup flow
-      }
-    } catch (error) { // Changed error type to unknown for Firebase errors
+      }    } catch (error) { // Changed error type to unknown for Firebase errors
       console.error('Error during sign up:', error);
       // Handle Firebase specific errors if needed
       if (error instanceof Error && 'code' in error && (error as Error & { code: string }).code === 'auth/email-already-in-use') {
-        setErrors({ email: 'This email is already in use.' });
+        setErrors({ email: 'このメールアドレスは既に使用されています。' });
       } else if (error instanceof Error) {
-        setErrors({ submit: error.message || 'Failed to sign up. Please try again.' });
+        setErrors({ submit: error.message || 'サインアップに失敗しました。もう一度お試しください。' });
       } else {
-        setErrors({ submit: 'An unknown error occurred. Please try again.' });
+        setErrors({ submit: '不明なエラーが発生しました。もう一度お試しください。' });
       }
     } finally {
       setLoading(false);
@@ -120,7 +117,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSignUp }) => {
       }
     } catch (error: unknown) {
       console.error('Google sign in error:', error);
-      const errorMessage = 'Failed to sign in with Google. Please try again.';
+      const errorMessage = 'Googleでのサインインに失敗しました。もう一度お試しください。';
       setErrors({ submit: errorMessage });
     } finally {
       setLoading(false);
@@ -138,9 +135,8 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSignUp }) => {
         )}
         
         <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-brand-dark mb-2">
-              First Name
+          <div>            <label className="block text-sm font-medium text-brand-dark mb-2">
+              名前
             </label>
             <div className="relative">
               <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -152,15 +148,14 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSignUp }) => {
                 className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-brown focus:border-transparent transition-colors ${
                   errors.firstName ? 'border-red-500' : 'border-gray-300'
                 }`}
-                placeholder="John"
+                placeholder="太郎"
               />
             </div>
             {errors.firstName && <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>}
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-brand-dark mb-2">
-              Last Name
+          <div>            <label className="block text-sm font-medium text-brand-dark mb-2">
+              姓
             </label>
             <div className="relative">
               <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -172,16 +167,15 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSignUp }) => {
                 className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-brown focus:border-transparent transition-colors ${
                   errors.lastName ? 'border-red-500' : 'border-gray-300'
                 }`}
-                placeholder="Doe"
+                placeholder="田中"
               />
             </div>
             {errors.lastName && <p className="text-red-500 text-sm mt-1">{errors.lastName}</p>}
           </div>
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-brand-dark mb-2">
-            Email
+        <div>          <label className="block text-sm font-medium text-brand-dark mb-2">
+            メールアドレス
           </label>
           <div className="relative">
             <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -199,9 +193,8 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSignUp }) => {
           {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-brand-dark mb-2">
-            Password
+        <div>          <label className="block text-sm font-medium text-brand-dark mb-2">
+            パスワード
           </label>
           <div className="relative">
             <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -226,9 +219,8 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSignUp }) => {
           {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-brand-dark mb-2">
-            Confirm Password
+        <div>          <label className="block text-sm font-medium text-brand-dark mb-2">
+            パスワード確認
           </label>
           <div className="relative">
             <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -260,12 +252,11 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSignUp }) => {
             checked={agreeTerms}
             onChange={(e) => setAgreeTerms(e.target.checked)}
             className="mt-1 mr-3 rounded border-gray-300 text-brand-brown focus:ring-brand-brown"
-          />
-          <label htmlFor="terms" className="text-sm text-gray-600">
-            I've read and agree with the{' '}
-            <a href="#" className="text-brand-brown hover:underline">Terms of Service</a>
-            {' '}and{' '}
-            <a href="#" className="text-brand-brown hover:underline">Privacy Policy</a>
+          />          <label htmlFor="terms" className="text-sm text-gray-600">
+            <a href="#" className="text-brand-brown hover:underline">利用規約</a>
+            と
+            <a href="#" className="text-brand-brown hover:underline">プライバシーポリシー</a>
+            を読み、同意します
           </label>
         </div>
         {errors.terms && <p className="text-red-500 text-sm">{errors.terms}</p>}        <button
@@ -273,7 +264,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSignUp }) => {
           disabled={loading}
           className="w-full bg-gradient-brand text-white py-3 px-6 rounded-lg font-semibold hover:shadow-lg transform hover:scale-[1.02] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-brand-brown focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
         >
-          {loading ? 'Creating Account...' : 'Sign Up'}
+          {loading ? 'アカウント作成中...' : 'サインアップ'}
         </button>
 
         <div className="relative">
@@ -281,7 +272,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSignUp }) => {
             <div className="w-full border-t border-gray-300" />
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-brand-light text-gray-500">OR</span>
+            <span className="px-2 bg-brand-light text-gray-500">または</span>
           </div>
         </div>        <button
           type="button"
@@ -293,9 +284,8 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSignUp }) => {
             src="https://www.google.com/favicon.ico" 
             alt="Google" 
             className="w-4 h-4 mr-2"
-          />
-          <span className="text-gray-700 font-medium">
-            {loading ? 'Signing in...' : 'Continue with Google'}
+          />          <span className="text-gray-700 font-medium">
+            {loading ? 'サインイン中...' : 'Googleで続行'}
           </span>
         </button>
       </form>

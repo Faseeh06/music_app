@@ -6,143 +6,137 @@ import Footer from './Footer';
 
 const PrivacyPage: React.FC = () => {
   const navigate = useNavigate();
-
   const sections = [
     {
       id: 'information-collection',
-      title: 'Information We Collect',
+      title: '収集する情報',
       icon: <Eye className="w-6 h-6" />,
       content: [
         {
-          subtitle: 'Account Information',
-          text: 'When you create a Zenic account, we collect basic information such as your email address, username, and password. This information is necessary to provide you with access to our platform and personalize your experience.'
+          subtitle: 'アカウント情報',
+          text: 'Zenicアカウントを作成する際、メールアドレス、ユーザー名、パスワードなどの基本情報を収集します。この情報は、プラットフォームへのアクセスを提供し、あなたの体験をパーソナライズするために必要です。'
         },
         {
-          subtitle: 'Practice Data',
-          text: 'We collect data about your music practice sessions, including practice duration, songs practiced, progress metrics, and performance analytics. This data helps us provide personalized recommendations and track your musical journey.'
+          subtitle: '練習データ',
+          text: '練習時間、練習した楽曲、進歩指標、パフォーマンス分析など、音楽練習セッションに関するデータを収集します。このデータは、パーソナライズされた推奨を提供し、あなたの音楽の旅を追跡するのに役立ちます。'
         },
         {
-          subtitle: 'Device Information',
-          text: 'We may collect information about the device you use to access Zenic, including device type, operating system, browser type, and IP address for security and optimization purposes.'
+          subtitle: 'デバイス情報',
+          text: 'セキュリティと最適化の目的で、Zenicへのアクセスに使用するデバイスに関する情報（デバイスタイプ、オペレーティングシステム、ブラウザタイプ、IPアドレスなど）を収集する場合があります。'
         },
         {
-          subtitle: 'Usage Analytics',
-          text: 'We collect anonymized usage data to understand how users interact with our platform, which features are most popular, and how we can improve the user experience.'
+          subtitle: '使用分析',
+          text: 'ユーザーがプラットフォームとどのように相互作用するか、どの機能が最も人気か、ユーザーエクスペリエンスをどのように改善できるかを理解するために、匿名化された使用データを収集します。'
         }
       ]
-    },
-    {
+    },    {
       id: 'information-use',
-      title: 'How We Use Your Information',
+      title: '情報の使用方法',
       icon: <FileText className="w-6 h-6" />,
       content: [
         {
-          subtitle: 'Service Provision',
-          text: 'We use your information to provide and maintain the Zenic platform, including AI-powered practice recommendations, progress tracking, and personalized learning experiences.'
+          subtitle: 'サービス提供',
+          text: 'AI搭載練習推奨、進歩追跡、パーソナライズされた学習体験を含むZenicプラットフォームの提供と維持のために、あなたの情報を使用します。'
         },
         {
-          subtitle: 'Personalization',
-          text: 'Your practice data helps us customize your experience, suggest relevant songs and exercises, and adapt our AI tutoring to your skill level and musical preferences.'
+          subtitle: 'パーソナライゼーション',
+          text: 'あなたの練習データは、体験をカスタマイズし、関連する楽曲やエクササイズを提案し、AIチュータリングをあなたのスキルレベルと音楽の好みに適応させるのに役立ちます。'
         },
         {
-          subtitle: 'Communication',
-          text: 'We may use your contact information to send you important updates about your account, new features, and practice reminders (which you can opt out of at any time).'
+          subtitle: 'コミュニケーション',
+          text: 'アカウントに関する重要な更新、新機能、練習リマインダーを送信するために連絡先情報を使用する場合があります（いつでもオプトアウトできます）。'
         },
         {
-          subtitle: 'Improvement and Analytics',
-          text: 'Aggregated and anonymized data helps us improve our services, develop new features, and understand user behavior patterns to enhance the overall platform.'
+          subtitle: '改善と分析',
+          text: '集約された匿名化データは、サービスの改善、新機能の開発、全体的なプラットフォームを向上させるためのユーザー行動パターンの理解に役立ちます。'
         }
       ]
-    },
-    {
+    },    {
       id: 'data-protection',
-      title: 'Data Protection and Security',
+      title: 'データ保護とセキュリティ',
       icon: <Lock className="w-6 h-6" />,
       content: [
         {
-          subtitle: 'Encryption',
-          text: 'All data transmitted between your device and our servers is encrypted using industry-standard SSL/TLS protocols. Your personal information is stored using advanced encryption methods.'
+          subtitle: '暗号化',
+          text: 'あなたのデバイスと当社のサーバー間で送信されるすべてのデータは、業界標準のSSL/TLSプロトコルを使用して暗号化されます。あなたの個人情報は高度な暗号化方式を使用して保存されます。'
         },
         {
-          subtitle: 'Access Controls',
-          text: 'We implement strict access controls and authentication measures to ensure that only authorized personnel can access user data, and only when necessary for service provision or support.'
+          subtitle: 'アクセス制御',
+          text: '認可された担当者のみがユーザーデータにアクセスできるよう、サービス提供やサポートに必要な場合にのみ、厳格なアクセス制御と認証措置を実装しています。'
         },
         {
-          subtitle: 'Regular Security Audits',
-          text: 'Our systems undergo regular security audits and penetration testing to identify and address potential vulnerabilities before they can be exploited.'
+          subtitle: '定期的なセキュリティ監査',
+          text: '潜在的な脆弱性が悪用される前に特定し対処するため、システムは定期的なセキュリティ監査と侵入テストを受けています。'
         },
         {
-          subtitle: 'Data Minimization',
-          text: 'We collect only the data necessary to provide our services and delete information that is no longer needed in accordance with our data retention policies.'
+          subtitle: 'データ最小化',
+          text: 'サービスの提供に必要なデータのみを収集し、データ保持ポリシーに従って不要になった情報は削除します。'
         }
       ]
-    },
-    {
+    },    {
       id: 'data-sharing',
-      title: 'Information Sharing and Disclosure',
+      title: '情報共有と開示',
       icon: <Users className="w-6 h-6" />,
       content: [
         {
-          subtitle: 'Third-Party Services',
-          text: 'We may share limited data with trusted third-party service providers who help us operate our platform, such as cloud hosting providers and analytics services. These providers are contractually bound to protect your data.'
+          subtitle: 'サードパーティサービス',
+          text: 'クラウドホスティングプロバイダーや分析サービスなど、プラットフォームの運営を支援する信頼できるサードパーティサービスプロバイダーと限定的なデータを共有する場合があります。これらのプロバイダーは、あなたのデータを保護する契約上の義務を負っています。'
         },
         {
-          subtitle: 'Legal Requirements',
-          text: 'We may disclose your information if required by law, court order, or government regulation, or if we believe such disclosure is necessary to protect our rights or the safety of our users.'
+          subtitle: '法的要件',
+          text: '法律、裁判所命令、政府規制により要求された場合、または当社の権利やユーザーの安全を保護するために必要と判断される場合、あなたの情報を開示する場合があります。'
         },
         {
-          subtitle: 'Business Transfers',
-          text: 'In the event of a merger, acquisition, or sale of assets, your information may be transferred to the acquiring company, but only under the same privacy protections outlined in this policy.'
+          subtitle: '事業譲渡',
+          text: '合併、買収、資産売却の場合、あなたの情報は買収会社に譲渡される可能性がありますが、このポリシーで概説されている同じプライバシー保護の下でのみ行われます。'
         },
         {
-          subtitle: 'User Consent',
-          text: 'We will never sell your personal information to third parties for marketing purposes. Any sharing beyond what is described here will only occur with your explicit consent.'
+          subtitle: 'ユーザーの同意',
+          text: 'マーケティング目的であなたの個人情報をサードパーティに販売することは決してありません。ここで説明されている範囲を超える共有は、あなたの明示的な同意がある場合にのみ行われます。'
         }
       ]
-    },
-    {
+    },    {
       id: 'user-rights',
-      title: 'Your Rights and Controls',
+      title: 'あなたの権利とコントロール',
       icon: <Shield className="w-6 h-6" />,
       content: [
         {
-          subtitle: 'Data Access',
-          text: 'You have the right to access and review all personal data we have collected about you. You can request a copy of your data through your account settings or by contacting our support team.'
+          subtitle: 'データアクセス',
+          text: '当社があなたについて収集したすべての個人データにアクセスし、確認する権利があります。アカウント設定またはサポートチームへの連絡により、データのコピーを要求できます。'
         },
         {
-          subtitle: 'Data Correction',
-          text: 'You can update and correct your personal information at any time through your account settings. If you notice any inaccuracies, please let us know so we can correct them promptly.'
+          subtitle: 'データ修正',
+          text: 'アカウント設定を通じて、いつでも個人情報を更新・修正できます。不正確な情報にお気づきの場合は、迅速に修正できるようお知らせください。'
         },
         {
-          subtitle: 'Data Deletion',
-          text: 'You have the right to request deletion of your personal data. When you delete your account, we will remove your personal information from our active systems within 30 days, though some data may be retained for legal or security purposes.'
+          subtitle: 'データ削除',
+          text: '個人データの削除を要求する権利があります。アカウントを削除すると、30日以内にアクティブシステムから個人情報を削除しますが、法的またはセキュリティ上の目的で一部のデータが保持される場合があります。'
         },
         {
-          subtitle: 'Data Portability',
-          text: 'Upon request, we can provide your data in a structured, machine-readable format so you can transfer it to another service if you choose to leave Zenic.'
+          subtitle: 'データポータビリティ',
+          text: 'ご要望により、Zenicを離れることを選択した場合に他のサービスに転送できるよう、構造化された機械読み取り可能な形式でデータを提供できます。'
         }
       ]
-    },
-    {
+    },    {
       id: 'international-transfers',
-      title: 'International Data Transfers',
+      title: '国際データ転送',
       icon: <Globe className="w-6 h-6" />,
       content: [
         {
-          subtitle: 'Global Infrastructure',
-          text: 'Zenic operates globally and may store and process your data in countries other than where you reside. We ensure that all international transfers comply with applicable data protection laws.'
+          subtitle: 'グローバルインフラストラクチャ',
+          text: 'Zenicはグローバルに運営されており、あなたが居住する国以外でデータを保存・処理する場合があります。すべての国際転送が適用されるデータ保護法に準拠していることを保証します。'
         },
         {
-          subtitle: 'Adequacy Decisions',
-          text: 'We only transfer data to countries that have been deemed to provide adequate protection by relevant authorities, or we implement appropriate safeguards such as standard contractual clauses.'
+          subtitle: '十分性決定',
+          text: '関連当局によって十分な保護を提供すると判断された国にのみデータを転送するか、標準契約条項などの適切な保護措置を実装します。'
         },
         {
-          subtitle: 'Regional Compliance',
-          text: 'We comply with regional privacy regulations including GDPR (European Union), CCPA (California), and other applicable privacy laws in jurisdictions where we operate.'
+          subtitle: '地域コンプライアンス',
+          text: 'GDPR（欧州連合）、CCPA（カリフォルニア）、および運営する管轄区域の適用される他のプライバシー法を含む地域プライバシー規制に準拠しています。'
         },
         {
-          subtitle: 'Data Localization',
-          text: 'Where required by law, we maintain local copies of data within specific jurisdictions and provide users with control over where their data is stored and processed.'
+          subtitle: 'データローカライゼーション',
+          text: '法律で要求される場合、特定の管轄区域内でデータのローカルコピーを維持し、ユーザーがデータの保存場所と処理場所をコントロールできるようにします。'
         }
       ]
     }
@@ -166,20 +160,19 @@ const PrivacyPage: React.FC = () => {
         <div className="text-center mb-16">
           <div className="w-16 h-16 bg-gradient-to-br from-brand-brown to-brand-yellow rounded-2xl flex items-center justify-center mx-auto mb-6">
             <Shield className="w-8 h-8 text-white" />
-          </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">Privacy Policy</h1>
+          </div>          <h1 className="text-4xl md:text-5xl font-bold mb-6">プライバシーポリシー</h1>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-            At Zenic, we are committed to protecting your privacy and ensuring the security of your personal information. 
-            This policy explains how we collect, use, and safeguard your data.
+            Zenicでは、あなたのプライバシーを保護し、個人情報のセキュリティを確保することをお約束します。
+            このポリシーでは、データの収集、使用、保護方法について説明します。
           </p>
           <div className="mt-6 text-sm text-gray-400">
-            Last updated: January 2025
+            最終更新：2025年1月
           </div>
         </div>
 
         {/* Table of Contents */}
         <div className="bg-gray-900/30 rounded-xl p-6 mb-12 border border-gray-700/30">
-          <h2 className="text-xl font-bold mb-4 text-white">Table of Contents</h2>
+          <h2 className="text-xl font-bold mb-4 text-white">目次</h2>
           <div className="grid md:grid-cols-2 gap-2">
             {sections.map((section, index) => (
               <a
@@ -224,24 +217,23 @@ const PrivacyPage: React.FC = () => {
         </div>
 
         {/* Contact Section */}
-        <div className="mt-16 bg-gray-900/30 rounded-xl p-8 border border-gray-700/30 text-center">
-          <h2 className="text-2xl font-bold mb-4">Questions About Privacy?</h2>
+        <div className="mt-16 bg-gray-900/30 rounded-xl p-8 border border-gray-700/30 text-center">          <h2 className="text-2xl font-bold mb-4">プライバシーについてのご質問は？</h2>
           <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
-            If you have any questions about this Privacy Policy or how we handle your data, 
-            please don't hesitate to contact us. We're here to help and ensure your privacy is protected.
+            このプライバシーポリシーや当社がどのようにあなたのデータを取り扱うかについて質問がございましたら、
+            お気軽にお問い合わせください。あなたのプライバシーが保護されるよう、喜んでサポートいたします。
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a 
               href="mailto:privacy@zenic.com"
               className="px-6 py-3 bg-brand-brown text-white rounded-lg hover:bg-brand-brown/90 transition-colors font-medium"
             >
-              Contact Privacy Team
+              プライバシーチームに問い合わせ
             </a>
             <button
               onClick={() => navigate('/faq')}
               className="px-6 py-3 border border-gray-600 text-gray-300 rounded-lg hover:border-brand-brown hover:text-brand-yellow transition-colors font-medium"
             >
-              View FAQ
+              FAQ表示
             </button>
           </div>
         </div>

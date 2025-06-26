@@ -23,10 +23,9 @@ const Navbar: React.FC = () => {
       }
     }
   }, [location.pathname, searchParams]);
-
   // Mock recent searches and trending
-  const recentSearches = ['Perfect - Ed Sheeran', 'Hotel California', 'Wonderwall'];
-  const trendingSearches = ['Billie Eilish', 'Taylor Swift', 'The Beatles'];
+  const recentSearches = ['パーフェクト - エド・シーラン', 'ホテル・カリフォルニア', 'ワンダーウォール'];
+  const trendingSearches = ['ビリー・アイリッシュ', 'テイラー・スウィフト', 'ザ・ビートルズ'];
 
   const handleLogout = async () => {
     try {
@@ -106,7 +105,7 @@ const Navbar: React.FC = () => {
           onFocus={handleSearchFocus}
           onBlur={handleSearchBlur}
           onKeyDown={handleSearch}
-          placeholder="Search songs, playlists, albums, artists, etc..."
+          placeholder="楽曲、プレイリスト、アルバム、アーティストなどを検索..."
           className={`w-full rounded-2xl pl-12 pr-32 py-3 bg-[#101218]/90 backdrop-blur-sm text-white placeholder:text-gray-400 border transition-all duration-300 ease-in-out text-base font-medium ${
             searchFocused 
               ? 'border-brand-brown bg-[#101218] focus:outline-none' 
@@ -155,7 +154,7 @@ const Navbar: React.FC = () => {
                   <div className="p-4 border-b border-gray-700">
                     <div className="flex items-center gap-2 mb-3">
                       <History className="w-4 h-4 text-gray-400" />
-                      <span className="text-sm font-medium text-gray-300">Recent searches</span>
+                      <span className="text-sm font-medium text-gray-300">最近の検索</span>
                     </div>
                     <div className="space-y-2">
                       {recentSearches.map((search, index) => (
@@ -180,7 +179,7 @@ const Navbar: React.FC = () => {
                 <div className="p-4">
                   <div className="flex items-center gap-2 mb-3">
                     <TrendingUp className="w-4 h-4 text-brand-brown" />
-                    <span className="text-sm font-medium text-gray-300">Trending</span>
+                    <span className="text-sm font-medium text-gray-300">トレンド</span>
                   </div>
                   <div className="space-y-2">
                     {trendingSearches.map((search, index) => (
@@ -235,8 +234,7 @@ const Navbar: React.FC = () => {
             <div className="hidden md:block text-left">
               <div className="text-sm font-semibold text-white">
                 {currentUser?.displayName || 'User'}
-              </div>
-              <div className="text-xs text-gray-400">Premium Member</div>
+              </div>                      <div className="text-xs text-gray-400">プレミアムメンバー</div>
             </div>
           </button>
           {dropdownOpen && (
@@ -263,14 +261,14 @@ const Navbar: React.FC = () => {
                 onClick={() => { setDropdownOpen(false); navigate('/profile'); }}
               >
                   <User className="w-5 h-5" /> 
-                  <span>Profile Settings</span>
+                  <span>プロフィール設定</span>
                 </button>
                 <button
                   className="w-full flex items-center gap-3 px-4 py-3 text-white hover:bg-gray-800/50 transition-colors"
                   onClick={() => { setDropdownOpen(false); navigate('/settings'); }}
                 >
                   <Settings className="w-5 h-5" /> 
-                  <span>Preferences</span>
+                  <span>環境設定</span>
                 </button>
               </div>
               
@@ -280,7 +278,7 @@ const Navbar: React.FC = () => {
                 onClick={() => { setDropdownOpen(false); handleLogout(); }}
               >
                   <LogOut className="w-5 h-5" /> 
-                  <span>Sign Out</span>
+                  <span>サインアウト</span>
               </button>
               </div>
             </div>

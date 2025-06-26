@@ -27,12 +27,12 @@ const SignUpPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.firstName || !formData.lastName || !formData.email || !formData.password) {
-      setErrors({ submit: 'Please fill in all fields' });
+      setErrors({ submit: 'すべてのフィールドを入力してください' });
       return;
     }
 
     if (formData.password.length < 6) {
-      setErrors({ submit: 'Password must be at least 6 characters' });
+      setErrors({ submit: 'パスワードは6文字以上である必要があります' });
       return;
     }
 
@@ -44,10 +44,9 @@ const SignUpPage: React.FC = () => {
       await signup(formData.email, formData.password, fullName);
       navigate('/dashboard');
     } catch (error: unknown) {
-      console.error('Sign up error:', error);
-      const errorMessage = error instanceof Error && 'code' in error && (error as Error & { code?: string }).code === 'auth/email-already-in-use'
-        ? 'An account with this email already exists'
-        : 'Failed to create account. Please try again.';
+      console.error('Sign up error:', error);      const errorMessage = error instanceof Error && 'code' in error && (error as Error & { code?: string }).code === 'auth/email-already-in-use'
+        ? 'このメールアドレスのアカウントは既に存在します'
+        : 'アカウントの作成に失敗しました。もう一度お試しください。';
       setErrors({ submit: errorMessage });
     } finally {
       setLoading(false);
@@ -63,7 +62,7 @@ const SignUpPage: React.FC = () => {
       navigate('/dashboard');
     } catch (error: unknown) {
       console.error('Google sign up error:', error);
-      setErrors({ submit: 'Failed to sign up with Google. Please try again.' });
+      setErrors({ submit: 'Googleサインアップに失敗しました。もう一度お試しください。' });
     } finally {
       setLoading(false);
     }
@@ -141,7 +140,7 @@ const SignUpPage: React.FC = () => {
                     <input
                       type="text"
                       name="firstName"
-                      placeholder="First name"
+                      placeholder="名"
                       value={formData.firstName}
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 bg-gray-800/30 border border-gray-700/50 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-brand-brown focus:ring-1 focus:ring-brand-brown/50 transition-all"
@@ -151,7 +150,7 @@ const SignUpPage: React.FC = () => {
                     <input
                       type="text"
                       name="lastName"
-                      placeholder="Last name"
+                      placeholder="姓"
                       value={formData.lastName}
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 bg-gray-800/30 border border-gray-700/50 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-brand-brown focus:ring-1 focus:ring-brand-brown/50 transition-all"
@@ -162,7 +161,7 @@ const SignUpPage: React.FC = () => {
                   <input
                     type="email"
                     name="email"
-                    placeholder="Email address"
+                    placeholder="メールアドレス"
                     value={formData.email}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 bg-gray-800/30 border border-gray-700/50 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-brand-brown focus:ring-1 focus:ring-brand-brown/50 transition-all"
@@ -172,7 +171,7 @@ const SignUpPage: React.FC = () => {
                   <input
                     type={showPassword ? "text" : "password"}
                     name="password"
-                    placeholder="Password"
+                    placeholder="パスワード"
                     value={formData.password}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 pr-12 bg-gray-800/30 border border-gray-700/50 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-brand-brown focus:ring-1 focus:ring-brand-brown/50 transition-all"
@@ -191,7 +190,7 @@ const SignUpPage: React.FC = () => {
                   disabled={loading}
                   className="w-full bg-gradient-to-r from-brand-brown to-brand-yellow text-white font-semibold py-3 px-4 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50"
                 >
-                  {loading ? 'Creating Account...' : 'Create Account'}
+                  {loading ? 'アカウント作成中...' : 'アカウント作成'}
                 </button>
               </form>
 

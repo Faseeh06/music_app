@@ -57,21 +57,20 @@ const PracticePage: React.FC = () => {
 
   // Mock song data
   const song: Song = {
-    id: songId || '1',
-    title: 'Perfect',
+    id: songId || '1',    title: 'Perfect',
     artist: 'Ed Sheeran',
     youtubeId: '2Vv-BfVoq4g',
     currentPractitioners: 42,
-    difficulty: 'Intermediate',
+    difficulty: '中級',
     duration: '4:23',
     chords: ['Am', 'G', 'F', 'C'],
     sections: [
-      { name: 'Intro', startTime: 0, endTime: 30 },
-      { name: 'Verse 1', startTime: 30, endTime: 60 },
-      { name: 'Chorus', startTime: 60, endTime: 90 },
-      { name: 'Verse 2', startTime: 90, endTime: 120 },
-      { name: 'Bridge', startTime: 120, endTime: 150 },
-      { name: 'Outro', startTime: 150, endTime: 180 }
+      { name: 'イントロ', startTime: 0, endTime: 30 },
+      { name: 'バース1', startTime: 30, endTime: 60 },
+      { name: 'コーラス', startTime: 60, endTime: 90 },
+      { name: 'バース2', startTime: 90, endTime: 120 },
+      { name: 'ブリッジ', startTime: 120, endTime: 150 },
+      { name: 'アウトロ', startTime: 150, endTime: 180 }
     ]
   };
 
@@ -186,9 +185,8 @@ const PracticePage: React.FC = () => {
             </div>
 
             {/* Practice Timer */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-gray-900">Practice Session</h2>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold text-gray-900">練習セッション</h2>
                 <div className="flex items-center text-gray-600">
                   <Timer className="w-5 h-5 mr-2" />
                   <span>{formatTime(practiceTime)}</span>
@@ -216,9 +214,8 @@ const PracticePage: React.FC = () => {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Chord Chart */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-gray-900">Chord Chart</h2>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold text-gray-900">コード表</h2>
                 <button
                   onClick={() => setShowChords(!showChords)}
                   className="p-2 text-gray-600 hover:text-brand-brown"
@@ -242,7 +239,7 @@ const PracticePage: React.FC = () => {
 
             {/* Emoji Reactions */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Reactions</h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">リアクション</h2>
               <div className="grid grid-cols-4 gap-4">
                 {['🎸', '🎵', '🎼', '🎹', '🎺', '🎻', '🥁', '🎤'].map((emoji) => (
                   <button
@@ -261,17 +258,15 @@ const PracticePage: React.FC = () => {
             </div>
 
             {/* Practice Settings */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-gray-900">Settings</h2>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold text-gray-900">設定</h2>
                 <button className="p-2 text-gray-600 hover:text-brand-brown">
                   <Settings className="w-5 h-5" />
                 </button>
               </div>
-              <div className="space-y-4">
-                <div>
+              <div className="space-y-4">                <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Metronome BPM
+                    メトロノーム BPM
                   </label>
                   <input
                     type="range"
@@ -283,7 +278,7 @@ const PracticePage: React.FC = () => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Volume
+                    ボリューム
                   </label>
                   <input
                     type="range"

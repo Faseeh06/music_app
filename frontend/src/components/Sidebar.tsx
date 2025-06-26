@@ -16,10 +16,10 @@ import {
 import logo from '../assets/images/logo.png';
 
 const navItems = [
-  { label: 'Dashboard', icon: <LayoutDashboard className="w-5 h-5" />, to: '/dashboard' },
-  { label: 'Search', icon: <Search className="w-5 h-5" />, to: '/search' },
-  { label: 'History', icon: <History className="w-5 h-5" />, to: '/history' },
-  { label: 'Ranking', icon: <Trophy className="w-5 h-5" />, to: '/ranking' },
+  { label: 'ダッシュボード', icon: <LayoutDashboard className="w-5 h-5" />, to: '/dashboard' },
+  { label: '検索', icon: <Search className="w-5 h-5" />, to: '/search' },
+  { label: '履歴', icon: <History className="w-5 h-5" />, to: '/history' },
+  { label: 'ランキング', icon: <Trophy className="w-5 h-5" />, to: '/ranking' },
 ];
 
 const Sidebar: React.FC = () => {
@@ -97,7 +97,7 @@ const Sidebar: React.FC = () => {
           <span className={`transition-all duration-500 ease-in-out overflow-hidden whitespace-nowrap ${
             isCollapsed ? 'opacity-0 w-0 translate-x-4' : 'opacity-100 w-auto translate-x-0'
           }`}>
-            Profile
+            プロフィール
           </span>
         </Link>
         <Link
@@ -113,7 +113,7 @@ const Sidebar: React.FC = () => {
           <span className={`transition-all duration-500 ease-in-out overflow-hidden whitespace-nowrap ${
             isCollapsed ? 'opacity-0 w-0 translate-x-4' : 'opacity-100 w-auto translate-x-0'
           }`}>
-            Settings
+            設定
           </span>
         </Link>
         <button
@@ -127,14 +127,14 @@ const Sidebar: React.FC = () => {
           <span className={`transition-all duration-500 ease-in-out overflow-hidden whitespace-nowrap ${
             isCollapsed ? 'opacity-0 w-0 translate-x-4' : 'opacity-100 w-auto translate-x-0'
           }`}>
-            Logout
+            ログアウト
           </span>
         </button>
       </div>
       <button
         onClick={toggleSidebar}
         className="absolute -right-3 top-8 bg-brand-brown text-white p-1 rounded-full hover:bg-brand-yellow transition-all duration-300 ease-in-out hover:scale-110 transform hover:shadow-lg"
-        title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+        title={isCollapsed ? 'サイドバーを展開' : 'サイドバーを折りたたむ'}
       >
         <div className={`transition-transform duration-300 ease-in-out ${isCollapsed ? 'rotate-0' : 'rotate-180'}`}>
         {isCollapsed ? (

@@ -9,123 +9,120 @@ const FAQPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
   const [expandedItems, setExpandedItems] = useState<number[]>([]);
-
   const categories = [
-    { id: 'all', name: 'All Questions', icon: <HelpCircle className="w-5 h-5" />, count: 18 },
-    { id: 'getting-started', name: 'Getting Started', icon: <Music className="w-5 h-5" />, count: 6 },
-    { id: 'ai-features', name: 'AI Features', icon: <Settings className="w-5 h-5" />, count: 5 },
-    { id: 'privacy', name: 'Privacy & Security', icon: <Shield className="w-5 h-5" />, count: 4 },
-    { id: 'technical', name: 'Technical Support', icon: <Headphones className="w-5 h-5" />, count: 3 }
-  ];
-
-  const faqData = [
+    { id: 'all', name: 'すべての質問', icon: <HelpCircle className="w-5 h-5" />, count: 18 },
+    { id: 'getting-started', name: 'はじめに', icon: <Music className="w-5 h-5" />, count: 6 },
+    { id: 'ai-features', name: 'AI機能', icon: <Settings className="w-5 h-5" />, count: 5 },
+    { id: 'privacy', name: 'プライバシーとセキュリティ', icon: <Shield className="w-5 h-5" />, count: 4 },
+    { id: 'technical', name: 'テクニカルサポート', icon: <Headphones className="w-5 h-5" />, count: 3 }
+  ];  const faqData = [
     {
       id: 1,
       category: 'getting-started',
-      question: 'How do I get started with Zenic?',
-      answer: 'Getting started with Zenic is simple! First, create your free account by clicking the "Get Started" button. Once registered, you can choose your instrument(s), set your skill level, and begin with our guided onboarding process. Our AI will assess your current abilities and create a personalized learning path just for you.'
+      question: 'Zenicの始め方を教えてください。',
+      answer: 'Zenicを始めるのはとても簡単です！まず「はじめる」ボタンをクリックして無料アカウントを作成してください。登録後、楽器を選択し、スキルレベルを設定して、ガイド付きオンボーディングプロセスを開始できます。私たちのAIがあなたの現在の能力を評価し、あなただけのパーソナライズされた学習パスを作成します。'
     },
     {
       id: 2,
       category: 'getting-started',
-      question: 'What instruments does Zenic support?',
-      answer: 'Zenic currently supports guitar, piano, violin, drums, bass guitar, and vocals. We are continuously adding support for more instruments based on user feedback. Each instrument comes with specialized AI tutors trained specifically for that instrument\'s techniques and repertoire.'
+      question: 'Zenicはどの楽器をサポートしていますか？',
+      answer: 'Zenicは現在、ギター、ピアノ、バイオリン、ドラム、ベースギター、ボーカルをサポートしています。ユーザーフィードバックに基づいて、継続的により多くの楽器のサポートを追加しています。各楽器には、その楽器のテクニックとレパートリーに特化してトレーニングされた専用のAIチューターが付いています。'
     },
     {
       id: 3,
       category: 'ai-features',
-      question: 'How does the AI practice recommendation system work?',
-      answer: 'Our AI analyzes your practice sessions, identifies areas for improvement, and suggests personalized exercises and songs. It considers your skill level, musical preferences, practice history, and progress patterns to create recommendations that challenge you appropriately while keeping you engaged.'
+      question: 'AI練習推奨システムはどのように機能しますか？',
+      answer: '私たちのAIは、あなたの練習セッションを分析し、改善が必要な分野を特定して、パーソナライズされたエクササイズと楽曲を提案します。スキルレベル、音楽の好み、練習履歴、進歩パターンを考慮して、適切にチャレンジしながらもモチベーションを保てる推奨を作成します。'
     },
     {
       id: 4,
       category: 'ai-features',
-      question: 'Can the AI tutor adapt to my learning style?',
-      answer: 'Absolutely! Our AI continuously learns from your interactions, practice patterns, and feedback to adapt its teaching approach. Whether you learn better through visual cues, repetition, or theoretical explanations, the AI adjusts its methodology to match your preferred learning style.'
+      question: 'AIチューターは私の学習スタイルに適応できますか？',
+      answer: 'もちろんです！私たちのAIは、あなたのインタラクション、練習パターン、フィードバックから継続的に学習し、教授アプローチを適応させます。視覚的な手がかり、反復、理論的説明のいずれがより良い学習方法であっても、AIはあなたの好みの学習スタイルに合わせて方法論を調整します。'
     },
     {
       id: 5,
       category: 'getting-started',
-      question: 'Do I need any special equipment to use Zenic?',
-      answer: 'For basic use, you only need your instrument and a device with internet access. However, for advanced features like real-time feedback and precise audio analysis, we recommend using a good quality microphone or audio interface. Our app works great with both built-in device microphones and professional audio equipment.'
+      question: 'Zenicを使用するために特別な機器は必要ですか？',
+      answer: '基本的な使用には、楽器とインターネットアクセス可能なデバイスのみが必要です。ただし、リアルタイムフィードバックや精密な音声分析などの高度な機能には、高品質のマイクまたはオーディオインターフェースの使用をお勧めします。私たちのアプリは、デバイス内蔵マイクとプロ用オーディオ機器の両方で優れた動作をします。'
     },
     {
       id: 6,
       category: 'privacy',
-      question: 'How is my practice data protected?',
-      answer: 'We take your privacy seriously. All practice data is encrypted both in transit and at rest. Your personal information is never sold to third parties, and you have full control over your data. You can export, modify, or delete your data at any time through your account settings.'
+      question: '練習データはどのように保護されていますか？',
+      answer: '私たちはあなたのプライバシーを真剣に考えています。すべての練習データは送信中と保管中の両方で暗号化されています。個人情報は第三者に販売されることはなく、あなたのデータを完全にコントロールできます。アカウント設定からいつでもデータをエクスポート、変更、削除することができます。'
     },
     {
       id: 7,
       category: 'ai-features',
-      question: 'How accurate is the AI feedback on my playing?',
-      answer: 'Our AI feedback system achieves over 95% accuracy in detecting pitch, timing, and technique issues. The system is continuously improved through machine learning and feedback from professional musicians. While it\'s highly accurate, we always recommend combining AI feedback with occasional lessons from human instructors for the best results.'
+      question: '私の演奏に対するAIフィードバックの精度はどの程度ですか？',
+      answer: '私たちのAIフィードバックシステムは、ピッチ、タイミング、テクニックの問題を95%以上の精度で検出します。システムは機械学習とプロの音楽家からのフィードバックを通じて継続的に改善されています。高い精度を誇りますが、最良の結果を得るために、AIフィードバックと人間のインストラクターからの時折のレッスンを組み合わせることをお勧めします。'
     },
     {
       id: 8,
       category: 'getting-started',
-      question: 'Can I practice offline?',
-      answer: 'Some features of Zenic work offline, including accessing downloaded songs, practice exercises, and basic recording. However, AI analysis, real-time feedback, and progress syncing require an internet connection. We recommend downloading practice materials when you have internet access for offline use.'
+      question: 'オフラインで練習できますか？',
+      answer: 'Zenicの一部機能は、ダウンロードした楽曲へのアクセス、練習エクササイズ、基本的な録音を含めてオフラインで動作します。ただし、AI分析、リアルタイムフィードバック、進歩の同期にはインターネット接続が必要です。オフライン使用のために、インターネット接続がある時に練習素材をダウンロードしておくことをお勧めします。'
     },
     {
       id: 9,
       category: 'technical',
-      question: 'What should I do if the app isn\'t recognizing my instrument?',
-      answer: 'First, check your microphone permissions and ensure your device\'s microphone is working properly. Make sure you\'re in a quiet environment and your instrument is close enough to the microphone. If issues persist, try adjusting the input sensitivity in the app settings or contact our support team for personalized troubleshooting.'
+      question: 'アプリが私の楽器を認識しない場合はどうすればよいですか？',
+      answer: 'まず、マイクの権限を確認し、デバイスのマイクが正常に動作していることを確認してください。静かな環境にいて、楽器がマイクに十分近いことを確認してください。問題が続く場合は、アプリ設定で入力感度を調整するか、個別のトラブルシューティングについて私たちのサポートチームにお問い合わせください。'
     },
     {
       id: 10,
       category: 'ai-features',
-      question: 'Can I customize my AI tutor\'s personality and teaching style?',
-      answer: 'Yes! You can adjust your AI tutor\'s communication style, feedback frequency, and motivational approach in the settings. Choose from different personality types like encouraging, direct, or analytical to match your preferences. You can also set goals and adjust the challenge level to create your ideal learning environment.'
+      question: 'AIチューターの性格と教授スタイルをカスタマイズできますか？',
+      answer: 'はい！設定でAIチューターのコミュニケーションスタイル、フィードバック頻度、動機づけアプローチを調整できます。あなたの好みに合わせて、励ましたり、直接的だったり、分析的だったりする異なる性格タイプから選択してください。理想的な学習環境を作るために、目標を設定し、チャレンジレベルを調整することもできます。'
     },
     {
       id: 11,
       category: 'privacy',
-      question: 'Does Zenic share my data with other users?',
-      answer: 'No, your personal practice data and progress information are completely private. Only anonymized and aggregated data (without any personal identifiers) may be used to improve our AI models and platform features. You can opt out of this data usage in your privacy settings if you prefer.'
+      question: 'Zenicは私のデータを他のユーザーと共有しますか？',
+      answer: 'いいえ、あなたの個人的な練習データと進歩情報は完全にプライベートです。個人識別子のない匿名化・集約されたデータのみが、私たちのAIモデルとプラットフォーム機能の改善に使用される場合があります。希望する場合は、プライバシー設定でこのデータ使用をオプトアウトできます。'
     },
     {
       id: 12,
       category: 'getting-started',
-      question: 'Is there a mobile app available?',
-      answer: 'Yes! Zenic is available on iOS and Android devices, as well as through web browsers on desktop computers. All your progress syncs across devices, so you can practice on your phone, tablet, or computer seamlessly. The mobile apps include all core features with touch-optimized interfaces.'
+      question: 'モバイルアプリはありますか？',
+      answer: 'はい！ZenicはiOSとAndroidデバイス、さらにデスクトップコンピュータのWebブラウザで利用できます。すべての進歩がデバイス間で同期されるため、スマートフォン、タブレット、コンピュータでシームレスに練習できます。モバイルアプリには、タッチ最適化されたインターフェースを持つすべての主要機能が含まれています。'
     },
     {
       id: 13,
       category: 'technical',
-      question: 'Why is there a delay in the audio feedback?',
-      answer: 'Audio latency can be caused by several factors including your device\'s processing power, audio drivers, or internet connection. Try using wired headphones instead of Bluetooth, close other applications, and ensure you have a stable internet connection. For the best experience, we recommend using devices with at least 4GB of RAM.'
+      question: 'オーディオフィードバックに遅延があるのはなぜですか？',
+      answer: 'オーディオレイテンシは、デバイスの処理能力、オーディオドライバー、インターネット接続など、いくつかの要因によって引き起こされる可能性があります。Bluetoothの代わりに有線ヘッドフォンを使用し、他のアプリケーションを閉じ、安定したインターネット接続を確保してみてください。最良の体験のために、少なくとも4GBのRAMを持つデバイスの使用をお勧めします。'
     },
     {
       id: 14,
       category: 'ai-features',
-      question: 'How often does the AI update my learning path?',
-      answer: 'The AI continuously analyzes your progress and adjusts recommendations in real-time. Major learning path updates typically occur after each practice session, while minor adjustments happen throughout your practice. You\'ll see significant path changes when you master new skills or when the AI identifies areas that need additional focus.'
+      question: 'AIはどのくらいの頻度で私の学習パスを更新しますか？',
+      answer: 'AIは継続的にあなたの進歩を分析し、リアルタイムで推奨を調整します。主要な学習パス更新は通常、各練習セッション後に行われ、練習中に細かい調整が行われます。新しいスキルをマスターしたり、AIが追加の焦点が必要な分野を特定したりすると、大幅なパス変更が見られます。'
     },
     {
       id: 15,
       category: 'privacy',
-      question: 'Can I use Zenic without creating an account?',
-      answer: 'While some basic features can be accessed without an account, creating a free account unlocks the full potential of Zenic, including personalized AI tutoring, progress tracking, and cloud sync across devices. Account creation is free and only requires an email address.'
+      question: 'アカウントを作成せずにZenicを使用できますか？',
+      answer: 'アカウントなしでも一部の基本機能にアクセスできますが、無料アカウントを作成することで、パーソナライズされたAIチュータリング、進歩追跡、デバイス間のクラウド同期を含むZenicの全潜在能力を解放できます。アカウント作成は無料で、メールアドレスのみが必要です。'
     },
     {
       id: 16,
       category: 'getting-started',
-      question: 'What skill levels does Zenic cater to?',
-      answer: 'Zenic is designed for all skill levels, from complete beginners to advanced musicians. Our AI assessment creates appropriate challenges regardless of your starting point. Beginners get foundational lessons and basic techniques, while advanced players receive complex arrangements and professional-level feedback.'
+      question: 'Zenicはどのスキルレベルに対応していますか？',
+      answer: 'Zenicは、完全な初心者から上級音楽家まで、すべてのスキルレベル向けに設計されています。私たちのAI評価は、開始地点に関係なく適切なチャレンジを作成します。初心者は基礎レッスンと基本テクニックを得て、上級者は複雑なアレンジとプロレベルのフィードバックを受けます。'
     },
     {
       id: 17,
       category: 'technical',
-      question: 'How much storage space does Zenic require?',
-      answer: 'The Zenic app itself requires about 150MB of storage space. Additional space is needed for downloaded songs and recorded practice sessions, typically 2-5MB per song. You can manage storage by deleting old recordings and removing downloaded songs you no longer need.'
+      question: 'Zenicはどのくらいのストレージ容量が必要ですか？',
+      answer: 'Zenicアプリ自体は約150MBのストレージ容量を必要とします。ダウンロードした楽曲と録音された練習セッションには追加の容量が必要で、通常は楽曲あたり2-5MBです。古い録音を削除し、不要になったダウンロード楽曲を削除することでストレージを管理できます。'
     },
     {
       id: 18,
       category: 'privacy',
-      question: 'How long is my data retained?',
-      answer: 'Your practice data and progress information are retained as long as your account is active. After account deletion, most data is permanently removed within 30 days, though some anonymized analytics data may be retained longer for service improvement. You can request complete data deletion by contacting our privacy team.'
+      question: '私のデータはどのくらいの期間保持されますか？',
+      answer: 'あなたの練習データと進歩情報は、アカウントがアクティブである限り保持されます。アカウント削除後、ほとんどのデータは30日以内に永続的に削除されますが、一部の匿名化された分析データはサービス改善のためにより長期間保持される場合があります。私たちのプライバシーチームに連絡することで、完全なデータ削除を要求できます。'
     }
   ];
 
@@ -163,21 +160,19 @@ const FAQPage: React.FC = () => {
         <div className="text-center mb-16">
           <div className="w-16 h-16 bg-gradient-to-br from-brand-brown to-brand-yellow rounded-2xl flex items-center justify-center mx-auto mb-6">
             <HelpCircle className="w-8 h-8 text-white" />
-          </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">Frequently Asked Questions</h1>
+          </div>          <h1 className="text-4xl md:text-5xl font-bold mb-6">よくある質問</h1>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-            Find answers to common questions about Zenic's AI-powered music learning platform. 
-            Can't find what you're looking for? Contact our support team.
+            ZenicのAI搭載音楽学習プラットフォームに関するよくある質問への回答をご覧ください。
+            お探しのものが見つからない場合は、サポートチームにお問い合わせください。
           </p>
         </div>
 
         {/* Search Bar */}
         <div className="max-w-2xl mx-auto mb-12">
           <div className="relative">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-            <input
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />            <input
               type="text"
-              placeholder="Search frequently asked questions..."
+              placeholder="よくある質問を検索..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-12 pr-4 py-4 bg-gray-900/30 border border-gray-700/30 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-brand-brown focus:bg-gray-900/50 transition-all"
@@ -208,11 +203,10 @@ const FAQPage: React.FC = () => {
 
         {/* FAQ Items */}
         <div className="space-y-4">
-          {filteredFAQs.length === 0 ? (
-            <div className="text-center py-12">
+          {filteredFAQs.length === 0 ? (            <div className="text-center py-12">
               <HelpCircle className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-400 mb-2">No questions found</h3>
-              <p className="text-gray-500">Try adjusting your search terms or selecting a different category.</p>
+              <h3 className="text-xl font-semibold text-gray-400 mb-2">質問が見つかりません</h3>
+              <p className="text-gray-500">検索語句を調整するか、別のカテゴリを選択してみてください。</p>
             </div>
           ) : (
             filteredFAQs.map((faq) => (
@@ -252,24 +246,23 @@ const FAQPage: React.FC = () => {
           <div className="max-w-2xl mx-auto">
             <div className="w-16 h-16 bg-gradient-to-br from-brand-brown to-brand-yellow rounded-2xl flex items-center justify-center mx-auto mb-6">
               <Headphones className="w-8 h-8 text-white" />
-            </div>
-            <h2 className="text-2xl font-bold mb-4">Still Have Questions?</h2>
+            </div>            <h2 className="text-2xl font-bold mb-4">まだ質問がございますか？</h2>
             <p className="text-gray-300 mb-6">
-              Our support team is here to help you get the most out of your Zenic experience. 
-              We typically respond within 24 hours.
+              私たちのサポートチームが、Zenicの体験を最大限に活用できるようお手伝いいたします。
+              通常24時間以内にお返事いたします。
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a 
                 href="mailto:support@zenic.com"
                 className="px-6 py-3 bg-brand-brown text-white rounded-lg hover:bg-brand-brown/90 transition-colors font-medium"
               >
-                Contact Support
+                サポートに連絡
               </a>
               <button
                 onClick={() => navigate('/privacy')}
                 className="px-6 py-3 border border-gray-600 text-gray-300 rounded-lg hover:border-brand-brown hover:text-brand-yellow transition-colors font-medium"
               >
-                Privacy Policy
+                プライバシーポリシー
               </button>
             </div>
           </div>

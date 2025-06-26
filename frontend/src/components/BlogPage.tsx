@@ -1,105 +1,100 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Calendar, Clock, User, Music, Headphones, TrendingUp, BookOpen, Play } from 'lucide-react';
+import { Calendar, Clock, User, Music, BookOpen } from 'lucide-react';
 import Header from './Header';
 import Footer from './Footer';
 
 const BlogPage: React.FC = () => {
-  const navigate = useNavigate();
-
   const featuredPost = {
     id: 1,
-    title: "The Science Behind AI-Powered Music Learning",
-    excerpt: "Discover how artificial intelligence is revolutionizing the way we learn and practice music, backed by cognitive science research.",
+    title: "AI搭載音楽学習の科学",
+    excerpt: "認知科学研究に基づき、人工知能がどのように音楽の学習と練習方法を革新しているかを発見しましょう。",
     author: "Dr. Sarah Chen",
-    date: "January 15, 2025",
-    readTime: "8 min read",
-    category: "AI & Technology",
+    date: "2025年1月15日",
+    readTime: "8分で読める",
+    category: "AI・テクノロジー",
     image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=compress&cs=tinysrgb&w=800&h=400&fit=crop",
     featured: true
   };
-
   const blogPosts = [
     {
       id: 2,
-      title: "5 Essential Practice Techniques Every Musician Should Know",
-      excerpt: "Master these fundamental practice methods to accelerate your musical progress and build lasting skills.",
+      title: "すべての音楽家が知るべき5つの必須練習テクニック",
+      excerpt: "音楽の進歩を加速し、持続的なスキルを構築するために、これらの基本的な練習方法をマスターしましょう。",
       author: "Marcus Rodriguez",
-      date: "January 12, 2025",
-      readTime: "6 min read",
-      category: "Practice Tips",
+      date: "2025年1月12日",
+      readTime: "6分で読める",
+      category: "練習のコツ",
       image: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=compress&cs=tinysrgb&w=400&h=250&fit=crop"
     },
     {
       id: 3,
-      title: "Building a Sustainable Daily Practice Routine",
-      excerpt: "Learn how to create and maintain a practice schedule that fits your lifestyle and maximizes your progress.",
+      title: "持続可能な毎日の練習ルーティンの構築",
+      excerpt: "あなたのライフスタイルに合い、進歩を最大化する練習スケジュールの作成と維持方法を学びましょう。",
       author: "Emma Thompson",
-      date: "January 10, 2025",
-      readTime: "5 min read",
-      category: "Productivity",
+      date: "2025年1月10日",
+      readTime: "5分で読める",
+      category: "生産性",
       image: "https://images.unsplash.com/photo-1485579149621-3123dd979885?auto=compress&cs=tinysrgb&w=400&h=250&fit=crop"
     },
     {
       id: 4,
-      title: "The Psychology of Musical Performance Anxiety",
-      excerpt: "Understanding and overcoming stage fright with proven psychological techniques and mindfulness practices.",
+      title: "音楽パフォーマンス不安の心理学",
+      excerpt: "実証済みの心理学的テクニックとマインドフルネス実践でステージフライトを理解し、克服しましょう。",
       author: "Dr. James Wilson",
-      date: "January 8, 2025",
-      readTime: "7 min read",
-      category: "Mental Health",
+      date: "2025年1月8日",
+      readTime: "7分で読める",
+      category: "メンタルヘルス",
       image: "https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=compress&cs=tinysrgb&w=400&h=250&fit=crop"
     },
     {
       id: 5,
-      title: "Exploring World Music: Broadening Your Musical Horizons",
-      excerpt: "Dive into diverse musical traditions from around the globe and incorporate new styles into your practice.",
-      author: "Yuki Tanaka",
-      date: "January 5, 2025",
-      readTime: "9 min read",
-      category: "Culture",
+      title: "世界音楽の探求：音楽的視野の拡大",
+      excerpt: "世界中の多様な音楽伝統を深く探求し、新しいスタイルを練習に取り入れましょう。",
+      author: "田中雪",
+      date: "2025年1月5日",
+      readTime: "9分で読める",
+      category: "文化",
       image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=compress&cs=tinysrgb&w=400&h=250&fit=crop"
     },
     {
       id: 6,
-      title: "Technology in Music Education: Tools for Modern Musicians",
-      excerpt: "Explore the latest apps, software, and hardware that can enhance your musical learning experience.",
+      title: "音楽教育におけるテクノロジー：現代音楽家のためのツール",
+      excerpt: "あなたの音楽学習体験を向上させる最新のアプリ、ソフトウェア、ハードウェアを探求しましょう。",
       author: "Alex Kim",
-      date: "January 3, 2025",
-      readTime: "6 min read",
-      category: "Technology",
+      date: "2025年1月3日",
+      readTime: "6分で読める",
+      category: "テクノロジー",
       image: "https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?auto=compress&cs=tinysrgb&w=400&h=250&fit=crop"
     },
     {
       id: 7,
-      title: "Mastering Music Theory: A Beginner's Guide",
-      excerpt: "Break down complex music theory concepts into digestible lessons that will improve your understanding and playing.",
-      author: "Professor Maria Garcia",
-      date: "December 30, 2024",
-      readTime: "10 min read",
-      category: "Theory",
+      title: "音楽理論のマスター：初心者向けガイド",
+      excerpt: "複雑な音楽理論の概念を理解しやすいレッスンに分解し、理解と演奏を向上させましょう。",
+      author: "Maria Garcia教授",
+      date: "2024年12月30日",
+      readTime: "10分で読める",
+      category: "理論",
       image: "https://images.unsplash.com/photo-1507838153414-b4b713384a76?auto=compress&cs=tinysrgb&w=400&h=250&fit=crop"
     }
   ];
-
   const categories = [
-    { name: "All Posts", count: 47, active: true },
-    { name: "AI & Technology", count: 12 },
-    { name: "Practice Tips", count: 15 },
-    { name: "Theory", count: 8 },
-    { name: "Mental Health", count: 6 },
-    { name: "Culture", count: 4 },
-    { name: "Productivity", count: 2 }
+    { name: "すべての投稿", count: 47, active: true },
+    { name: "AI・テクノロジー", count: 12 },
+    { name: "練習のコツ", count: 15 },
+    { name: "理論", count: 8 },
+    { name: "メンタルヘルス", count: 6 },
+    { name: "文化", count: 4 },
+    { name: "生産性", count: 2 }
   ];
-
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case 'AI & Technology': return 'bg-blue-500/10 text-blue-400 border-blue-500/20';
-      case 'Practice Tips': return 'bg-green-500/10 text-green-400 border-green-500/20';
-      case 'Theory': return 'bg-purple-500/10 text-purple-400 border-purple-500/20';
-      case 'Mental Health': return 'bg-pink-500/10 text-pink-400 border-pink-500/20';
-      case 'Culture': return 'bg-orange-500/10 text-orange-400 border-orange-500/20';
-      case 'Productivity': return 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20';
+      case 'AI・テクノロジー': return 'bg-blue-500/10 text-blue-400 border-blue-500/20';
+      case '練習のコツ': return 'bg-green-500/10 text-green-400 border-green-500/20';
+      case '理論': return 'bg-purple-500/10 text-purple-400 border-purple-500/20';
+      case 'メンタルヘルス': return 'bg-pink-500/10 text-pink-400 border-pink-500/20';
+      case '文化': return 'bg-orange-500/10 text-orange-400 border-orange-500/20';
+      case '生産性': return 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20';
+      case 'テクノロジー': return 'bg-blue-500/10 text-blue-400 border-blue-500/20';
       default: return 'bg-gray-500/10 text-gray-400 border-gray-500/20';
     }
   };
@@ -122,11 +117,10 @@ const BlogPage: React.FC = () => {
         <div className="text-center mb-16">
           <div className="w-16 h-16 bg-gradient-to-br from-brand-brown to-brand-yellow rounded-2xl flex items-center justify-center mx-auto mb-6">
             <BookOpen className="w-8 h-8 text-white" />
-          </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">Zenic Blog</h1>
+          </div>          <h1 className="text-4xl md:text-5xl font-bold mb-6">Zenicブログ</h1>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-            Insights, tips, and stories from the world of AI-powered music learning. 
-            Discover expert advice to accelerate your musical journey.
+            AI搭載音楽学習の世界からのインサイト、ヒント、ストーリー。
+            あなたの音楽の旅を加速させるエキスパートアドバイスを発見しましょう。
           </p>
         </div>
 
@@ -148,7 +142,7 @@ const BlogPage: React.FC = () => {
 
         {/* Featured Post */}
         <div className="mb-16">
-          <h2 className="text-2xl font-bold mb-8 text-center">Featured Article</h2>
+          <h2 className="text-2xl font-bold mb-8 text-center">注目記事</h2>
           <div className="bg-gray-900/30 backdrop-blur-sm border border-gray-700/30 rounded-2xl overflow-hidden hover:border-brand-brown/50 transition-all duration-300 group">
             <div className="grid lg:grid-cols-2 gap-0">
               <div className="relative overflow-hidden">
@@ -183,9 +177,8 @@ const BlogPage: React.FC = () => {
                     <Clock className="w-4 h-4" />
                     <span>{featuredPost.readTime}</span>
                   </div>
-                </div>
-                <button className="px-6 py-3 bg-brand-brown text-white rounded-lg hover:bg-brand-brown/90 transition-colors font-medium w-fit">
-                  Read Full Article
+                </div>                <button className="px-6 py-3 bg-brand-brown text-white rounded-lg hover:bg-brand-brown/90 transition-colors font-medium w-fit">
+                  全記事を読む
                 </button>
               </div>
             </div>
@@ -194,7 +187,7 @@ const BlogPage: React.FC = () => {
 
         {/* Blog Posts Grid */}
         <div className="mb-16">
-          <h2 className="text-2xl font-bold mb-8">Latest Articles</h2>
+          <h2 className="text-2xl font-bold mb-8">最新記事</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {blogPosts.map((post) => (
               <article 
@@ -245,19 +238,18 @@ const BlogPage: React.FC = () => {
           <div className="max-w-2xl mx-auto">
             <div className="w-16 h-16 bg-gradient-to-br from-brand-brown to-brand-yellow rounded-2xl flex items-center justify-center mx-auto mb-6">
               <Music className="w-8 h-8 text-white" />
-            </div>
-            <h2 className="text-2xl font-bold mb-4">Stay in the Loop</h2>
+            </div>            <h2 className="text-2xl font-bold mb-4">最新情報をお届け</h2>
             <p className="text-gray-300 mb-6">
-              Get the latest insights on AI-powered music learning, practice tips, and exclusive content delivered to your inbox.
+              AI搭載音楽学習、練習のコツ、限定コンテンツの最新情報をあなたの受信箱に配信します。
             </p>
             <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
               <input
                 type="email"
-                placeholder="Enter your email"
+                placeholder="メールアドレスを入力"
                 className="flex-1 px-4 py-3 bg-gray-800/50 border border-gray-600/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-brand-brown"
               />
               <button className="px-6 py-3 bg-brand-brown text-white rounded-lg hover:bg-brand-brown/90 transition-colors font-medium">
-                Subscribe
+                購読する
               </button>
             </div>
           </div>

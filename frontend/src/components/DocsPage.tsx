@@ -22,287 +22,279 @@ const DocsPage: React.FC = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeSection, setActiveSection] = useState('getting-started');
-
   const sections = [
     {
       id: 'getting-started',
-      title: 'Getting Started',
+      title: 'はじめに',
       icon: <Play className="w-5 h-5" />,
-      description: 'Learn the basics of using Zenic'
+      description: 'Zenicの基本的な使い方を学ぶ'
     },
     {
       id: 'ai-features',
-      title: 'AI Features',
+      title: 'AI機能',
       icon: <Settings className="w-5 h-5" />,
-      description: 'Master AI-powered practice tools'
+      description: 'AI搭載練習ツールをマスターする'
     },
     {
       id: 'practice-tools',
-      title: 'Practice Tools',
+      title: '練習ツール',
       icon: <Music className="w-5 h-5" />,
-      description: 'Essential tools for effective practice'
+      description: '効果的な練習のための必須ツール'
     },
     {
       id: 'audio-setup',
-      title: 'Audio Setup',
+      title: 'オーディオ設定',
       icon: <Mic className="w-5 h-5" />,
-      description: 'Configure your audio equipment'
-    },
-    {
+      description: 'オーディオ機器の設定'
+    },    {
       id: 'analytics',
-      title: 'Analytics & Progress',
+      title: '分析と進歩',
       icon: <BarChart3 className="w-5 h-5" />,
-      description: 'Track your musical journey'
+      description: 'あなたの音楽の旅を追跡する'
     },
     {
       id: 'api',
-      title: 'API Reference',
+      title: 'APIリファレンス',
       icon: <Code className="w-5 h-5" />,
-      description: 'Developer documentation'
+      description: '開発者向けドキュメント'
     }
   ];
-
   const documentation = {
     'getting-started': {
-      title: 'Getting Started with Zenic',
+      title: 'Zenicの始め方',
       items: [
         {
-          title: 'Creating Your Account',
+          title: 'アカウントの作成',
           content: `
-            <h3>Sign Up Process</h3>
-            <p>Getting started with Zenic is simple and free. Follow these steps to create your account:</p>
+            <h3>サインアップの手順</h3>
+            <p>Zenicを始めるのは簡単で無料です。以下の手順に従ってアカウントを作成してください：</p>
             <ol>
-              <li>Click the "Get Started" button on our homepage</li>
-              <li>Enter your email address and create a secure password</li>
-              <li>Verify your email address through the confirmation link</li>
-              <li>Complete your musical profile setup</li>
+              <li>ホームページの「はじめる」ボタンをクリック</li>
+              <li>メールアドレスを入力し、安全なパスワードを作成</li>
+              <li>確認リンクを通じてメールアドレスを認証</li>
+              <li>音楽プロフィールの設定を完了</li>
             </ol>
             
-            <h3>Profile Setup</h3>
-            <p>During setup, you'll be asked to:</p>
+            <h3>プロフィール設定</h3>
+            <p>設定中に以下を選択していただきます：</p>
             <ul>
-              <li>Select your primary instrument(s)</li>
-              <li>Indicate your current skill level</li>
-              <li>Choose your musical goals</li>
-              <li>Set practice preferences and schedule</li>
+              <li>主要楽器の選択</li>
+              <li>現在のスキルレベルの指定</li>
+              <li>音楽の目標を選択</li>
+              <li>練習の設定とスケジュール設定</li>
             </ul>
           `
         },
         {
-          title: 'First Practice Session',
+          title: '最初の練習セッション',
           content: `
-            <h3>Starting Your Journey</h3>
-            <p>Your first practice session helps our AI understand your current abilities:</p>
+            <h3>あなたの旅の始まり</h3>
+            <p>最初の練習セッションは、AIがあなたの現在の能力を理解するのに役立ちます：</p>
             
-            <h4>Initial Assessment</h4>
+            <h4>初期評価</h4>
             <ul>
-              <li>Play a simple song or exercise</li>
-              <li>Our AI analyzes your technique, timing, and pitch accuracy</li>
-              <li>Receive personalized recommendations based on your performance</li>
+              <li>簡単な楽曲やエクササイズを演奏</li>
+              <li>AIがあなたのテクニック、タイミング、音程の精度を分析</li>
+              <li>あなたのパフォーマンスに基づいたパーソナライズされた推奨を受信</li>
             </ul>
             
-            <h4>Setting Up Practice Goals</h4>
-            <p>Define what you want to achieve:</p>
+            <h4>練習目標の設定</h4>
+            <p>達成したいことを定義してください：</p>
             <ul>
-              <li>Daily practice time targets</li>
-              <li>Skill development priorities</li>
-              <li>Song learning objectives</li>
+              <li>日々の練習時間の目標</li>
+              <li>スキル開発の優先順位</li>
+              <li>楽曲学習の目的</li>
             </ul>
           `
         },
         {
-          title: 'Navigating the Interface',
+          title: 'インターフェースのナビゲーション',
           content: `
-            <h3>Dashboard Overview</h3>
-            <p>Your dashboard provides quick access to:</p>
+            <h3>ダッシュボード概要</h3>
+            <p>ダッシュボードでは以下に素早くアクセスできます：</p>
             <ul>
-              <li><strong>Practice Sessions:</strong> Start new sessions or continue previous ones</li>
-              <li><strong>Progress Tracking:</strong> View your improvement over time</li>
-              <li><strong>AI Recommendations:</strong> Personalized practice suggestions</li>
-              <li><strong>Song Library:</strong> Browse and search available songs</li>
-            </ul>
+              <li><strong>練習セッション：</strong> 新しいセッションを開始するか、以前のセッションを継続</li>
+              <li><strong>進歩の追跡：</strong> 時間の経過とともにあなたの改善を表示</li>
+              <li><strong>AI推奨：</strong> パーソナライズされた練習提案</li>
+              <li><strong>楽曲ライブラリ：</strong> 利用可能な楽曲を閲覧・検索</li>            </ul>
             
-            <h3>Practice Interface</h3>
-            <p>During practice sessions, you'll see:</p>
+            <h3>練習インターフェース</h3>
+            <p>練習セッション中に以下が表示されます：</p>
             <ul>
-              <li>Real-time feedback on your performance</li>
-              <li>Visual indicators for timing and pitch</li>
-              <li>Progress bars showing completion status</li>
-              <li>Recording controls for playback review</li>
+              <li>パフォーマンスのリアルタイムフィードバック</li>
+              <li>タイミングと音程の視覚的インジケータ</li>
+              <li>完了状況を示すプログレスバー</li>
+              <li>再生レビュー用の録音コントロール</li>
             </ul>
           `
         }
       ]
     },
     'ai-features': {
-      title: 'AI-Powered Learning Features',
+      title: 'AI搭載学習機能',
       items: [
         {
-          title: 'Smart Practice Recommendations',
+          title: 'スマート練習推奨',
           content: `
-            <h3>How It Works</h3>
-            <p>Our AI analyzes your practice sessions to provide personalized recommendations:</p>
+            <h3>仕組み</h3>
+            <p>AIがあなたの練習セッションを分析してパーソナライズされた推奨を提供します：</p>
             
-            <h4>Analysis Factors</h4>
+            <h4>分析要因</h4>
             <ul>
-              <li>Current skill level and progress rate</li>
-              <li>Areas of strength and improvement needed</li>
-              <li>Practice frequency and consistency</li>
-              <li>Musical preferences and goals</li>
+              <li>現在のスキルレベルと進歩率</li>
+              <li>強みの分野と改善が必要な分野</li>
+              <li>練習頻度と一貫性</li>
+              <li>音楽の好みと目標</li>
             </ul>
             
-            <h4>Recommendation Types</h4>
+            <h4>推奨タイプ</h4>
             <ul>
-              <li><strong>Technical Exercises:</strong> Targeted drills for specific skills</li>
-              <li><strong>Song Suggestions:</strong> Pieces matching your level and interests</li>
-              <li><strong>Practice Scheduling:</strong> Optimal timing and duration</li>
-              <li><strong>Difficulty Progression:</strong> Gradual challenge increases</li>
+              <li><strong>テクニカルエクササイズ：</strong> 特定のスキルのための集中的な練習</li>
+              <li><strong>楽曲提案：</strong> あなたのレベルと興味に合った楽曲</li>
+              <li><strong>練習スケジューリング：</strong> 最適なタイミングと持続時間</li>
+              <li><strong>難易度の進歩：</strong> 段階的なチャレンジの増加</li>
             </ul>
           `
         },
         {
-          title: 'Real-Time Feedback System',
+          title: 'リアルタイムフィードバックシステム',
           content: `
-            <h3>Instant Performance Analysis</h3>
-            <p>Get immediate feedback on your playing:</p>
+            <h3>即座のパフォーマンス分析</h3>
+            <p>演奏に対する即座のフィードバックを取得：</p>
             
-            <h4>Pitch Detection</h4>
+            <h4>音程検出</h4>
             <ul>
-              <li>Accuracy measurement with 95%+ precision</li>
-              <li>Visual indicators for sharp/flat notes</li>
-              <li>Intonation improvement suggestions</li>
+              <li>95%以上の精度での正確性測定</li>
+              <li>シャープ/フラット音符の視覚的インジケータ</li>
+              <li>音程改善の提案</li>
             </ul>
             
-            <h4>Rhythm Analysis</h4>
+            <h4>リズム分析</h4>
             <ul>
-              <li>Beat accuracy tracking</li>
-              <li>Tempo consistency monitoring</li>
-              <li>Rhythm pattern recognition</li>
+              <li>ビート精度の追跡</li>
+              <li>テンポ一貫性のモニタリング</li>
+              <li>リズムパターンの認識</li>
             </ul>
             
-            <h4>Technique Assessment</h4>
-            <ul>
-              <li>Fingering and hand position analysis</li>
-              <li>Bowing technique (for string instruments)</li>
-              <li>Breath control (for wind instruments)</li>
+            <h4>テクニック評価</h4>            <ul>
+              <li>運指と手の位置の分析</li>
+              <li>弓のテクニック（弦楽器用）</li>
+              <li>息の制御（管楽器用）</li>
             </ul>
           `
         }
       ]
     },
     'practice-tools': {
-      title: 'Essential Practice Tools',
+      title: '必須練習ツール',
       items: [
         {
-          title: 'Metronome & Tempo Control',
+          title: 'メトロノーム＆テンポコントロール',
           content: `
-            <h3>Built-in Metronome</h3>
-            <p>Master timing with our advanced metronome features:</p>
+            <h3>内蔵メトロノーム</h3>
+            <p>高度なメトロノーム機能でタイミングをマスター：</p>
             
-            <h4>Features</h4>
+            <h4>機能</h4>
             <ul>
-              <li>BPM range: 40-200 beats per minute</li>
-              <li>Time signatures: 2/4, 3/4, 4/4, 6/8, and more</li>
-              <li>Accent patterns for complex rhythms</li>
-              <li>Visual and audio cues</li>
+              <li>BPM範囲：毎分40-200拍</li>
+              <li>拍子記号：2/4、3/4、4/4、6/8など</li>
+              <li>複雑なリズムのアクセントパターン</li>
+              <li>視覚的・音声的合図</li>
             </ul>
             
-            <h4>Practice Modes</h4>
+            <h4>練習モード</h4>
             <ul>
-              <li><strong>Progressive Tempo:</strong> Gradually increase speed</li>
-              <li><strong>Rhythm Trainer:</strong> Focus on specific patterns</li>
-              <li><strong>Subdivision Practice:</strong> Quarter, eighth, sixteenth notes</li>
+              <li><strong>プログレッシブテンポ：</strong> 徐々にスピードを上げる</li>
+              <li><strong>リズムトレーナー：</strong> 特定のパターンに集中</li>
+              <li><strong>細分化練習：</strong> 四分音符、八分音符、十六分音符</li>
             </ul>
           `
         },
         {
-          title: 'Digital Tuner',
+          title: 'デジタルチューナー',
           content: `
-            <h3>Precision Tuning</h3>
-            <p>Keep your instrument perfectly in tune:</p>
+            <h3>精密チューニング</h3>
+            <p>楽器を完璧にチューニングする：</p>
             
-            <h4>Tuner Features</h4>
+            <h4>チューナー機能</h4>
             <ul>
-              <li>Chromatic tuning with ±0.1 cent accuracy</li>
-              <li>Multiple temperaments (Equal, Just, Pythagorean)</li>
-              <li>Custom tuning presets</li>
-              <li>Transposition for different instruments</li>
+              <li>±0.1セント精度のクロマチックチューニング</li>
+              <li>複数の音律（平均律、純正律、ピタゴラス音律）</li>
+              <li>カスタムチューニングプリセット</li>
+              <li>異なる楽器の移調</li>
             </ul>
           `
         }
       ]
     },
     'audio-setup': {
-      title: 'Audio Configuration',
+      title: 'オーディオ設定',
       items: [
         {
-          title: 'Microphone Setup',
+          title: 'マイクロフォン設定',
           content: `
-            <h3>Optimal Audio Input</h3>
-            <p>Configure your microphone for best results:</p>
-            
-            <h4>Built-in Microphones</h4>
+            <h3>最適なオーディオ入力</h3>
+            <p>最良の結果を得るためにマイクロフォンを設定：</p>
+              <h4>内蔵マイクロフォン</h4>
             <ul>
-              <li>Position device 2-3 feet from instrument</li>
-              <li>Avoid background noise and echoes</li>
-              <li>Use a quiet practice space</li>
-              <li>Adjust input sensitivity in settings</li>
+              <li>楽器から2-3フィート離れた位置にデバイスを配置</li>
+              <li>背景ノイズやエコーを避ける</li>
+              <li>静かな練習スペースを使用</li>
+              <li>設定で入力感度を調整</li>
             </ul>
             
-            <h4>External Microphones</h4>
+            <h4>外部マイクロフォン</h4>
             <ul>
-              <li><strong>USB Microphones:</strong> Plug-and-play convenience</li>
-              <li><strong>XLR Microphones:</strong> Professional quality with audio interface</li>
-              <li><strong>Instrument Pickups:</strong> Direct connection for electric instruments</li>
+              <li><strong>USBマイクロフォン：</strong> プラグアンドプレイの便利さ</li>
+              <li><strong>XLRマイクロフォン：</strong> オーディオインターフェースによるプロ品質</li>
+              <li><strong>楽器ピックアップ：</strong> 電子楽器への直接接続</li>
             </ul>
           `
         }
       ]
-    },
-    'analytics': {
-      title: 'Progress Analytics',
+    },    'analytics': {
+      title: '進歩の分析',
       items: [
         {
-          title: 'Performance Metrics',
+          title: 'パフォーマンス指標',
           content: `
-            <h3>Tracking Your Progress</h3>
-            <p>Understand your improvement with detailed analytics:</p>
+            <h3>進歩の追跡</h3>
+            <p>詳細な分析であなたの改善を理解する：</p>
             
-            <h4>Practice Statistics</h4>
+            <h4>練習統計</h4>
             <ul>
-              <li>Daily, weekly, and monthly practice time</li>
-              <li>Session frequency and consistency</li>
-              <li>Goal achievement rates</li>
-              <li>Streak tracking and milestones</li>
+              <li>日々、週次、月次の練習時間</li>
+              <li>セッション頻度と一貫性</li>
+              <li>目標達成率</li>
+              <li>連続記録の追跡とマイルストーン</li>
             </ul>
             
-            <h4>Skill Development</h4>
+            <h4>スキル開発</h4>
             <ul>
-              <li>Accuracy improvement over time</li>
-              <li>Tempo progression tracking</li>
-              <li>Technical skill advancement</li>
-              <li>Song mastery levels</li>
+              <li>時間の経過による精度の向上</li>
+              <li>テンポ進歩の追跡</li>
+              <li>技術スキルの向上</li>
+              <li>楽曲マスターレベル</li>
             </ul>
           `
         }
       ]
-    },
-    'api': {
-      title: 'Developer API Reference',
+    },    'api': {
+      title: '開発者APIリファレンス',
       items: [
         {
-          title: 'Authentication',
+          title: '認証',
           content: `
-            <h3>API Authentication</h3>
-            <p>Secure access to Zenic's developer API:</p>
+            <h3>API認証</h3>
+            <p>Zenicの開発者APIへの安全なアクセス：</p>
             
-            <h4>Getting Started</h4>
-            <pre><code>// Request API key
+            <h4>はじめに</h4>
+            <pre><code>// APIキーのリクエスト
 curl -X POST https://api.zenic.com/auth/token \\
   -H "Content-Type: application/json" \\
   -d '{"email": "your@email.com", "password": "your_password"}'</code></pre>
             
-            <h4>Authentication Headers</h4>
+            <h4>認証ヘッダー</h4>
             <pre><code>Authorization: Bearer YOUR_API_TOKEN
 Content-Type: application/json</code></pre>
           `
@@ -337,11 +329,10 @@ Content-Type: application/json</code></pre>
         <div className="text-center mb-16">
           <div className="w-16 h-16 bg-gradient-to-br from-brand-brown to-brand-yellow rounded-2xl flex items-center justify-center mx-auto mb-6">
             <BookOpen className="w-8 h-8 text-white" />
-          </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">Documentation</h1>
+          </div>          <h1 className="text-4xl md:text-5xl font-bold mb-6">ドキュメント</h1>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-            Complete guides and references for mastering Zenic's AI-powered music learning platform. 
-            From beginner setup to advanced features and API integration.
+            ZenicのAI搭載音楽学習プラットフォームをマスターするための完全なガイドとリファレンス。
+            初心者の設定から高度な機能やAPI統合まで。
           </p>
         </div>
 
@@ -351,7 +342,7 @@ Content-Type: application/json</code></pre>
             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
             <input
               type="text"
-              placeholder="Search documentation..."
+              placeholder="ドキュメントを検索..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-12 pr-4 py-4 bg-gray-900/30 border border-gray-700/30 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-brand-brown focus:bg-gray-900/50 transition-all"
@@ -363,7 +354,7 @@ Content-Type: application/json</code></pre>
           {/* Sidebar */}
           <div className="lg:col-span-1">
             <div className="sticky top-24">
-              <h3 className="text-lg font-semibold mb-4 text-brand-yellow">Documentation Sections</h3>
+              <h3 className="text-lg font-semibold mb-4 text-brand-yellow">ドキュメントセクション</h3>
               <nav className="space-y-2">
                 {filteredSections.map((section) => (
                   <button
@@ -386,22 +377,21 @@ Content-Type: application/json</code></pre>
 
               {/* Quick Links */}
               <div className="mt-8 p-4 bg-gray-900/30 rounded-xl border border-gray-700/30">
-                <h4 className="font-semibold mb-3 text-white">Quick Links</h4>
+                <h4 className="font-semibold mb-3 text-white">クイックリンク</h4>
                 <div className="space-y-2 text-sm">
                   <button 
                     onClick={() => navigate('/faq')}
                     className="flex items-center gap-2 text-gray-300 hover:text-brand-yellow transition-colors w-full text-left"
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                    FAQ
+                  >                    <ExternalLink className="w-4 h-4" />
+                    よくある質問
                   </button>
                   <a href="mailto:support@zenic.com" className="flex items-center gap-2 text-gray-300 hover:text-brand-yellow transition-colors">
                     <Headphones className="w-4 h-4" />
-                    Support
+                    サポート
                   </a>
                   <a href="#" className="flex items-center gap-2 text-gray-300 hover:text-brand-yellow transition-colors">
                     <Download className="w-4 h-4" />
-                    PDF Guide
+                    PDFガイド
                   </a>
                 </div>
               </div>
@@ -448,23 +438,22 @@ Content-Type: application/json</code></pre>
           <div className="max-w-2xl mx-auto">
             <div className="w-16 h-16 bg-gradient-to-br from-brand-brown to-brand-yellow rounded-2xl flex items-center justify-center mx-auto mb-6">
               <Users className="w-8 h-8 text-white" />
-            </div>
-            <h2 className="text-2xl font-bold mb-4">Need More Help?</h2>
+            </div>            <h2 className="text-2xl font-bold mb-4">さらなるサポートが必要ですか？</h2>
             <p className="text-gray-300 mb-6">
-              Join our community of musicians or reach out to our support team for personalized assistance.
+              音楽家のコミュニティに参加するか、パーソナライズされたサポートについてサポートチームにお問い合わせください。
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
                 onClick={() => navigate('/faq')}
                 className="px-6 py-3 bg-brand-brown text-white rounded-lg hover:bg-brand-brown/90 transition-colors font-medium"
               >
-                View FAQ
+                FAQ表示
               </button>
               <a 
                 href="mailto:support@zenic.com"
                 className="px-6 py-3 border border-gray-600 text-gray-300 rounded-lg hover:border-brand-brown hover:text-brand-yellow transition-colors font-medium"
               >
-                Contact Support
+                サポートに問い合わせ
               </a>
             </div>
           </div>

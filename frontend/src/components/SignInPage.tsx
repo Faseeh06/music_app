@@ -39,7 +39,7 @@ const SignInPage: React.FC = () => {
       console.error('Sign in error:', error);
       const errorMessage = error instanceof Error && 'code' in error && (error as Error & { code?: string }).code === 'auth/invalid-credential'
         ? 'Invalid email or password' 
-        : 'Failed to sign in. Please try again.';
+        : 'サインインに失敗しました。もう一度お試しください。';
       setErrors({ submit: errorMessage });
     } finally {
       setLoading(false);
@@ -55,7 +55,7 @@ const SignInPage: React.FC = () => {
       navigate('/dashboard');
     } catch (error: unknown) {
       console.error('Google sign in error:', error);
-      setErrors({ submit: 'Failed to sign in with Google. Please try again.' });
+      setErrors({ submit: 'Googleサインインに失敗しました。もう一度お試しください。' });
     } finally {
       setLoading(false);
     }
@@ -131,7 +131,7 @@ const SignInPage: React.FC = () => {
                   <input
                     type="email"
                     name="email"
-                    placeholder="Email address"
+                    placeholder="メールアドレス"
                     value={formData.email}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 bg-gray-800/30 border border-gray-700/50 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-brand-brown focus:ring-1 focus:ring-brand-brown/50 transition-all"
@@ -141,7 +141,7 @@ const SignInPage: React.FC = () => {
                   <input
                     type={showPassword ? "text" : "password"}
                     name="password"
-                    placeholder="Password"
+                    placeholder="パスワード"
                     value={formData.password}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 pr-12 bg-gray-800/30 border border-gray-700/50 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-brand-brown focus:ring-1 focus:ring-brand-brown/50 transition-all"
@@ -167,7 +167,7 @@ const SignInPage: React.FC = () => {
                   disabled={loading}
                   className="w-full bg-gradient-to-r from-brand-brown to-brand-yellow text-white font-semibold py-3 px-4 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50"
                 >
-                  {loading ? 'Signing In...' : 'Sign In'}
+                  {loading ? 'サインイン中...' : 'サインイン'}
                 </button>
               </form>
 
