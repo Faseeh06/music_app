@@ -50,6 +50,18 @@ service cloud.firestore {
              (!data.keys().hasAny(['progress']) || (data.progress is number && data.progress >= 0 && data.progress <= 100));
     }
 
+    function isValidSongScore() {
+      let data = request.resource.data;
+      return data.keys().hasAll(['userId', 'username', 'displayName', 'songTitle', 'artist', 'score']) &&
+             data.userId is string &&
+             data.username is string &&
+             data.displayName is string &&
+             data.songTitle is string &&
+             data.artist is string &&
+             data.score is number &&
+             data.score >= 0 && data.score <= 100;
+    }
+
     // Practice History Collection Rules
     match /practiceHistory/{sessionId} {
       // Allow read if user is the owner of the practice session
@@ -69,7 +81,34 @@ service cloud.firestore {
       allow delete: if isAuthenticated() && isOwner(resource.data.userId);
     }
 
-    // User Profiles Collection Rules (if you plan to add user profile features)
+    // Song Scores Collection Rules
+    match /songScores/{scoreId} {
+      // Allow read for all authenticated users (public scores for leaderboards)
+      allow read: if isAuthenticated();
+      
+      // Allow users to create their own song scores
+      allow create: if isAuthenticated() && 
+                   isOwner(request.resource.data.userId) &&
+                   isValidSongScore();
+      
+      // Users cannot update or delete individual score entries (preserve history)
+      allow update: if false;
+      allow delete: if false;
+    }
+
+    // User Song Bests Collection Rules (stores best score per user per song)
+    match /userSongBests/{bestId} {
+      // Allow read for all authenticated users (public best scores)
+      allow read: if isAuthenticated();
+      
+      // Only allow system updates (handled by Cloud Functions or service functions)
+      // Users cannot directly manipulate their best scores
+      allow create: if isAuthenticated() && isOwner(request.resource.data.userId);
+      allow update: if isAuthenticated() && isOwner(resource.data.userId);
+      allow delete: if false;
+    }
+
+    // User Profiles Collection Rules
     match /userProfiles/{userId} {
       // Users can read and write their own profile
       allow read, write: if isAuthenticated() && isOwner(userId);
@@ -106,7 +145,7 @@ service cloud.firestore {
     }
 
     // Practice Challenges Collection Rules (if you plan to add challenges)
-    match /practiceeChallenges/{challengeId} {
+    match /practiceChallenges/{challengeId} {
       // Allow read for all authenticated users
       allow read: if isAuthenticated();
       
@@ -139,15 +178,26 @@ service cloud.firestore {
 - ✅ Prevents users from changing the `userId` on updates
 - ✅ Validates data types and ranges (difficulty 1-5, scores 0-100)
 
-### 2. **User Profiles Rules** (`/userProfiles/{userId}`)
+### 2. **Song Scores Rules** (`/songScores/{scoreId}`)
+- ✅ All authenticated users can read song scores (public leaderboards)
+- ✅ Users can only create their own song scores
+- ✅ Data validation for song score fields
+- ✅ Prevents modification of score history (preserve integrity)
+
+### 3. **User Song Bests Rules** (`/userSongBests/{bestId}`)
+- ✅ All authenticated users can read best scores (public rankings)
+- ✅ System-controlled updates to maintain best scores
+- ✅ Prevents manual manipulation of best score records
+
+### 4. **User Profiles Rules** (`/userProfiles/{userId}`)
 - ✅ Users can only access their own profile
 - ✅ Prepared for future user profile features
 
-### 3. **User Settings Rules** (`/userSettings/{userId}`)
+### 5. **User Settings Rules** (`/userSettings/{userId}`)
 - ✅ Users can manage their own app settings
 - ✅ Useful for preferences, themes, etc.
 
-### 4. **Additional Collections**
+### 6. **Additional Collections**
 - Prepared rules for future features like goals, song library, and challenges
 
 ## Security Features
