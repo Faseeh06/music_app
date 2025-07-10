@@ -76,7 +76,7 @@ const SignInPage: React.FC = () => {
         className="absolute top-8 left-8 flex items-center gap-2 text-gray-500 hover:text-gray-300 transition-colors z-20 group"
       >
         <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-        <span className="text-sm font-medium">Back</span>
+        <span className="text-sm font-medium">戻る</span>
       </button>
 
       {/* Main Content */}
@@ -98,7 +98,7 @@ const SignInPage: React.FC = () => {
                   </h1>
                 </div>
                 <p className="text-white font-light text-lg">
-                  Sign in or create an account
+                  サインインまたはアカウント作成
                 </p>
               </div>
             </div>
@@ -114,8 +114,8 @@ const SignInPage: React.FC = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
                   </svg>
                 </div>
-                <h2 className="text-2xl font-bold text-white mb-2">Sign In</h2>
-                <p className="text-gray-400">Welcome back to your practice</p>
+                <h2 className="text-2xl font-bold text-white mb-2">サインイン</h2>
+                <p className="text-gray-400">練習へようこそお帰りなさい</p>
               </div>
 
               {/* Error Message */}
@@ -174,7 +174,7 @@ const SignInPage: React.FC = () => {
               {/* Divider */}
               <div className="flex items-center my-6">
                 <div className="flex-1 h-px bg-gray-700"></div>
-                <span className="px-4 text-sm text-gray-500">or</span>
+                <span className="px-4 text-sm text-gray-500">または</span>
                 <div className="flex-1 h-px bg-gray-700"></div>
               </div>
 
@@ -190,18 +190,18 @@ const SignInPage: React.FC = () => {
                   <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
                   <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
                 </svg>
-                <span>Continue with Google</span>
+                <span>Googleで続ける</span>
               </button>
 
               {/* Sign Up Link */}
               <div className="mt-6 text-center">
                 <p className="text-gray-400">
-                  New to Zenic?{' '}
+                  Zenicが初めてですか？{' '}
                   <button
                     onClick={() => navigate('/signup')}
                     className="text-brand-brown hover:text-brand-yellow font-medium transition-colors"
                   >
-                    Create account
+                    アカウント作成
                   </button>
                 </p>
               </div>
