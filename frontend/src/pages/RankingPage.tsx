@@ -1,67 +1,289 @@
-import React, { useState } from 'react';
-import { Trophy, Medal, Star, Clock, Users, Guitar, Piano, Award, TrendingUp } from 'lucide-react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { Trophy, Medal, Star, Zap, Filter, Search, TrendingUp, ChevronDown, ChevronUp, Info, Users, Target } from 'lucide-react';
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
 import { useSidebar } from '../contexts/SidebarContext';
 
-const dummyLeaderboards = {
-  practiceTime: [
-    { rank: 1, name: 'Alice', time: '120h', instrument: 'Guitar', avatar: 'https://picsum.photos/40?random=1' },
-    { rank: 2, name: 'Bob', time: '90h', instrument: 'Piano', avatar: 'https://picsum.photos/40?random=2' },
-    { rank: 3, name: 'Charlie', time: '75h', instrument: 'Violin', avatar: 'https://picsum.photos/40?random=3' },
-    { rank: 4, name: 'Diana', time: '68h', instrument: 'Guitar', avatar: 'https://picsum.photos/40?random=4' },
-    { rank: 5, name: 'Eve', time: '55h', instrument: 'Drums', avatar: 'https://picsum.photos/40?random=5' },
-  ],
-  popularSongs: [
-    { rank: 1, song: 'Wonderwall', artist: 'Oasis', plays: 150, cover: 'https://picsum.photos/60?random=11' },
-    { rank: 2, song: 'Hotel California', artist: 'Eagles', plays: 120, cover: 'https://picsum.photos/60?random=12' },
-    { rank: 3, song: 'Stairway to Heaven', artist: 'Led Zeppelin', plays: 100, cover: 'https://picsum.photos/60?random=13' },
-    { rank: 4, song: 'Bohemian Rhapsody', artist: 'Queen', plays: 95, cover: 'https://picsum.photos/60?random=14' },
-    { rank: 5, song: 'Sweet Child O Mine', artist: 'Guns N Roses', plays: 85, cover: 'https://picsum.photos/60?random=15' },
-  ],
-  instrumentSpecific: {
-    Guitar: [
-      { rank: 1, name: 'Alice', time: '120h', avatar: 'https://picsum.photos/40?random=1' },
-      { rank: 2, name: 'Bob', time: '90h', avatar: 'https://picsum.photos/40?random=2' },
-      { rank: 3, name: 'Charlie', time: '75h', avatar: 'https://picsum.photos/40?random=3' },
-    ],
-    Piano: [
-      { rank: 1, name: 'David', time: '100h', avatar: 'https://picsum.photos/40?random=6' },
-      { rank: 2, name: 'Eve', time: '80h', avatar: 'https://picsum.photos/40?random=7' },
-      { rank: 3, name: 'Frank', time: '60h', avatar: 'https://picsum.photos/40?random=8' },
-    ],
-  },
-};
-
-const dummyAchievements = [
-  { name: 'Practice Streak', description: 'Practice for 7 days in a row', icon: '🏆', rarity: 'gold' },
-  { name: 'Song Master', description: 'Master 10 songs', icon: '🎵', rarity: 'silver' },
-  { name: 'Social Butterfly', description: 'Follow 5 friends', icon: '🦋', rarity: 'bronze' },
-  { name: 'Night Owl', description: 'Practice after midnight', icon: '🦉', rarity: 'gold' },
-  { name: 'Early Bird', description: 'Practice before 6 AM', icon: '🐦', rarity: 'silver' },
-  { name: 'Marathon', description: 'Practice for 5+ hours straight', icon: '⏰', rarity: 'gold' },
-];
+interface Player {
+  rank: number;
+  name: string;
+  avatar: string;
+  country: string;
+  points: number;
+  wins: number;
+  loses: number;
+  winRate: number;
+  isTopPlayer?: boolean;
+  streak: number;
+  level: string;
+  lastActive: string;
+  totalGames: number;
+  averageScore: number;
+}
 
 const RankingPage: React.FC = () => {
   const { isCollapsed } = useSidebar();
+  const [timeFilter, setTimeFilter] = useState('weekly');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedRank, setSelectedRank] = useState<number | null>(null);
+  const [sortBy, setSortBy] = useState<'points' | 'winRate' | 'wins'>('points');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [showStats, setShowStats] = useState(true);
+  const [animationTrigger, setAnimationTrigger] = useState(0);
 
+  // Enhanced mock data with more detailed statistics
+  const leaderboardData: Player[] = useMemo(() => [
+    {
+      rank: 1,
+      name: 'AlexSkywalker',
+      avatar: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?w=60&h=60&fit=crop&crop=face',
+      country: '🇺🇸',
+      points: 3100,
+      wins: 31,
+      loses: 0,
+      winRate: 100,
+      isTopPlayer: true,
+      streak: 15,
+      level: 'Master',
+      lastActive: '2分前',
+      totalGames: 31,
+      averageScore: 100
+    },
+    {
+      rank: 2,
+      name: 'JuvenirSnoods',
+      avatar: 'https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?w=60&h=60&fit=crop&crop=face',
+      country: '🇺🇸',
+      points: 900,
+      wins: 38,
+      loses: 6,
+      winRate: 86,
+      streak: 7,
+      level: 'Expert',
+      lastActive: '5分前',
+      totalGames: 44,
+      averageScore: 86
+    },
+    {
+      rank: 3,
+      name: 'SarkhanFirefeffer',
+      avatar: 'https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?w=60&h=60&fit=crop&crop=face',
+      country: '🇺🇸',
+      points: 870,
+      wins: 50,
+      loses: 9,
+      winRate: 80,
+      streak: 3,
+      level: 'Expert',
+      lastActive: '1時間前',
+      totalGames: 59,
+      averageScore: 80
+    },
+    {
+      rank: 4,
+      name: 'tropsatlantic',
+      avatar: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?w=60&h=60&fit=crop&crop=face',
+      country: '🇺🇸',
+      points: 840,
+      wins: 29,
+      loses: 6,
+      winRate: 78,
+      streak: 2,
+      level: 'Advanced',
+      lastActive: '2時間前',
+      totalGames: 35,
+      averageScore: 78
+    },
+    {
+      rank: 5,
+      name: 'introducerdapping',
+      avatar: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?w=60&h=60&fit=crop&crop=face',
+      country: '🇺🇸',
+      points: 810,
+      wins: 25,
+      loses: 4,
+      winRate: 69,
+      streak: 1,
+      level: 'Advanced',
+      lastActive: '3時間前',
+      totalGames: 29,
+      averageScore: 69
+    },
+    {
+      rank: 6,
+      name: 'uninvesduniquely',
+      avatar: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?w=60&h=60&fit=crop&crop=face',
+      country: '🇺🇸',
+      points: 690,
+      wins: 50,
+      loses: 16,
+      winRate: 65,
+      streak: 0,
+      level: 'Intermediate',
+      lastActive: '4時間前',
+      totalGames: 66,
+      averageScore: 65
+    },
+    {
+      rank: 7,
+      name: 'musicmaster7',
+      avatar: 'https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg?w=60&h=60&fit=crop&crop=face',
+      country: '🇺🇸',
+      points: 610,
+      wins: 25,
+      loses: 4,
+      winRate: 53,
+      streak: 0,
+      level: 'Intermediate',
+      lastActive: '6時間前',
+      totalGames: 29,
+      averageScore: 53
+    },
+    {
+      rank: 8,
+      name: 'rhythmking8',
+      avatar: 'https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?w=60&h=60&fit=crop&crop=face',
+      country: '🇺🇸',
+      points: 580,
+      wins: 40,
+      loses: 18,
+      winRate: 45,
+      streak: 0,
+      level: 'Beginner',
+      lastActive: '8時間前',
+      totalGames: 58,
+      averageScore: 45
+    }
+  ], []);
+
+  // Enhanced utility functions
   const getRankIcon = (rank: number) => {
-    switch (rank) {
-      case 1: return <Trophy className="w-5 h-5 text-yellow-400" />;
-      case 2: return <Medal className="w-5 h-5 text-gray-300" />;
-      case 3: return <Medal className="w-5 h-5 text-orange-400" />;
-      default: return <span className="text-gray-400 font-bold">#{rank}</span>;
+    if (rank === 1) return <div className="w-8 h-8 bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg animate-pulse">1</div>;
+    if (rank === 2) return <div className="w-8 h-8 bg-gradient-to-r from-gray-300 to-gray-500 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg">2</div>;
+    if (rank === 3) return <div className="w-8 h-8 bg-gradient-to-r from-orange-400 to-orange-600 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg">3</div>;
+    return <div className="w-8 h-8 bg-gradient-to-r from-gray-600 to-gray-700 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-md hover:shadow-lg transition-shadow duration-200">{rank}</div>;
+  };
+
+  const getWinRateColor = (winRate: number) => {
+    if (winRate >= 90) return 'text-green-400';
+    if (winRate >= 70) return 'text-yellow-400';
+    if (winRate >= 50) return 'text-orange-400';
+    return 'text-red-400';
+  };
+
+  const getWinRateBadge = (winRate: number) => {
+    if (winRate >= 90) return 'bg-green-500/20 text-green-400 border-green-500/30';
+    if (winRate >= 70) return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
+    if (winRate >= 50) return 'bg-orange-500/20 text-orange-400 border-orange-500/30';
+    return 'bg-red-500/20 text-red-400 border-red-500/30';
+  };
+
+  const getPerformanceTrend = (winRate: number) => {
+    if (winRate >= 80) return { icon: <TrendingUp className="w-3 h-3" />, color: 'text-green-400' };
+    if (winRate >= 60) return { icon: <TrendingUp className="w-3 h-3" />, color: 'text-yellow-400' };
+    return { icon: <TrendingUp className="w-3 h-3 rotate-180" />, color: 'text-red-400' };
+  };
+
+  const getLevelColor = (level: string) => {
+    switch (level) {
+      case 'Master': return 'text-purple-400 bg-purple-500/20';
+      case 'Expert': return 'text-blue-400 bg-blue-500/20';
+      case 'Advanced': return 'text-green-400 bg-green-500/20';
+      case 'Intermediate': return 'text-yellow-400 bg-yellow-500/20';
+      case 'Beginner': return 'text-gray-400 bg-gray-500/20';
+      default: return 'text-gray-400 bg-gray-500/20';
     }
   };
 
-  const getRarityColor = (rarity: string) => {
-    switch (rarity) {
-      case 'gold': return 'border-yellow-400 bg-yellow-400/10';
-      case 'silver': return 'border-gray-300 bg-gray-300/10';
-      case 'bronze': return 'border-orange-400 bg-orange-400/10';
-      default: return 'border-gray-600 bg-gray-600/10';
+  const getStreakIcon = (streak: number) => {
+    if (streak >= 10) return <div className="w-4 h-4 bg-red-500 rounded-full animate-pulse" />;
+    if (streak >= 5) return <div className="w-4 h-4 bg-orange-500 rounded-full" />;
+    if (streak >= 3) return <div className="w-4 h-4 bg-yellow-500 rounded-full" />;
+    if (streak > 0) return <div className="w-4 h-4 bg-green-500 rounded-full" />;
+    return <div className="w-4 h-4 bg-gray-500 rounded-full" />;
+  };
+
+  // Enhanced filtering and sorting with useMemo
+  const filteredAndSortedData = useMemo(() => {
+    const filtered = leaderboardData.filter(player => 
+      player.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    // Sort data based on selected criteria
+    filtered.sort((a, b) => {
+      let aValue, bValue;
+      switch (sortBy) {
+        case 'points':
+          aValue = a.points;
+          bValue = b.points;
+          break;
+        case 'winRate':
+          aValue = a.winRate;
+          bValue = b.winRate;
+          break;
+        case 'wins':
+          aValue = a.wins;
+          bValue = b.wins;
+          break;
+        default:
+          aValue = a.points;
+          bValue = b.points;
+      }
+
+      if (sortOrder === 'asc') {
+        return aValue - bValue;
+      } else {
+        return bValue - aValue;
+      }
+    });
+
+    return filtered;
+  }, [leaderboardData, searchTerm, sortBy, sortOrder]);
+
+  // Enhanced statistics calculation
+  const stats = useMemo(() => {
+    const totalPlayers = leaderboardData.length;
+    const totalGames = leaderboardData.reduce((sum, player) => sum + player.totalGames, 0);
+    const averageWinRate = leaderboardData.reduce((sum, player) => sum + player.winRate, 0) / totalPlayers;
+    const topStreak = Math.max(...leaderboardData.map(player => player.streak));
+    
+    return {
+      totalPlayers,
+      totalGames,
+      averageWinRate: Math.round(averageWinRate),
+      topStreak,
+      activeNow: leaderboardData.filter(player => player.lastActive.includes('分前')).length
+    };
+  }, [leaderboardData]);
+
+  // Animation and interaction effects
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setAnimationTrigger(prev => prev + 1);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Trigger subtle animations for visual appeal
+  useEffect(() => {
+    // This effect uses animationTrigger to create subtle UI updates
+    const elements = document.querySelectorAll('.animate-pulse');
+    elements.forEach(el => {
+      el.classList.remove('animate-pulse');
+      setTimeout(() => el.classList.add('animate-pulse'), 100);
+    });
+  }, [animationTrigger]);
+
+  const handleSortChange = (newSortBy: 'points' | 'winRate' | 'wins') => {
+    if (sortBy === newSortBy) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortBy(newSortBy);
+      setSortOrder('desc');
     }
   };
+
+  const topPlayer = leaderboardData[0];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#101218] to-[#03020a] font-poppins">
@@ -69,338 +291,356 @@ const RankingPage: React.FC = () => {
       <div className={`transition-all duration-300 ${isCollapsed ? 'ml-20' : 'ml-64'}`}>
         <Navbar />
         <div className="max-w-7xl mx-auto py-8 px-4">
-          <h1 className="text-3xl font-bold text-white mb-8">Rankings & Leaderboards</h1>
+          <div className="flex items-center justify-between mb-8">
+            <h1 className="text-3xl font-bold text-white">ランキング＆リーダーボード</h1>
+            
+            {/* Controls */}
+            <div className="flex items-center gap-4">
+              {/* Search */}
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="プレイヤーを検索..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 pr-4 py-2 bg-gray-800/50 border border-gray-600/50 rounded-lg text-white text-sm focus:outline-none focus:border-blue-500 transition-colors"
+                />
+              </div>
+              
+              {/* Time Filter */}
+              <div className="relative">
+                <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <select
+                  value={timeFilter}
+                  onChange={(e) => setTimeFilter(e.target.value)}
+                  className="pl-10 pr-8 py-2 bg-gray-800/50 border border-gray-600/50 rounded-lg text-white text-sm focus:outline-none focus:border-blue-500 transition-colors appearance-none"
+                >
+                  <option value="daily">日間</option>
+                  <option value="weekly">週間</option>
+                  <option value="monthly">月間</option>
+                  <option value="yearly">年間</option>
+                </select>
+              </div>
+            </div>
+          </div>
           
-          {/* Top Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-            {/* Practice Time Leaderboard */}
-            <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="bg-brand-brown/20 p-2 rounded-lg">
-                  <Clock className="w-6 h-6 text-brand-brown" />
-                </div>
-                <div>
-                  <h2 className="text-xl font-bold text-white">Practice Time Leaders</h2>
-                  <p className="text-gray-400 text-sm">This month's top practitioners</p>
-                </div>
+          {/* Header Section with Enhanced Controls and Stats */}
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
+            {/* Enhanced Statistics Panel */}
+            <div className="bg-gray-800/40 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 lg:col-span-1">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-white font-semibold flex items-center gap-2">
+                  <Users className="w-4 h-4 text-blue-400" />
+                  統計情報
+                </h3>
+                <button 
+                  onClick={() => setShowStats(!showStats)}
+                  className="p-1 hover:bg-gray-700/50 rounded transition-colors"
+                >
+                  {showStats ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
+                </button>
               </div>
-              
-              <div className="space-y-4">
-                {[
-                  { 
-                    rank: 1, 
-                    name: 'Alex Johnson', 
-                    hours: '45.2h', 
-                    instrument: 'Guitar',
-                    avatar: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?w=60&h=60&fit=crop&crop=face',
-                    isCurrentUser: false
-                  },
-                  { 
-                    rank: 2, 
-                    name: 'Sarah Chen', 
-                    hours: '42.8h', 
-                    instrument: 'Piano',
-                    avatar: 'https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?w=60&h=60&fit=crop&crop=face',
-                    isCurrentUser: false
-                  },
-                  { 
-                    rank: 3, 
-                    name: 'Mike Rodriguez', 
-                    hours: '38.1h', 
-                    instrument: 'Drums',
-                    avatar: 'https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?w=60&h=60&fit=crop&crop=face',
-                    isCurrentUser: false
-                  },
-                  { 
-                    rank: 4, 
-                    name: 'You', 
-                    hours: '35.7h', 
-                    instrument: 'Guitar',
-                    avatar: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?w=60&h=60&fit=crop&crop=face',
-                    isCurrentUser: true
-                  },
-                  { 
-                    rank: 5, 
-                    name: 'Emma Wilson', 
-                    hours: '33.2h', 
-                    instrument: 'Violin',
-                    avatar: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?w=60&h=60&fit=crop&crop=face',
-                    isCurrentUser: false
-                  }
-                ].map((user) => (
-                  <div key={user.rank} className={`flex items-center gap-4 p-4 rounded-lg border transition-all duration-300 ${
-                    user.isCurrentUser 
-                      ? 'bg-brand-brown/20 border-brand-brown/50 ring-1 ring-brand-brown/30' 
-                      : 'bg-gray-700/30 border-gray-600/50 hover:bg-gray-700/50'
-                  }`}>
-                    <div className="flex items-center justify-center w-8 h-8">
-                      {user.rank === 1 && <Trophy className="w-6 h-6 text-yellow-400" />}
-                      {user.rank === 2 && <Medal className="w-6 h-6 text-gray-300" />}
-                      {user.rank === 3 && <Medal className="w-6 h-6 text-amber-600" />}
-                      {user.rank > 3 && <span className="text-gray-400 font-bold">{user.rank}</span>}
-                    </div>
-                    
-                    <img src={user.avatar} alt={user.name} className="w-12 h-12 rounded-full object-cover" />
-                    
-                    <div className="flex-1">
-                      <h3 className={`font-medium ${user.isCurrentUser ? 'text-brand-brown' : 'text-white'}`}>
-                        {user.name}
-                      </h3>
-                      <div className="flex items-center gap-2 text-sm text-gray-400">
-                        <Guitar className="w-4 h-4" />
-                        <span>{user.instrument}</span>
-                      </div>
-                    </div>
-                    
-                    <div className="text-right">
-                      <div className={`font-bold ${user.isCurrentUser ? 'text-brand-brown' : 'text-white'}`}>
-                        {user.hours}
-                      </div>
-                      <div className="text-gray-400 text-sm">this month</div>
-                    </div>
+              {showStats && (
+                <div className="space-y-3 animate-fadeIn">
+                  <div className="flex justify-between">
+                    <span className="text-gray-400 text-sm">総プレイヤー数</span>
+                    <span className="text-white font-bold">{stats.totalPlayers}</span>
                   </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Popular Songs Leaderboard */}
-            <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="bg-purple-500/20 p-2 rounded-lg">
-                  <TrendingUp className="w-6 h-6 text-purple-400" />
-                </div>
-                <div>
-                  <h2 className="text-xl font-bold text-white">Most Practiced Songs</h2>
-                  <p className="text-gray-400 text-sm">Community favorites</p>
-                </div>
-              </div>
-              
-              <div className="space-y-4">
-                {[
-                  { 
-                    rank: 1, 
-                    song: 'Hotel California', 
-                    artist: 'Eagles',
-                    practices: '2,847',
-                    cover: 'https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg?w=60&h=60&fit=crop'
-                  },
-                  { 
-                    rank: 2, 
-                    song: 'Wonderwall', 
-                    artist: 'Oasis',
-                    practices: '2,156',
-                    cover: 'https://images.pexels.com/photos/1763076/pexels-photo-1763076.jpeg?w=60&h=60&fit=crop'
-                  },
-                  { 
-                    rank: 3, 
-                    song: 'Perfect', 
-                    artist: 'Ed Sheeran',
-                    practices: '1,923',
-                    cover: 'https://images.pexels.com/photos/1763077/pexels-photo-1763077.jpeg?w=60&h=60&fit=crop'
-                  },
-                  { 
-                    rank: 4, 
-                    song: 'Blackbird', 
-                    artist: 'The Beatles',
-                    practices: '1,678',
-                    cover: 'https://images.pexels.com/photos/1763078/pexels-photo-1763078.jpeg?w=60&h=60&fit=crop'
-                  },
-                  { 
-                    rank: 5, 
-                    song: 'Stairway to Heaven', 
-                    artist: 'Led Zeppelin',
-                    practices: '1,432',
-                    cover: 'https://images.pexels.com/photos/1763079/pexels-photo-1763079.jpeg?w=60&h=60&fit=crop'
-                  }
-                ].map((song) => (
-                  <div key={song.rank} className="flex items-center gap-4 p-4 bg-gray-700/30 rounded-lg border border-gray-600/50 hover:bg-gray-700/50 transition-all duration-300">
-                    <div className="flex items-center justify-center w-8 h-8">
-                      {song.rank === 1 && <Trophy className="w-6 h-6 text-yellow-400" />}
-                      {song.rank === 2 && <Medal className="w-6 h-6 text-gray-300" />}
-                      {song.rank === 3 && <Medal className="w-6 h-6 text-amber-600" />}
-                      {song.rank > 3 && <span className="text-gray-400 font-bold">{song.rank}</span>}
-                    </div>
-                    
-                    <img src={song.cover} alt={song.song} className="w-12 h-12 rounded-lg object-cover" />
-                    
-                    <div className="flex-1">
-                      <h3 className="font-medium text-white">{song.song}</h3>
-                      <p className="text-gray-400 text-sm">{song.artist}</p>
-                    </div>
-                    
-                    <div className="text-right">
-                      <div className="text-white font-bold">{song.practices}</div>
-                      <div className="text-gray-400 text-sm">practices</div>
-                    </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400 text-sm">総ゲーム数</span>
+                    <span className="text-white font-bold">{stats.totalGames}</span>
                   </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Instrument-Specific Rankings */}
-          <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl p-6 mb-8 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="bg-blue-500/20 p-2 rounded-lg">
-                <Guitar className="w-6 h-6 text-blue-400" />
-              </div>
-              <div>
-                <h2 className="text-xl font-bold text-white">Instrument Rankings</h2>
-                <p className="text-gray-400 text-sm">Top players by instrument</p>
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[
-                {
-                  instrument: 'Guitar',
-                  icon: <Guitar className="w-5 h-5 text-orange-400" />,
-                  color: 'from-orange-500 to-red-500',
-                  players: [
-                    { name: 'Alex Johnson', score: '98%', avatar: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?w=40&h=40&fit=crop&crop=face' },
-                    { name: 'Mike Rodriguez', score: '95%', avatar: 'https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?w=40&h=40&fit=crop&crop=face' },
-                    { name: 'You', score: '92%', avatar: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?w=40&h=40&fit=crop&crop=face', isCurrentUser: true }
-                  ]
-                },
-                {
-                  instrument: 'Piano',
-                  icon: <Piano className="w-5 h-5 text-purple-400" />,
-                  color: 'from-purple-500 to-pink-500',
-                  players: [
-                    { name: 'Sarah Chen', score: '97%', avatar: 'https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?w=40&h=40&fit=crop&crop=face' },
-                    { name: 'Emily Davis', score: '94%', avatar: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?w=40&h=40&fit=crop&crop=face' },
-                    { name: 'James Wilson', score: '91%', avatar: 'https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg?w=40&h=40&fit=crop&crop=face' }
-                  ]
-                },
-                {
-                  instrument: 'Drums',
-                  icon: <Award className="w-5 h-5 text-green-400" />,
-                  color: 'from-green-500 to-emerald-500',
-                  players: [
-                    { name: 'Chris Taylor', score: '96%', avatar: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?w=40&h=40&fit=crop&crop=face' },
-                    { name: 'David Kim', score: '93%', avatar: 'https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg?w=40&h=40&fit=crop&crop=face' },
-                    { name: 'Lisa Brown', score: '90%', avatar: 'https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?w=40&h=40&fit=crop&crop=face' }
-                  ]
-                }
-              ].map((instrumentRank, index) => (
-                <div key={index} className="bg-gray-700/30 rounded-xl p-4 border border-gray-600/50 hover:bg-gray-700/50 transition-all duration-300">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className={`p-2 rounded-lg bg-gradient-to-r ${instrumentRank.color} bg-opacity-20`}>
-                      {instrumentRank.icon}
-                    </div>
-                    <h3 className="font-bold text-white">{instrumentRank.instrument}</h3>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400 text-sm">平均勝率</span>
+                    <span className="text-white font-bold">{stats.averageWinRate}%</span>
                   </div>
-                  
-                  <div className="space-y-3">
-                    {instrumentRank.players.map((player, playerIndex) => (
-                      <div key={playerIndex} className={`flex items-center gap-3 p-2 rounded-lg transition-colors ${
-                        player.isCurrentUser ? 'bg-brand-brown/20' : 'hover:bg-gray-600/30'
-                      }`}>
-                        <div className="flex items-center justify-center w-6 h-6">
-                          {playerIndex === 0 && <Trophy className="w-4 h-4 text-yellow-400" />}
-                          {playerIndex === 1 && <Medal className="w-4 h-4 text-gray-300" />}
-                          {playerIndex === 2 && <Medal className="w-4 h-4 text-amber-600" />}
-                        </div>
-                        
-                        <img src={player.avatar} alt={player.name} className="w-8 h-8 rounded-full object-cover" />
-                        
-                        <div className="flex-1">
-                          <div className={`font-medium text-sm ${player.isCurrentUser ? 'text-brand-brown' : 'text-white'}`}>
-                            {player.name}
-                          </div>
-                        </div>
-                        
-                        <div className={`font-bold text-sm ${player.isCurrentUser ? 'text-brand-brown' : 'text-white'}`}>
-                          {player.score}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Achievement Showcase */}
-          <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="bg-yellow-500/20 p-2 rounded-lg">
-                <Award className="w-6 h-6 text-yellow-400" />
-              </div>
-              <div>
-                <h2 className="text-xl font-bold text-white">Recent Achievements</h2>
-                <p className="text-gray-400 text-sm">Community milestones and accomplishments</p>
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[
-                {
-                  title: 'Perfect Practice',
-                  description: 'Completed 10 songs with 100% accuracy',
-                  user: 'Alex Johnson',
-                  avatar: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?w=60&h=60&fit=crop&crop=face',
-                  rarity: 'Legendary',
-                  color: 'border-yellow-500 bg-yellow-500/10'
-                },
-                {
-                  title: 'Speed Master',
-                  description: 'Played 5 songs at 150% speed with 95%+ accuracy',
-                  user: 'Sarah Chen',
-                  avatar: 'https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?w=60&h=60&fit=crop&crop=face',
-                  rarity: 'Epic',
-                  color: 'border-purple-500 bg-purple-500/10'
-                },
-                {
-                  title: 'Dedication',
-                  description: 'Practiced every day for 30 days straight',
-                  user: 'Mike Rodriguez',
-                  avatar: 'https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?w=60&h=60&fit=crop&crop=face',
-                  rarity: 'Rare',
-                  color: 'border-blue-500 bg-blue-500/10'
-                },
-                {
-                  title: 'Genre Explorer',
-                  description: 'Practiced songs from 10 different genres',
-                  user: 'Emma Wilson',
-                  avatar: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?w=60&h=60&fit=crop&crop=face',
-                  rarity: 'Rare',
-                  color: 'border-green-500 bg-green-500/10'
-                },
-                {
-                  title: 'Night Owl',
-                  description: 'Completed 20 practice sessions after midnight',
-                  user: 'Chris Taylor',
-                  avatar: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?w=60&h=60&fit=crop&crop=face',
-                  rarity: 'Common',
-                  color: 'border-gray-500 bg-gray-500/10'
-                },
-                {
-                  title: 'Crowd Favorite',
-                  description: 'Song practice shared 100+ times',
-                  user: 'Lisa Brown',
-                  avatar: 'https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?w=60&h=60&fit=crop&crop=face',
-                  rarity: 'Epic',
-                  color: 'border-pink-500 bg-pink-500/10'
-                }
-              ].map((achievement, index) => (
-                <div key={index} className={`p-4 rounded-xl border-2 transition-all duration-300 hover:scale-105 ${achievement.color}`}>
-                  <div className="flex items-center gap-3 mb-3">
-                    <img src={achievement.avatar} alt={achievement.user} className="w-10 h-10 rounded-full object-cover" />
-                    <div className="flex-1">
-                      <h3 className="font-bold text-white text-sm">{achievement.title}</h3>
-                      <p className="text-gray-400 text-xs">{achievement.user}</p>
-                    </div>
-                    <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-                      achievement.rarity === 'Legendary' ? 'bg-yellow-500/20 text-yellow-400' :
-                      achievement.rarity === 'Epic' ? 'bg-purple-500/20 text-purple-400' :
-                      achievement.rarity === 'Rare' ? 'bg-blue-500/20 text-blue-400' :
-                      'bg-gray-500/20 text-gray-400'
-                    }`}>
-                      {achievement.rarity}
+                  <div className="flex justify-between">
+                    <span className="text-gray-400 text-sm">最高連勝</span>
+                    <span className="text-white font-bold flex items-center gap-1">
+                      {getStreakIcon(stats.topStreak)}
+                      {stats.topStreak}
                     </span>
                   </div>
-                  <p className="text-gray-300 text-sm">{achievement.description}</p>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400 text-sm">現在オンライン</span>
+                    <span className="text-green-400 font-bold">{stats.activeNow}</span>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Top Player Showcase */}
+            <div className="bg-gray-800/40 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 lg:col-span-3 hover:bg-gray-800/50 transition-all duration-300">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="relative group">
+                    <img src={topPlayer.avatar} alt={topPlayer.name} className="w-16 h-16 rounded-full object-cover border-2 border-yellow-400 group-hover:scale-105 transition-transform duration-300" />
+                    <div className="absolute -top-1 -right-1 bg-yellow-500 rounded-full p-1 group-hover:bg-yellow-400 transition-colors">
+                      <Trophy className="w-4 h-4 text-white" />
+                    </div>
+                    <div className="absolute inset-0 rounded-full bg-yellow-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  </div>
+                  <div>
+                    <div className="text-purple-400 font-bold text-lg hover:text-purple-300 transition-colors cursor-pointer">{topPlayer.name}</div>
+                    <div className="text-gray-400 text-sm">ランク 1 - チャンピオン</div>
+                    <div className={`text-xs px-2 py-1 rounded-full mt-1 border ${getWinRateBadge(topPlayer.winRate)}`}>
+                      勝率 {topPlayer.winRate}%
+                    </div>
+                    <div className={`text-xs px-2 py-1 rounded-full mt-1 ${getLevelColor(topPlayer.level)}`}>
+                      {topPlayer.level}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-6">
+                  <div className="flex items-center gap-2 group hover:bg-blue-500/10 px-3 py-2 rounded-lg transition-colors">
+                    <Zap className="w-4 h-4 text-blue-400 group-hover:scale-110 transition-transform" />
+                    <span className="text-blue-400 font-bold">{topPlayer.points}</span>
+                  </div>
+                  <div className="flex items-center gap-2 group hover:bg-green-500/10 px-3 py-2 rounded-lg transition-colors">
+                    <div className="w-3 h-3 bg-green-400 rounded-full group-hover:scale-110 transition-transform"></div>
+                    <span className="text-green-400 font-bold">{topPlayer.wins}</span>
+                  </div>
+                  <div className="flex items-center gap-2 group hover:bg-red-500/10 px-3 py-2 rounded-lg transition-colors">
+                    <div className="w-3 h-3 bg-red-400 rounded-full group-hover:scale-110 transition-transform"></div>
+                    <span className="text-red-400 font-bold">{topPlayer.loses}</span>
+                  </div>
+                  <div className="flex items-center gap-2 group hover:bg-yellow-500/10 px-3 py-2 rounded-lg transition-colors">
+                    <Star className="w-4 h-4 text-yellow-400 group-hover:scale-110 transition-transform" />
+                    <span className="text-yellow-400 font-bold">{topPlayer.winRate}%</span>
+                    <div className={getPerformanceTrend(topPlayer.winRate).color}>
+                      {getPerformanceTrend(topPlayer.winRate).icon}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 group hover:bg-orange-500/10 px-3 py-2 rounded-lg transition-colors">
+                    {getStreakIcon(topPlayer.streak)}
+                    <span className="text-orange-400 font-bold">{topPlayer.streak}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Enhanced Controls and Sorting */}
+          <div className="bg-gray-800/40 backdrop-blur-sm rounded-xl p-4 border border-gray-700/50 mb-6">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                {/* Search */}
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="プレイヤーを検索..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10 pr-4 py-2 bg-gray-800/50 border border-gray-600/50 rounded-lg text-white text-sm focus:outline-none focus:border-blue-500 transition-colors"
+                  />
+                </div>
+                
+                {/* Time Filter */}
+                <div className="relative">
+                  <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <select
+                    value={timeFilter}
+                    onChange={(e) => setTimeFilter(e.target.value)}
+                    className="pl-10 pr-8 py-2 bg-gray-800/50 border border-gray-600/50 rounded-lg text-white text-sm focus:outline-none focus:border-blue-500 transition-colors appearance-none"
+                  >
+                    <option value="daily">日間</option>
+                    <option value="weekly">週間</option>
+                    <option value="monthly">月間</option>
+                    <option value="yearly">年間</option>
+                  </select>
+                </div>
+              </div>
+              
+              {/* Sort Controls */}
+              <div className="flex items-center gap-2">
+                <span className="text-gray-400 text-sm">並び替え:</span>
+                <button
+                  onClick={() => handleSortChange('points')}
+                  className={`px-3 py-1 rounded text-xs transition-colors ${
+                    sortBy === 'points' ? 'bg-blue-500 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                  }`}
+                >
+                  <div className="flex items-center gap-1">
+                    <Target className="w-3 h-3" />
+                    ポイント {sortBy === 'points' && (sortOrder === 'desc' ? '↓' : '↑')}
+                  </div>
+                </button>
+                <button
+                  onClick={() => handleSortChange('winRate')}
+                  className={`px-3 py-1 rounded text-xs transition-colors ${
+                    sortBy === 'winRate' ? 'bg-blue-500 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                  }`}
+                >
+                  勝率 {sortBy === 'winRate' && (sortOrder === 'desc' ? '↓' : '↑')}
+                </button>
+                <button
+                  onClick={() => handleSortChange('wins')}
+                  className={`px-3 py-1 rounded text-xs transition-colors ${
+                    sortBy === 'wins' ? 'bg-blue-500 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                  }`}
+                >
+                  勝利数 {sortBy === 'wins' && (sortOrder === 'desc' ? '↓' : '↑')}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Main Leaderboard */}
+          <div className="bg-gray-800/40 backdrop-blur-sm rounded-xl border border-gray-700/50 overflow-hidden mb-8">
+            {/* Table Header */}
+            <div className="bg-gray-700/50 px-6 py-4 border-b border-gray-600/50">
+              <div className="grid grid-cols-7 gap-4 text-xs font-medium text-gray-400 uppercase tracking-wider">
+                <div>ランク</div>
+                <div>プレイヤー</div>
+                <div>ポイント</div>
+                <div>勝利</div>
+                <div>敗北</div>
+                <div>勝率</div>
+                <div>アクション</div>
+              </div>
+            </div>
+
+            {/* Table Body */}
+            <div className="divide-y divide-gray-700/50">
+              {filteredAndSortedData.map((player: Player, index: number) => (
+                <div 
+                  key={index} 
+                  className={`px-6 py-4 hover:bg-gray-700/30 transition-all duration-300 cursor-pointer ${
+                    player.rank <= 3 ? 'bg-gray-700/20' : ''
+                  } ${selectedRank === player.rank ? 'bg-blue-500/20 border-l-4 border-blue-500' : ''}`}
+                  onClick={() => setSelectedRank(selectedRank === player.rank ? null : player.rank)}
+                >
+                  <div className="grid grid-cols-7 gap-4 items-center">
+                    {/* Rank */}
+                    <div className="flex items-center gap-3">
+                      <div className="hover:scale-110 transition-transform duration-200">
+                        {getRankIcon(player.rank)}
+                      </div>
+                    </div>
+
+                    {/* Player */}
+                    <div className="flex items-center gap-3">
+                      <div className="relative group">
+                        <img src={player.avatar} alt={player.name} className="w-10 h-10 rounded-full object-cover group-hover:scale-105 transition-transform duration-200" />
+                        {player.rank <= 3 && (
+                          <div className="absolute -top-1 -right-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            {player.rank === 1 && <Trophy className="w-3 h-3 text-yellow-400" />}
+                            {player.rank === 2 && <Medal className="w-3 h-3 text-gray-400" />}
+                            {player.rank === 3 && <Medal className="w-3 h-3 text-orange-400" />}
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <div className="text-white font-medium hover:text-blue-400 transition-colors">{player.name}</div>
+                        <div className={`text-xs px-2 py-1 rounded-full mt-1 ${getLevelColor(player.level)}`}>
+                          {player.level}
+                        </div>
+                        {selectedRank === player.rank && (
+                          <div className="text-xs text-gray-400 mt-1">最後のアクティブ: {player.lastActive}</div>
+                        )}
+                      </div>
+                      <span className="text-lg hover:scale-110 transition-transform duration-200">{player.country}</span>
+                    </div>
+
+                    {/* Points */}
+                    <div className="text-blue-400 font-bold hover:text-blue-300 transition-colors">
+                      <div className="flex items-center gap-1">
+                        <Zap className="w-3 h-3" />
+                        {player.points}
+                      </div>
+                    </div>
+
+                    {/* Wins */}
+                    <div className="text-green-400 font-bold hover:text-green-300 transition-colors">
+                      <div className="flex items-center gap-1">
+                        <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                        {player.wins}
+                      </div>
+                    </div>
+
+                    {/* Loses */}
+                    <div className="text-red-400 font-bold hover:text-red-300 transition-colors">
+                      <div className="flex items-center gap-1">
+                        <div className="w-2 h-2 bg-red-400 rounded-full"></div>
+                        {player.loses}
+                      </div>
+                    </div>
+
+                    {/* Win Rate with Streak */}
+                    <div className="flex items-center gap-2">
+                      <span className={`font-bold ${getWinRateColor(player.winRate)} hover:scale-105 transition-transform duration-200`}>
+                        {player.winRate}%
+                      </span>
+                      <div className={getPerformanceTrend(player.winRate).color}>
+                        {getPerformanceTrend(player.winRate).icon}
+                      </div>
+                      {player.streak > 0 && (
+                        <div className="flex items-center gap-1">
+                          {getStreakIcon(player.streak)}
+                          <span className="text-xs text-orange-400">{player.streak}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Action */}
+                    <div className="flex items-center gap-2">
+                      <button 
+                        className="w-8 h-8 bg-blue-500/20 hover:bg-blue-500/40 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedRank(player.rank);
+                        }}
+                      >
+                        <Info className="w-4 h-4 text-blue-400" />
+                      </button>
+                    </div>
+                  </div>
+                  
+                  {/* Enhanced Expanded Details */}
+                  {selectedRank === player.rank && (
+                    <div className="mt-4 pt-4 border-t border-gray-600/50 animate-fadeIn">
+                      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                        <div className="bg-gray-700/30 rounded-lg p-3">
+                          <div className="text-xs text-gray-400 mb-1">総合スコア</div>
+                          <div className="text-white font-bold flex items-center gap-1">
+                            <Target className="w-3 h-3 text-blue-400" />
+                            {player.points}
+                          </div>
+                        </div>
+                        <div className="bg-gray-700/30 rounded-lg p-3">
+                          <div className="text-xs text-gray-400 mb-1">勝利数/敗北数</div>
+                          <div className="text-white font-bold">{player.wins}/{player.loses}</div>
+                        </div>
+                        <div className={`rounded-lg p-3 border ${getWinRateBadge(player.winRate)}`}>
+                          <div className="text-xs opacity-70 mb-1">勝率</div>
+                          <div className="font-bold">{player.winRate}%</div>
+                        </div>
+                        <div className="bg-gray-700/30 rounded-lg p-3">
+                          <div className="text-xs text-gray-400 mb-1">連勝記録</div>
+                          <div className="font-bold text-orange-400 flex items-center gap-1">
+                            {getStreakIcon(player.streak)}
+                            {player.streak}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="bg-gray-700/30 rounded-lg p-3">
+                          <div className="text-xs text-gray-400 mb-1">総ゲーム数</div>
+                          <div className="text-white font-bold">{player.totalGames}</div>
+                        </div>
+                        <div className="bg-gray-700/30 rounded-lg p-3">
+                          <div className="text-xs text-gray-400 mb-1">平均スコア</div>
+                          <div className="text-white font-bold">{player.averageScore}</div>
+                        </div>
+                        <div className="bg-gray-700/30 rounded-lg p-3">
+                          <div className="text-xs text-gray-400 mb-1">最後のアクティブ</div>
+                          <div className="text-white font-bold">{player.lastActive}</div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -411,4 +651,4 @@ const RankingPage: React.FC = () => {
   );
 };
 
-export default RankingPage; 
+export default RankingPage;

@@ -22,19 +22,18 @@ const Header: React.FC = () => {
         </div>
         
         {/* Center Navigation Links */}
-        <div className="flex-1 flex items-center justify-center">
-          <div className="hidden md:flex items-center gap-12">
+        <div className="flex-1 flex items-center justify-center">          <div className="hidden md:flex items-center gap-12">
             <a href="/privacy" className="text-gray-300 hover:text-white transition-colors font-medium">
-              Privacy Policy
+              プライバシーポリシー
             </a>
             <a href="/blog" className="text-gray-300 hover:text-white transition-colors font-medium">
-              Blog
+              ブログ
             </a>
             <a href="/faq" className="text-gray-300 hover:text-white transition-colors font-medium">
-              FAQ
+              よくある質問
             </a>
             <a href="/docs" className="text-gray-300 hover:text-white transition-colors font-medium">
-              Docs
+              ドキュメント
             </a>
           </div>
         </div>
@@ -45,14 +44,14 @@ const Header: React.FC = () => {
             onClick={() => navigate('/signin')}
             className="relative px-4 py-2 text-white font-medium rounded-md border-2 border-gray-600/50 bg-gray-900/20 backdrop-blur-sm hover:border-brand-brown/70 hover:bg-brand-brown/10 hover:text-brand-yellow transition-all duration-300 group overflow-hidden"
           >
-            <span className="relative z-10">Sign In</span>
+            <span className="relative z-10">サインイン</span>
             <div className="absolute inset-0 bg-gradient-to-r from-brand-brown/0 via-brand-brown/5 to-brand-yellow/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           </button>
           <button 
             onClick={() => navigate('/signup')}
             className="relative px-4 py-2 bg-gradient-to-r from-brand-brown to-brand-brown/90 text-white font-semibold rounded-md border-2 border-brand-brown/60 hover:from-brand-brown/90 hover:to-brand-yellow/80 hover:border-brand-yellow/70 transition-all duration-300 shadow-lg hover:shadow-brand-brown/30 transform hover:scale-105 overflow-hidden group"
           >
-            <span className="relative z-10">Get Started</span>
+            <span className="relative z-10">始める</span>
             <div className="absolute inset-0 bg-gradient-to-r from-brand-yellow/0 via-brand-yellow/20 to-brand-yellow/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           </button>
         </div>

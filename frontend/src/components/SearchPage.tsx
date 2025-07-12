@@ -1,10 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Search, Play, Pause, Clock, Music, Headphones, Heart, ArrowRight } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
 import { useMusicPlayer } from '../contexts/PlayerContext';
 import { useSidebar } from '../contexts/SidebarContext';
+
+interface YoutubeApiItem {
+  id: string;
+  title: string;
+  channelTitle: string;
+  thumbnail: string;
+  duration?: string;
+  views?: string;
+}
 
 interface Track {
   id: string;
@@ -15,90 +24,83 @@ interface Track {
   views?: string;
 }
 
+// Mock search results - moved outside component to avoid re-creation
+const mockResults: Track[] = [
+  {
+    id: '1',
+    title: 'Hotel California - Eagles',
+    channelTitle: 'Eagles',
+    thumbnail: 'https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg?w=300&h=200&fit=crop',
+    duration: '6:31',
+    views: '2.1M'
+  },
+  {
+    id: '2',
+    title: 'Wonderwall - Oasis',
+    channelTitle: 'Oasis',
+    thumbnail: 'https://images.pexels.com/photos/1763076/pexels-photo-1763076.jpeg?w=300&h=200&fit=crop',
+    duration: '4:18',
+    views: '1.8M'
+  },
+  {
+    id: '3',
+    title: 'Perfect - Ed Sheeran',
+    channelTitle: 'Ed Sheeran',
+    thumbnail: 'https://images.pexels.com/photos/1763077/pexels-photo-1763077.jpeg?w=300&h=200&fit=crop',
+    duration: '4:23',
+    views: '3.2M'
+  },
+  {
+    id: '4',
+    title: 'Blackbird - The Beatles',
+    channelTitle: 'The Beatles',
+    thumbnail: 'https://images.pexels.com/photos/1763078/pexels-photo-1763078.jpeg?w=300&h=200&fit=crop',
+    duration: '2:18',
+    views: '1.5M'
+  },
+  {
+    id: '5',
+    title: 'Stairway to Heaven - Led Zeppelin',
+    channelTitle: 'Led Zeppelin',
+    thumbnail: 'https://images.pexels.com/photos/1763079/pexels-photo-1763079.jpeg?w=300&h=200&fit=crop',
+    duration: '8:02',
+    views: '4.1M'
+  }
+];
+
 const SearchPage: React.FC = () => {
   const { isCollapsed } = useSidebar();
-  const { currentTrack, isPlaying, togglePlay, playTrack } = useMusicPlayer();
+  const { currentTrack, isPlaying, playTrack } = useMusicPlayer();
   const [searchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
   const [isLoading, setIsLoading] = useState(false);
   const [searchResults, setSearchResults] = useState<Track[]>([]);
-
-  // Mock search results
-  const mockResults: Track[] = [
-    {
-      id: '1',
-      title: 'Hotel California - Eagles',
-      channelTitle: 'Eagles',
-      thumbnail: 'https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg?w=300&h=200&fit=crop',
-      duration: '6:31',
-      views: '2.1M'
-    },
-    {
-      id: '2',
-      title: 'Wonderwall - Oasis',
-      channelTitle: 'Oasis',
-      thumbnail: 'https://images.pexels.com/photos/1763076/pexels-photo-1763076.jpeg?w=300&h=200&fit=crop',
-      duration: '4:18',
-      views: '1.8M'
-    },
-    {
-      id: '3',
-      title: 'Perfect - Ed Sheeran',
-      channelTitle: 'Ed Sheeran',
-      thumbnail: 'https://images.pexels.com/photos/1763077/pexels-photo-1763077.jpeg?w=300&h=200&fit=crop',
-      duration: '4:23',
-      views: '3.2M'
-    },
-    {
-      id: '4',
-      title: 'Blackbird - The Beatles',
-      channelTitle: 'The Beatles',
-      thumbnail: 'https://images.pexels.com/photos/1763078/pexels-photo-1763078.jpeg?w=300&h=200&fit=crop',
-      duration: '2:18',
-      views: '1.5M'
-    },
-    {
-      id: '5',
-      title: 'Stairway to Heaven - Led Zeppelin',
-      channelTitle: 'Led Zeppelin',
-      thumbnail: 'https://images.pexels.com/photos/1763079/pexels-photo-1763079.jpeg?w=300&h=200&fit=crop',
-      duration: '8:02',
-      views: '4.1M'
-    }
+  const recentSearches = ['ギタータブ譜', 'エド・シーラン', 'ロックバラード', 'アコースティックカバー'];
+    const topGenres = [
+    { name: 'ロック', count: '1.2K 楽曲', image: 'https://images.pexels.com/photos/1190297/pexels-photo-1190297.jpeg?w=300&h=200&fit=crop' },
+    { name: 'ポップ', count: '2.3K 楽曲', image: 'https://images.pexels.com/photos/1190298/pexels-photo-1190298.jpeg?w=300&h=200&fit=crop' },
+    { name: 'ジャズ', count: '800 楽曲', image: 'https://images.pexels.com/photos/1190299/pexels-photo-1190299.jpeg?w=300&h=200&fit=crop' },
+    { name: 'クラシック', count: '600 楽曲', image: 'https://images.pexels.com/photos/1190300/pexels-photo-1190300.jpeg?w=300&h=200&fit=crop' }
   ];
-
-  const recentSearches = ['Guitar tabs', 'Ed Sheeran', 'Rock ballads', 'Acoustic covers'];
-  
-  const topGenres = [
-    { name: 'Rock', count: '1.2K songs', image: 'https://images.pexels.com/photos/1190297/pexels-photo-1190297.jpeg?w=300&h=200&fit=crop' },
-    { name: 'Pop', count: '2.3K songs', image: 'https://images.pexels.com/photos/1190298/pexels-photo-1190298.jpeg?w=300&h=200&fit=crop' },
-    { name: 'Jazz', count: '800 songs', image: 'https://images.pexels.com/photos/1190299/pexels-photo-1190299.jpeg?w=300&h=200&fit=crop' },
-    { name: 'Classical', count: '600 songs', image: 'https://images.pexels.com/photos/1190300/pexels-photo-1190300.jpeg?w=300&h=200&fit=crop' }
-  ];
-
   const browseCategories = [
-    { name: 'Popular Today', icon: <Heart className="w-6 h-6" />, color: 'from-red-500 to-pink-500' },
-    { name: 'New Releases', icon: <Music className="w-6 h-6" />, color: 'from-blue-500 to-purple-500' },
-    { name: 'Acoustic', icon: <Headphones className="w-6 h-6" />, color: 'from-green-500 to-emerald-500' },
-    { name: 'Rock Classics', icon: <Clock className="w-6 h-6" />, color: 'from-orange-500 to-red-500' }
-  ];
-
-  // Load search results when query parameter changes
-  useEffect(() => {
-    const query = searchParams.get('q');
-    if (query) {
-      setSearchQuery(query);
-      performSearch(query);
-    }
-  }, [searchParams]);
-
-  const performSearch = async (query: string) => {
+    { name: '今日の人気', icon: <Heart className="w-6 h-6" />, color: 'from-red-500 to-pink-500' },
+    { name: '新着リリース', icon: <Music className="w-6 h-6" />, color: 'from-blue-500 to-purple-500' },
+    { name: 'アコースティック', icon: <Headphones className="w-6 h-6" />, color: 'from-green-500 to-emerald-500' },
+    { name: 'ロッククラシック', icon: <Clock className="w-6 h-6" />, color: 'from-orange-500 to-red-500' }
+  ];const performSearch = useCallback(async (query: string) => {
     if (!query.trim()) return;
     
     setIsLoading(true);
-    
-    try {
-      const response = await fetch(`http://localhost:3000/api/youtube/search?query=${encodeURIComponent(query)}&maxResults=20`);
+    setSearchResults([]); // Clear previous results immediately
+      try {
+      const response = await fetch(`http://localhost:3000/api/youtube/search?query=${encodeURIComponent(query)}&maxResults=20`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        credentials: 'omit', // Don't send cookies to avoid CORS issues
+      });
       
       if (!response.ok) {
         const errorText = await response.text();
@@ -110,9 +112,8 @@ const SearchPage: React.FC = () => {
       if (data.error) {
         throw new Error(data.error);
       }
-      
-      // Transform YouTube API data to our Track interface
-      const transformedResults: Track[] = data.map((item: any) => ({
+        // Transform YouTube API data to our Track interface
+      const transformedResults: Track[] = data.map((item: YoutubeApiItem) => ({
         id: item.id,
         title: item.title,
         channelTitle: item.channelTitle,
@@ -126,15 +127,20 @@ const SearchPage: React.FC = () => {
       // Show success message if this is the first successful API call
       if (transformedResults.length > 0) {
         console.log(`✅ Successfully fetched ${transformedResults.length} results from YouTube API`);
-      }
-    } catch (error) {
+      }    } catch (error) {
       console.error('Error searching videos:', error);
       
       // Show helpful error message
-      if (error.message.includes('fetch')) {
-        console.warn('⚠️ Backend server not running. Please start the backend server and configure YouTube API key. See backend/YOUTUBE_API_SETUP.md for setup instructions.');
-      } else if (error.message.includes('YouTube API key is not configured')) {
-        console.warn('⚠️ YouTube API key not configured. Please see backend/YOUTUBE_API_SETUP.md for setup instructions.');
+      if (error instanceof Error) {
+        if (error.message.includes('ERR_BLOCKED_BY_CLIENT') || error.message.includes('blocked by client')) {
+          console.warn('⚠️ Request blocked by browser extension (likely ad blocker). Please disable ad blockers or try in incognito mode.');
+        } else if (error.message.includes('fetch')) {
+          console.warn('⚠️ Backend server not running. Please start the backend server and configure YouTube API key. See backend/YOUTUBE_API_SETUP.md for setup instructions.');
+        } else if (error.message.includes('YouTube API key is not configured')) {
+          console.warn('⚠️ YouTube API key not configured. Please see backend/YOUTUBE_API_SETUP.md for setup instructions.');
+        } else if (error.message.includes('NetworkError') || error.message.includes('Failed to fetch')) {
+          console.warn('⚠️ Network error occurred. This might be due to ad blockers, CORS issues, or connection problems.');
+        }
       }
       
       // Fallback to filtered mock results
@@ -151,7 +157,19 @@ const SearchPage: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
+
+  // Load search results when query parameter changes
+  useEffect(() => {
+    const query = searchParams.get('q');
+    if (query) {
+      setSearchQuery(query);
+      performSearch(query);
+    } else {
+      // Clear results when no query
+      setSearchResults([]);
+    }
+  }, [searchParams, performSearch]);
 
   const handleTrackPlay = (track: Track) => {
     playTrack(track);
@@ -165,13 +183,11 @@ const SearchPage: React.FC = () => {
       <div className={`transition-all duration-300 ${isCollapsed ? 'ml-20' : 'ml-64'}`}>
         <Navbar />
         <div className="max-w-7xl mx-auto py-8 px-4">
-          <div className="flex items-center justify-between mb-8">
-            <h1 className="text-3xl font-bold text-white">
-              {searchQuery ? `Search results for "${searchQuery}"` : 'Discover Music'}
+          <div className="flex items-center justify-between mb-8">            <h1 className="text-3xl font-bold text-white">
+              {searchQuery ? `"${searchQuery}"の検索結果` : '音楽を発見'}
             </h1>
-            {searchQuery && (
-              <span className="text-gray-400 text-sm">
-                {isLoading ? 'Searching...' : `${searchResults.length} results found`}
+            {searchQuery && (              <span className="text-gray-400 text-sm">
+                {isLoading ? '検索中...' : `${searchResults.length}件の結果が見つかりました`}
               </span>
             )}
           </div>
@@ -179,9 +195,8 @@ const SearchPage: React.FC = () => {
           {/* Search Results */}
           {searchResults.length > 0 && (
             <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl p-6 mb-8 border border-gray-700/50">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-white">Search Results</h2>
-                <span className="text-gray-400 text-sm">{searchResults.length} results found</span>
+              <div className="flex items-center justify-between mb-6">                <h2 className="text-xl font-bold text-white">検索結果</h2>
+                <span className="text-gray-400 text-sm">{searchResults.length}件の結果が見つかりました</span>
               </div>
               <div className="space-y-3">
                 {searchResults.map((track) => (
@@ -213,7 +228,7 @@ const SearchPage: React.FC = () => {
                     <div className="text-right">
                       <div className="text-gray-400 text-sm">{track.duration}</div>
                       {track.views && (
-                        <div className="text-gray-500 text-xs">{track.views} views</div>
+                        <div className="text-gray-500 text-xs">{track.views} 回視聴</div>
                       )}
                     </div>
                     <button
@@ -231,10 +246,9 @@ const SearchPage: React.FC = () => {
           {/* Discovery Section */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
             {/* Recent Searches */}
-            <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">
-              <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">              <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                 <Clock className="w-5 h-5 text-brand-brown" />
-                Recent Searches
+                最近の検索
               </h2>
               <div className="space-y-2">
                 {recentSearches.map((search, index) => (
@@ -252,10 +266,9 @@ const SearchPage: React.FC = () => {
             </div>
 
             {/* Top Genres */}
-            <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">
-              <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">              <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                 <Music className="w-5 h-5 text-brand-brown" />
-                Top Genres
+                トップジャンル
               </h2>
               <div className="grid grid-cols-2 gap-3">
                 {topGenres.map((genre) => (
@@ -274,10 +287,9 @@ const SearchPage: React.FC = () => {
             </div>
 
             {/* Browse All */}
-            <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">
-              <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50 hover:bg-gray-800/40 transition-all duration-300">              <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                 <Headphones className="w-5 h-5 text-brand-brown" />
-                Browse All
+                すべて閲覧
               </h2>
               <div className="space-y-3">
                 {browseCategories.map((category) => (
@@ -302,16 +314,15 @@ const SearchPage: React.FC = () => {
           {isLoading && (
             <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl p-12 border border-gray-700/50 text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-brown mx-auto mb-4"></div>
-              <p className="text-gray-400">Searching for music...</p>
+              <p className="text-gray-400">音楽を検索中...</p>
             </div>
           )}
 
           {/* Empty State */}
           {!isLoading && searchResults.length === 0 && searchQuery && (
             <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl p-12 border border-gray-700/50 text-center">
-              <Search className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-              <h3 className="text-xl font-bold text-white mb-2">No results found</h3>
-              <p className="text-gray-400">Try adjusting your search terms or browse our recommendations above.</p>
+              <Search className="w-16 h-16 text-gray-600 mx-auto mb-4" />              <h3 className="text-xl font-bold text-white mb-2">結果が見つかりません</h3>
+              <p className="text-gray-400">検索条件を調整するか、上記のおすすめを参照してください。</p>
             </div>
           )}
         </div>

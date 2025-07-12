@@ -14,34 +14,31 @@ const Footer: React.FC = () => {
               <span className="text-xl font-bold bg-gradient-to-r from-brand-brown to-brand-yellow bg-clip-text text-transparent">
                 ZENIC
               </span>
-            </div>
-            <p className="text-gray-400 text-sm">
-              Copyright © 2025. All rights reserved.
+            </div>            <p className="text-gray-400 text-sm">
+              Copyright © 2025. 無断複写・転載を禁じます。
             </p>
           </div>
 
           {/* Terms */}
-          <div>
-            <h3 className="text-white font-semibold text-base mb-4">Terms</h3>
+          <div>            <h3 className="text-white font-semibold text-base mb-4">規約</h3>
             <ul className="space-y-3">
-              <li><a href="/terms" className="text-gray-400 text-sm hover:text-white transition-colors">Terms of Service</a></li>
-              <li><a href="/privacy" className="text-gray-400 text-sm hover:text-white transition-colors">Privacy Policy</a></li>
-              <li><a href="/cookies" className="text-gray-400 text-sm hover:text-white transition-colors">Cookie Policy</a></li>
+              <li><a href="/terms" className="text-gray-400 text-sm hover:text-white transition-colors">利用規約</a></li>
+              <li><a href="/privacy" className="text-gray-400 text-sm hover:text-white transition-colors">プライバシーポリシー</a></li>
+              <li><a href="/cookies" className="text-gray-400 text-sm hover:text-white transition-colors">クッキーポリシー</a></li>
             </ul>
           </div>
 
           {/* Supports */}
-          <div>
-            <h3 className="text-white font-semibold text-base mb-4">Supports</h3>
+          <div>            <h3 className="text-white font-semibold text-base mb-4">サポート</h3>
             <ul className="space-y-3">
-              <li><a href="/feedback" className="text-gray-400 text-sm hover:text-white transition-colors">Feedback</a></li>
-              <li><a href="/docs" className="text-gray-400 text-sm hover:text-white transition-colors">Docs</a></li>
+              <li><a href="/feedback" className="text-gray-400 text-sm hover:text-white transition-colors">フィードバック</a></li>
+              <li><a href="/docs" className="text-gray-400 text-sm hover:text-white transition-colors">ドキュメント</a></li>
             </ul>
           </div>
 
           {/* Engage */}
           <div>
-            <h3 className="text-white font-semibold text-base mb-4">Engage</h3>
+            <h3 className="text-white font-semibold text-base mb-4">交流</h3>
             <ul className="space-y-3">
               <li><a href="https://discord.gg/zenic" target="_blank" rel="noopener noreferrer" className="text-gray-400 text-sm hover:text-white transition-colors flex items-center gap-2">Discord <ArrowUpRight className="w-3 h-3" /></a></li>
               <li><a href="https://twitter.com/zenic" target="_blank" rel="noopener noreferrer" className="text-gray-400 text-sm hover:text-white transition-colors flex items-center gap-2">Twitter X <ArrowUpRight className="w-3 h-3" /></a></li>

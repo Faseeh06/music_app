@@ -16,27 +16,26 @@ import landingPage3 from '../assets/images/landing_page3.png';
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
-
   const features = [
     {
       icon: <BarChart3 className="w-8 h-8" />,
-      title: "Advanced Analytics",
-      description: "Get detailed performance insights and personalized practice recommendations powered by AI"
+      title: "高度な分析",
+      description: "AIによる詳細なパフォーマンス洞察とパーソナライズされた練習推奨を取得"
     },
     {
       icon: <Zap className="w-8 h-8" />,
-      title: "Smart Learning",
-      description: "AI-powered adaptive learning that adjusts to your skill level and musical preferences"
+      title: "スマート学習",
+      description: "あなたのスキルレベルと音楽の好みに適応するAI搭載のアダプティブ学習"
     },
     {
       icon: <Shield className="w-8 h-8" />,
-      title: "Secure Platform",
-      description: "Practice with confidence on our secure, privacy-focused learning environment"
+      title: "安全なプラットフォーム",
+      description: "プライバシーを重視した安全な学習環境で安心して練習"
     },
     {
       icon: <Users className="w-8 h-8" />,
-      title: "Community Driven",
-      description: "Connect with musicians worldwide and learn from a community of professionals"
+      title: "コミュニティ主導",
+      description: "世界中のミュージシャンとつながり、プロフェッショナルのコミュニティから学習"
     }
   ];
 
@@ -58,16 +57,14 @@ const LandingPage: React.FC = () => {
       <section className="relative px-6 pt-20 pb-32">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-                        {/* Small Badge */}
-            <div className="inline-flex items-center gap-3 bg-gray-600/20 border border-gray-600/30 px-6 py-3 mb-8">
+                        {/* Small Badge */}            <div className="inline-flex items-center gap-3 bg-gray-600/20 border border-gray-600/30 px-6 py-3 mb-8">
               <div className="w-2 h-2 bg-brand-yellow rounded-full animate-pulse"></div>
-              <span className="text-base text-white font-medium">Streamline music practice and master your instrument</span>
+              <span className="text-base text-white font-medium">音楽練習を効率化し、楽器をマスターする</span>
         </div>
         
-            {/* Main Heading */}
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-8 leading-tight">
+            {/* Main Heading */}            <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-8 leading-tight">
               <span className="bg-gradient-to-r from-white via-gray-200 to-gray-300 bg-clip-text text-transparent">
-                Practice with
+                練習する
               </span>
               <span className="mx-1 md:mx-3"></span>
               <span className="bg-gradient-to-r from-brand-brown via-brand-yellow to-brand-brown bg-clip-text text-transparent">
@@ -75,30 +72,27 @@ const LandingPage: React.FC = () => {
               </span>
           </h1>
           
-            {/* Subtitle */}
-            <p className="text-xl md:text-2xl text-gray-300 mb-12 max-w-4xl mx-auto leading-relaxed">
-              Enhance you music career with Zenic and
+            {/* Subtitle */}            <p className="text-xl md:text-2xl text-gray-300 mb-12 max-w-4xl mx-auto leading-relaxed">
+              Zenicであなたの音楽キャリアを向上させ
               <br className="hidden md:block" />
-              practice  on the go.
+              移動中でも練習しましょう。
             </p>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
+            {/* CTA Buttons */}            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
             <button 
               onClick={() => navigate('/signup')}
                 className="group px-8 py-4 bg-brand-brown text-white rounded-lg hover:bg-brand-brown/90 transition-all shadow-xl hover:shadow-brand-brown/25 flex items-center gap-3 font-semibold text-lg"
               >
-                Get Started for Free
+                無料で始める
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </button>
               <button className="px-8 py-4 border border-gray-600 text-gray-300 rounded-lg hover:border-brand-brown hover:text-brand-yellow transition-all font-semibold text-lg">
-                Join our Community
+                コミュニティに参加
             </button>
             </div>
 
-            {/* Trust Indicators */}
-            <div className="text-center text-gray-400 text-sm mb-4">
-              Join thousands of musicians
+            {/* Trust Indicators */}            <div className="text-center text-gray-400 text-sm mb-4">
+              何千人ものミュージシャンが参加
             </div>
               </div>
 
@@ -129,17 +123,16 @@ const LandingPage: React.FC = () => {
           <div className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-radial from-brand-yellow/8 via-brand-yellow/2 to-transparent rounded-full blur-3xl"></div>
         </div>
         
-        <div className="max-w-7xl mx-auto relative z-10">
-          <div className="text-center mb-16">
+        <div className="max-w-7xl mx-auto relative z-10">          <div className="text-center mb-16">
             <h2 className="text-4xl md:text-6xl font-bold mb-6">
-              <span className="text-brand-brown">Practice with</span> The Real
+              <span className="text-brand-brown">本物の</span>
               <span className="bg-gradient-to-r from-brand-yellow to-brand-brown bg-clip-text text-transparent">AI</span> 
-              <span className="text-white"> Engine</span>
+              <span className="text-white">エンジンで練習</span>
           </h2>
             <p className="text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
-              Zenic enables natural conversations to unlock possibilities for Human-AI 
-              collaboration; just <span className="text-brand-yellow">@Agent</span> <span className="text-brand-yellow">@Context</span>, and 
-              Zenic will get your practice done.
+              Zenicは自然な会話でヒューマンAIコラボレーションの可能性を解き放ちます。
+              <span className="text-brand-yellow">@エージェント</span> <span className="text-brand-yellow">@コンテキスト</span>で、
+              Zenicがあなたの練習を完了させます。
             </p>
           </div>
 
@@ -184,23 +177,22 @@ const LandingPage: React.FC = () => {
             </div>
             
             {/* Right side - Content */}
-            <div className="space-y-6">
-              <div className="inline-block">
+            <div className="space-y-6">              <div className="inline-block">
                 <span className="text-sm font-semibold text-brand-brown bg-brand-brown/10 px-3 py-1 rounded-full">
-                  #1 Agent
+                  #1 エージェント
                 </span>
               </div>
               <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight">
-                Customize your
+                あなた専用の
                 <br />
-                <span className="text-brand-brown">own AI Tutors</span>
+                <span className="text-brand-brown">AIチューターをカスタマイズ</span>
               </h2>
               <p className="text-xl text-gray-300 leading-relaxed">
-                Trae introduces a powerful, fully configurable 
-                Agent system designed for musicians. Use 
-                pre-built AI tutors for instant practice guidance, or create your own AI tutor by customizing 
-                tools, skills, and age-based Agent focused on 
-                what it does best. With Trae AI-way means for you.
+                Traeはミュージシャン向けに設計された強力で完全に設定可能な
+                エージェントシステムを導入します。即座の練習ガイダンスには
+                事前構築されたAIチューターを使用するか、ツール、スキル、
+                年齢ベースのエージェントをカスタマイズして最適な分野に
+                焦点を当てた独自のAIチューターを作成します。TraeのAI方式があなたのためにあります。
               </p>
             </div>
           </div>
@@ -212,23 +204,22 @@ const LandingPage: React.FC = () => {
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             {/* Left side - Content */}
-            <div className="space-y-6">
-              <div className="inline-block">
+            <div className="space-y-6">              <div className="inline-block">
                 <span className="text-sm font-semibold text-brand-brown bg-brand-brown/10 px-3 py-1 rounded-full">
-                  #1 Tool
+                  #1 ツール
                 </span>
               </div>
               <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight">
-                More tools,
+                より多くのツール、
                 <br />
-                <span className="text-brand-brown">more capabilities</span>
+                <span className="text-brand-brown">より多くの機能</span>
               </h2>
               <p className="text-xl text-gray-300 leading-relaxed">
-                Trae supports integration with various external 
-                tools and enables agents to use them. Currently, 
-                it supports the Model Context Protocol (MCP) 
-                standard, which unlocks access to vast 
-                resources to better execute your tasks.
+                Traeはさまざまな外部ツールとの統合をサポートし、
+                エージェントがそれらを使用できるようにします。現在、
+                モデルコンテキストプロトコル（MCP）標準をサポートしており、
+                タスクをより良く実行するための豊富な
+                リソースへのアクセスを可能にします。
               </p>
             </div>
 
@@ -266,29 +257,26 @@ const LandingPage: React.FC = () => {
             </div>
             
             {/* Right side - Content */}
-            <div className="space-y-6">
-              <div className="inline-block">
+            <div className="space-y-6">              <div className="inline-block">
                 <span className="text-sm font-semibold text-brand-brown bg-brand-brown/10 px-3 py-1 rounded-full">
-                  #1 Context
+                  #1 コンテキスト
                 </span>
               </div>
               <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight">
-                More context,
+                より多くのコンテキスト、
                 <br />
-                <span className="text-brand-brown">more accuracy</span>
+                <span className="text-brand-brown">より高い精度</span>
               </h2>
               <p className="text-xl text-gray-300 leading-relaxed">
-                Trae can deeply understand your development 
-                context through your codebase integration via the 
-                VS, as well as external information from online 
-                resources. Documents that you may have 
-                created in Trae, and any music instruction 
-                in your workflows, enabling it to execute tasks 
-                more accurately more.
+                TraeはVSを介したコードベース統合やオンライン
+                リソースからの外部情報を通じて、あなたの開発
+                コンテキストを深く理解できます。Traeで作成した
+                ドキュメントやワークフローの音楽指導により、
+                タスクをより正確に実行できます。
               </p>
               
               <div className="flex flex-wrap gap-3 pt-4">
-                {['Metronome', 'Tuner', 'Tabs', 'Chords', 'Theory'].map((tool, index) => (
+                {['メトロノーム', 'チューナー', 'タブ譜', 'コード', '音楽理論'].map((tool, index) => (
                   <span key={index} className="px-4 py-2 bg-gray-800 border border-gray-600 rounded-lg text-sm text-gray-300">
                     {tool}
                   </span>
@@ -309,31 +297,29 @@ const LandingPage: React.FC = () => {
           <div className="mb-16">
             <div className="w-16 h-16 bg-gradient-to-br from-brand-brown to-brand-yellow rounded-2xl flex items-center justify-center mx-auto mb-8">
               <Shield className="w-8 h-8 text-white" />
-            </div>
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-              Privacy and Security
+            </div>            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+              プライバシーとセキュリティ
             </h2>
             <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              We prioritize protecting users' privacy and data security, adhering to the principle of 'local first' and 'minimal data collection'.
+              私たちはユーザーのプライバシーとデータセキュリティの保護を優先し、「ローカルファースト」と「最小限のデータ収集」の原則を遵守しています。
             </p>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
+          <div className="grid md:grid-cols-3 gap-8">            {[
               {
                 icon: <BarChart3 className="w-8 h-8 text-brand-brown" />,
-                title: "Local Data Storage",
-                description: "Codebases live and stored locally on your devices, for keeping data close to the user while ensuring accessibility, with prioritizing data protection to database."
+                title: "ローカルデータストレージ",
+                description: "コードベースはお客様のデバイス上でローカルに保存され、データをユーザーの近くに保ちながらアクセシビリティを確保し、データベースへのデータ保護を優先します。"
               },
               {
                 icon: <Shield className="w-8 h-8 text-brand-brown" />,
-                title: "Secure Data Access",
-                description: "Strict access control and encrypted transmission are enforced to ensure your practice data and music requires to security rules."
+                title: "安全なデータアクセス",
+                description: "厳格なアクセス制御と暗号化された送信により、あなたの練習データと音楽のセキュリティルールが確保されます。"
               },
               {
                 icon: <Users className="w-8 h-8 text-brand-brown" />,
-                title: "Regional Deployment",
-                description: "User data and infrastructure are deployed based on regional locations, giving you the choice. Deploy-anywhere compliance with local regulations allows the you maintain importants."
+                title: "地域別展開",
+                description: "ユーザーデータとインフラストラクチャは地域の場所に基づいて展開され、選択肢を提供します。どこでも展開可能なコンプライアンスにより、重要な事項を維持できます。"
               }
             ].map((item, index) => (
               <div key={index} className="bg-gray-900/30 backdrop-blur-sm border border-gray-700/30 rounded-2xl p-8 hover:border-brand-brown/50 hover:bg-gray-900/50 transition-all duration-300">
@@ -350,45 +336,43 @@ const LandingPage: React.FC = () => {
 
       {/* Loved by Musicians */}
       <section className="px-6 py-24 bg-[#101218] relative">
-        <div className="max-w-6xl mx-auto text-center relative z-10">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-            Loved by Musicians
+        <div className="max-w-6xl mx-auto text-center relative z-10">          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+            ミュージシャンに愛されています
           </h2>
           <p className="text-xl text-gray-300 mb-16">
-            Trae is popular among musicians worldwide.
+            Traeは世界中のミュージシャンに人気です。
           </p>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">            {[
               {
-                name: "Kai Smith Pason",
-                role: "Professional Guitarist",
-                content: "I think Cursor integration brings AI practice to my workspace in an awesome way. It's a game changer that helps with lesson planning and practice management."
+                name: "カイ・スミス・パソン",
+                role: "プロギタリスト",
+                content: "Cursor統合がAI練習を私のワークスペースに素晴らしい方法で持ち込んでくれると思います。レッスン計画と練習管理に役立つゲームチェンジャーです。"
               },
               {
-                name: "Steve Marks",
-                role: "Music Teacher",
-                content: "Since I found AI-based guitar lessons and practice sessions for my students, teaching has never been more effective."
+                name: "スティーブ・マークス",
+                role: "音楽教師",
+                content: "生徒のためのAIベースのギターレッスンと練習セッションを見つけてから、教えることがこれまでにないほど効果的になりました。"
               },
               {
-                name: "Albina Karsel",
-                role: "Violinist",
-                content: "I've always dreamed of having a perfect practice companion that understands my progress and helps me improve. Zenic does exactly that and it's amazing for tracking my practice time, getting my milestones and so much more."
+                name: "アルビナ・カーセル",
+                role: "バイオリニスト",
+                content: "私の進歩を理解し、改善を助ける完璧な練習パートナーを持つことをいつも夢見ていました。Zenicはまさにそれを実現し、練習時間の追跡、マイルストーンの取得など、素晴らしい機能があります。"
               },
               {
                 name: "ozanseriamp",
-                role: "Pianist",
-                content: "I love using AI as a classroom assistant, having a music tutor that can answer questions about chord progressions, scales, and theory. Just amazing, just clean, beautiful design and functionality."
+                role: "ピアニスト",
+                content: "AIを教室のアシスタントとして使用し、コード進行、スケール、音楽理論について質問に答えてくれる音楽チューターを持つのが大好きです。ただ素晴らしく、クリーンで美しいデザインと機能性です。"
               },
               {
-                name: "Misha Esikaev",
-                role: "Music Producer",
-                content: "Zenic Trae's eFiftyish, and this tool does clean work, building your best experiences and best in class features with users in the workflow."
+                name: "ミーシャ・エシカエフ",
+                role: "音楽プロデューサー",
+                content: "Zenic TraeのeFiftyishで、このツールはクリーンな作業を行い、ワークフローでユーザーと最高の体験と最高のクラス機能を構築します。"
               },
               {
-                name: "Gytautas Mark Vitriys",
-                role: "Bass Player",
-                content: "Getting value as one of the greatest musicians in recording and they have that are all greatest amount of experience with their easy is just not very easy, may be best all the best work and it is may not."
+                name: "ギタウタス・マーク・ヴィトリー",
+                role: "ベース奏者",
+                content: "録音で最も偉大なミュージシャンの一人として価値を得て、彼らの簡単さで最も多くの経験を持つすべての最高の作業があり、それは最高ではないかもしれません。"
               }
             ].map((testimonial, index) => (
               <div key={index} className="bg-gray-900/30 backdrop-blur-sm border border-gray-700/30 rounded-2xl p-6 hover:border-brand-brown/50 hover:bg-gray-900/50 transition-all duration-300">
@@ -408,16 +392,15 @@ const LandingPage: React.FC = () => {
 
       {/* Stats Section */}
       <section className="px-6 py-24 bg-[#101218] relative">
-        <div className="max-w-6xl mx-auto text-center relative z-10">
-          <h2 className="text-4xl md:text-5xl font-bold mb-16 bg-gradient-to-r from-white to-brand-yellow bg-clip-text text-transparent">
-            Trusted by Musicians Worldwide
+        <div className="max-w-6xl mx-auto text-center relative z-10">          <h2 className="text-4xl md:text-5xl font-bold mb-16 bg-gradient-to-r from-white to-brand-yellow bg-clip-text text-transparent">
+            世界中のミュージシャンに信頼されています
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {[
-              { number: "50K+", label: "Active Musicians" },
-              { number: "1M+", label: "Practice Sessions" },
-              { number: "10K+", label: "Songs Library" },
-              { number: "99%", label: "User Satisfaction" }
+              { number: "50K+", label: "アクティブミュージシャン" },
+              { number: "1M+", label: "練習セッション" },
+              { number: "10K+", label: "楽曲ライブラリ" },
+              { number: "99%", label: "ユーザー満足度" }
             ].map((stat, index) => (
               <div key={index} className="group">
                 <div className="bg-gray-900/30 backdrop-blur-sm border border-gray-700/30 p-8 rounded-2xl hover:border-brand-brown hover:bg-gray-900/50 transition-all duration-300">
@@ -439,19 +422,18 @@ const LandingPage: React.FC = () => {
           <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-gradient-radial from-brand-yellow/10 via-brand-yellow/3 to-transparent rounded-full blur-3xl"></div>
         </div>
         
-        <div className="max-w-4xl mx-auto relative z-10">
-          <div className="text-center mb-8">
-            <span className="text-sm text-gray-400 uppercase tracking-wider">Check out all features →</span>
+        <div className="max-w-4xl mx-auto relative z-10">          <div className="text-center mb-8">
+            <span className="text-sm text-gray-400 uppercase tracking-wider">すべての機能をチェック →</span>
           </div>
           
           <h2 className="text-5xl md:text-7xl font-bold mb-8 leading-tight">
-            <span className="text-white">Get Started for </span>
-            <span className="bg-gradient-to-r from-brand-brown to-brand-yellow bg-clip-text text-transparent">Free</span>
+            <span className="text-white">無料で </span>
+            <span className="bg-gradient-to-r from-brand-brown to-brand-yellow bg-clip-text text-transparent">始める</span>
             </h2>
           
           <p className="text-xl text-gray-300 mb-12 max-w-2xl mx-auto leading-relaxed">
-            Go to the first in your free and enjoy the community free worker among 
-            powerful AI coding tools flow.
+            無料で始めて、強力なAIコーディングツールフローの
+            コミュニティ無料ワーカーをお楽しみください。
           </p>
           
           <div className="mb-16">
@@ -460,7 +442,7 @@ const LandingPage: React.FC = () => {
               className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-brand-brown to-brand-yellow text-white font-semibold rounded-lg hover:shadow-2xl hover:shadow-brand-brown/25 transition-all text-lg"
             >
               <Music className="w-5 h-5" />
-              Get Started
+              始める
               </button>
           </div>
         </div>

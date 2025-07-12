@@ -29,11 +29,9 @@ const SignInForm: React.FC<SignInFormProps> = ({ onSignIn }) => {
   };
 
   const validateForm = () => {
-    const newErrors: Record<string, string> = {};
-
-    if (!formData.email.trim()) newErrors.email = 'Email is required';
-    else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Email is invalid';
-    if (!formData.password) newErrors.password = 'Password is required';
+    const newErrors: Record<string, string> = {};    if (!formData.email.trim()) newErrors.email = 'メールアドレスが必要です';
+    else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'メールアドレスが無効です';
+    if (!formData.password) newErrors.password = 'パスワードが必要です';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -53,28 +51,25 @@ const SignInForm: React.FC<SignInFormProps> = ({ onSignIn }) => {
       } else {
         navigate('/dashboard');
       }    } catch (error: unknown) {
-      console.error('Sign in error:', error);
-      const errorMessage = error instanceof Error && 'code' in error && error.code === 'auth/invalid-credential'
-        ? 'Invalid email or password' 
-        : 'Failed to sign in. Please try again.';
+      console.error('Sign in error:', error);      const errorMessage = error instanceof Error && 'code' in error && error.code === 'auth/invalid-credential'
+        ? 'メールアドレスまたはパスワードが無効です' 
+        : 'サインインに失敗しました。もう一度お試しください。';
       setErrors({ submit: errorMessage });
     } finally {
       setLoading(false);
     }
   };
 
-  const handleForgotPassword = async () => {
-    if (!formData.email) {
-      setErrors({ email: 'Please enter your email address first' });
+  const handleForgotPassword = async () => {    if (!formData.email) {
+      setErrors({ email: '最初にメールアドレスを入力してください' });
       return;
     }
 
     try {
       await resetPassword(formData.email);
-      alert('Password reset email sent! Check your inbox.');    } catch (error: unknown) {
-      console.error('Password reset error:', error);
-      setErrors({ 
-        submit: 'Failed to send password reset email. Please try again.' 
+      alert('パスワードリセットメールが送信されました！受信箱をご確認ください。');} catch (error: unknown) {
+      console.error('Password reset error:', error);      setErrors({ 
+        submit: 'パスワードリセットメールの送信に失敗しました。もう一度お試しください。' 
       });
     }
   };
@@ -92,9 +87,8 @@ const SignInForm: React.FC<SignInFormProps> = ({ onSignIn }) => {
         navigate('/dashboard');
       }
     } catch (error: unknown) {
-      console.error('Google sign in error:', error);
-      setErrors({ 
-        submit: 'Failed to sign in with Google. Please try again.' 
+      console.error('Google sign in error:', error);      setErrors({ 
+        submit: 'Googleでのサインインに失敗しました。もう一度お試しください。' 
       });
     } finally {
       setLoading(false);
@@ -112,9 +106,8 @@ const SignInForm: React.FC<SignInFormProps> = ({ onSignIn }) => {
           </div>
         )}
         
-        <div>
-          <label className="block text-sm font-medium text-brand-dark mb-2">
-            Email
+        <div>          <label className="block text-sm font-medium text-brand-dark mb-2">
+            メールアドレス
           </label>
           <div className="relative">
             <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -132,9 +125,8 @@ const SignInForm: React.FC<SignInFormProps> = ({ onSignIn }) => {
           {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-brand-dark mb-2">
-            Password
+        <div>          <label className="block text-sm font-medium text-brand-dark mb-2">
+            パスワード
           </label>
           <div className="relative">
             <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -167,23 +159,22 @@ const SignInForm: React.FC<SignInFormProps> = ({ onSignIn }) => {
               checked={rememberMe}
               onChange={(e) => setRememberMe(e.target.checked)}
               className="mr-2 rounded border-gray-300 text-brand-brown focus:ring-brand-brown"
-            />
-            <label htmlFor="remember" className="text-sm text-gray-600">
-              Remember me
+            />            <label htmlFor="remember" className="text-sm text-gray-600">
+              ログイン状態を保持
             </label>
           </div>          <button
             type="button"
             onClick={handleForgotPassword}
             className="text-sm text-brand-brown hover:underline"
           >
-            Forgot password?
+            パスワードを忘れましたか？
           </button>
         </div>        <button
           type="submit"
           disabled={loading}
           className="w-full bg-gradient-brand text-white py-3 px-6 rounded-lg font-semibold hover:shadow-lg transform hover:scale-[1.02] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-brand-brown focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
         >
-          {loading ? 'Signing In...' : 'Sign In'}
+          {loading ? 'サインイン中...' : 'サインイン'}
         </button>
 
         <div className="relative">
@@ -191,7 +182,7 @@ const SignInForm: React.FC<SignInFormProps> = ({ onSignIn }) => {
             <div className="w-full border-t border-gray-300" />
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-brand-light text-gray-500">OR</span>
+            <span className="px-2 bg-brand-light text-gray-500">または</span>
           </div>
         </div>        <button
           type="button"
@@ -203,9 +194,8 @@ const SignInForm: React.FC<SignInFormProps> = ({ onSignIn }) => {
             src="https://www.google.com/favicon.ico" 
             alt="Google" 
             className="w-4 h-4 mr-2"
-          />
-          <span className="text-gray-700 font-medium">
-            {loading ? 'Signing in...' : 'Continue with Google'}
+          />          <span className="text-gray-700 font-medium">
+            {loading ? 'サインイン中...' : 'Googleで続行'}
           </span>
         </button>
       </form>
