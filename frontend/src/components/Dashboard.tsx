@@ -3,8 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
 import MusicPlayerBar from './MusicBar';
+import SampleDataButton from './SampleDataButton';
 import { useMusicPlayer } from '../contexts/PlayerContext';
 import { useSidebar } from '../contexts/SidebarContext';
+import { usePracticeSessions } from '../hooks/usePracticeSessions';
 import { 
   Play, 
   Pause,
@@ -18,16 +20,7 @@ import {
   Users
 } from 'lucide-react';
 
-interface PracticeSession {
-  id: string;
-  songTitle: string;
-  artist: string;
-  duration: number;
-  date: string;
-  progress: number;
-  aiScore: number;
-  skillsImproved: string[];
-}
+
 
 
 
@@ -71,60 +64,7 @@ const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const { isCollapsed } = useSidebar();
   const { currentTrack, isPlaying, togglePlay, progress, duration, skip, playTrack } = useMusicPlayer();
-
-  // Mock data with AI-enhanced features
-  const recentSessions: PracticeSession[] = [
-    {
-      id: '1',
-      songTitle: 'Wonderwall',
-      artist: 'Oasis',
-      duration: 25,
-      date: '2 hours ago',
-      progress: 78,
-      aiScore: 85,
-      skillsImproved: ['Chord Transitions', 'Strumming Patterns']
-    },
-    {
-      id: '2',
-      songTitle: 'Hotel California',
-      artist: 'Eagles',
-      duration: 35,
-      date: '1 day ago',
-      progress: 92,
-      aiScore: 91,
-      skillsImproved: ['Fingerpicking', 'Tempo Control']
-    },
-    {
-      id: '3',
-      songTitle: 'Stairway to Heaven',
-      artist: 'Led Zeppelin',
-      duration: 42,
-      date: '2 days ago',
-      progress: 65,
-      aiScore: 72,
-      skillsImproved: ['Barre Chords', 'Dynamics']
-    },
-    {
-      id: '4',
-      songTitle: 'Sweet Child O Mine',
-      artist: 'Guns N Roses',
-      duration: 28,
-      date: '3 days ago',
-      progress: 88,
-      aiScore: 89,
-      skillsImproved: ['Lead Guitar', 'Timing']
-    },
-    {
-      id: '5',
-      songTitle: 'Blackbird',
-      artist: 'The Beatles',
-      duration: 18,
-      date: '4 days ago',
-      progress: 95,
-      aiScore: 94,
-      skillsImproved: ['Fingerpicking', 'Melody']
-    }
-  ];
+  const { recentSessions, formatRelativeTime } = usePracticeSessions();
 
 
 
@@ -325,32 +265,66 @@ const Dashboard: React.FC = () => {
                     <Music className="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-2xl font-bold text-white">Recent Practice Sessions</h3>
-                    <p className="text-sm text-gray-400">Your musical journey continues</p>
+                    <h3 className="text-2xl font-bold text-white">最近の練習セッション</h3>
+                    <p className="text-sm text-gray-400">あなたの音楽の旅は続きます • クリックして再生・練習</p>
                   </div>
                 </div>
-                <button className="px-6 py-2 bg-brand-brown/20 text-brand-brown hover:bg-brand-brown hover:text-white font-medium text-sm transition-all duration-300 rounded-lg border border-brand-brown/30 hover:border-brand-brown">
-                  View All Sessions
+                <button 
+                  className="px-6 py-2 bg-brand-brown/20 text-brand-brown hover:bg-brand-brown hover:text-white font-medium text-sm transition-all duration-300 rounded-lg border border-brand-brown/30 hover:border-brand-brown"
+                  title="すべての練習セッションを表示し、クリックして再生・練習できます"
+                >
+                  すべてのセッションを表示
                 </button>
               </div>
               
               <div className="space-y-2">
-                {recentSessions.map((session) => (
+                {recentSessions.length === 0 ? (
+                  <div className="text-center py-8">
+                    <Music className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+                    <h4 className="text-lg font-semibold text-gray-400 mb-2">まだ練習セッションがありません</h4>
+                    <p className="text-sm text-gray-500 mb-4">楽曲を選択して練習を開始しましょう</p>
+                    <div className="text-xs text-gray-600">
+                      ヒント: 右下の「Add Sample Data」ボタンでサンプルデータを追加できます<br/>
+                      練習セッションをクリックすると、その楽曲を再生・練習できます
+                    </div>
+                  </div>
+                ) : (
+                  recentSessions.map((session) => (
                   <div
                     key={session.id}
                     className="group relative rounded-lg p-4 cursor-pointer hover:bg-gray-800/20 transition-all duration-300 hover:scale-[1.01] hover:shadow-lg"
-                    onClick={() => navigate(`/practice/${session.id}`)}
+                    onClick={() => {
+                      // Load the song if we have track data
+                      if (session.trackData) {
+                        playTrack(session.trackData);
+                      } else {
+                        // Fallback: try to create track data from session info
+                        const fallbackTrack = {
+                          id: session.songId,
+                          title: session.songTitle,
+                          channelTitle: session.artist,
+                          thumbnail: session.thumbnail
+                        };
+                        playTrack(fallbackTrack);
+                      }
+                      navigate(`/practice/${session.songId}`);
+                    }}
                   >
                     <div className="flex items-center gap-4">
                       {/* Album Art with Play Overlay */}
                       <div className="relative">
-                    <img
-                          src={`https://picsum.photos/seed/${session.id}/48/48`}
-                      alt={session.songTitle}
+                        <img
+                          src={session.thumbnail}
+                          alt={session.songTitle}
                           className="w-12 h-12 rounded-lg object-cover shadow-md"
                     />
                         <div className="absolute inset-0 bg-black/40 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                           <Play className="w-4 h-4 text-white" />
+                        </div>
+                        
+                        {/* Play indicator - always visible */}
+                        <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-brand-brown rounded-full flex items-center justify-center border-2 border-[#101218]">
+                          <Play className="w-2 h-2 text-white" />
                         </div>
                         {/* Progress Ring */}
                         <div className="absolute -top-1 -right-1 w-5 h-5">
@@ -384,7 +358,7 @@ const Dashboard: React.FC = () => {
 
                           {/* Date and Skills */}
                           <div className="text-right">
-                            <div className="text-xs text-gray-500 mb-1">{session.date}</div>
+                            <div className="text-xs text-gray-500 mb-1">{formatRelativeTime(session.date)}</div>
                             <div className="flex gap-1 justify-end">
                               {session.skillsImproved.slice(0, 1).map((skill, idx) => (
                                 <span key={idx} className="text-xs bg-gradient-to-r from-green-900/40 to-emerald-900/40 text-green-300 px-2 py-0.5 rounded-full border border-green-700/30 font-medium">
@@ -408,8 +382,16 @@ const Dashboard: React.FC = () => {
                         <Play className="w-3 h-3 text-brand-brown" />
                       </div>
                     </div>
+                    
+                    {/* Play button tooltip */}
+                    <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <div className="bg-brand-brown text-white text-xs px-2 py-1 rounded-md shadow-lg">
+                        クリックして再生・練習
+                      </div>
+                    </div>
                   </div>
-                ))}
+                  ))
+                )}
               </div>
             </div>
 
@@ -444,6 +426,9 @@ const Dashboard: React.FC = () => {
       </div>
       {/* Music Player Bar */}
       <MusicPlayerBar />
+      
+      {/* Sample Data Button for testing */}
+      <SampleDataButton />
     </div>
   );
 };
