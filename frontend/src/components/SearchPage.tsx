@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Search, Play, Pause, Clock, Music, Headphones, Heart, ArrowRight } from 'lucide-react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
 import { useMusicPlayer } from '../contexts/PlayerContext';
@@ -69,6 +69,7 @@ const mockResults: Track[] = [
 ];
 
 const SearchPage: React.FC = () => {
+  const navigate = useNavigate();
   const { isCollapsed } = useSidebar();
   const { currentTrack, isPlaying, playTrack } = useMusicPlayer();
   const [searchParams] = useSearchParams();
@@ -175,6 +176,11 @@ const SearchPage: React.FC = () => {
     playTrack(track);
   };
 
+  const handleTrackPractice = (track: Track) => {
+    playTrack(track);
+    navigate(`/practice/${track.id}`);
+  };
+
   const isCurrentTrack = (trackId: string) => currentTrack?.id === trackId;
 
   return (
@@ -232,8 +238,9 @@ const SearchPage: React.FC = () => {
                       )}
                     </div>
                     <button
-                      onClick={() => handleTrackPlay(track)}
+                      onClick={() => handleTrackPractice(track)}
                       className="opacity-0 group-hover:opacity-100 transition-opacity p-2 rounded-full hover:bg-gray-600/50"
+                      title="練習ページへ"
                     >
                       <ArrowRight className="w-4 h-4 text-brand-brown" />
                     </button>

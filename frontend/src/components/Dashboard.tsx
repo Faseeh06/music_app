@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
 import MusicPlayerBar from './MusicBar';
-import SampleDataButton from './SampleDataButton';
 import { useMusicPlayer } from '../contexts/PlayerContext';
 import { useSidebar } from '../contexts/SidebarContext';
 import { usePracticeSessions } from '../hooks/usePracticeSessions';
@@ -16,13 +15,8 @@ import {
   Target,
   TrendingUp,
   Music,
-  Clock,
-  Users
+  Clock
 } from 'lucide-react';
-
-
-
-
 
 interface LeaderboardEntry {
   id: string;
@@ -41,8 +35,6 @@ interface PopularSong {
   plays: string;
   difficulty: string;
 }
-
-
 
 const leaderboardData: LeaderboardEntry[] = [
   { id: '1', name: 'Ali Hassanain', score: 98, avatar: 'https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?w=40&h=40&fit=crop&crop=face', rank: 1, badge: '🏆' },
@@ -65,7 +57,6 @@ const Dashboard: React.FC = () => {
   const { isCollapsed } = useSidebar();
   const { currentTrack, isPlaying, togglePlay, progress, duration, skip, playTrack } = useMusicPlayer();
   const { recentSessions, formatRelativeTime } = usePracticeSessions();
-
 
   const getDifficultyColorDark = (difficulty: string) => {
     switch (difficulty) {
@@ -95,19 +86,34 @@ const Dashboard: React.FC = () => {
             
             {/* Currently Playing Section with integrated Leaderboard - Takes first 9 columns */}
             <div className="lg:col-span-9 p-6">
-              <div className="relative">
+              <div className="relative group">
                 <img 
                   src={currentTrack?.thumbnail || "/src/assets/images/bmwsong.jpeg"}
                   alt={currentTrack?.title || "No track playing"}
-                  className="w-full aspect-[3/1] rounded-xl object-cover"
-                />                <div className="absolute top-3 right-3 bg-black/70 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-full">
+                  className="w-full aspect-[3/1] rounded-xl object-cover cursor-pointer transition-transform duration-300 group-hover:scale-[1.02]"
+                  onClick={() => {
+                    if (currentTrack?.id) {
+                      navigate(`/practice/${currentTrack.id}`);
+                    }
+                  }}
+                />
+                {/* Practice button overlay */}
+                {currentTrack?.id && (
+                  <div className="absolute top-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="bg-black/70 backdrop-blur-sm text-white text-xs px-3 py-1 rounded-full border border-white/20">
+                      練習ページへ
+                    </div>
+                  </div>
+                )}
+                <div className="absolute top-3 right-3 bg-black/70 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-full">
                   中級者
                 </div>
 
                 {/* Music Player Controls - Left Side */}
                 <div className="absolute bottom-3 left-6 right-3">
                   <div className="flex items-start">
-                    <div className="flex flex-col items-center">                      <h3 className="text-xl font-bold text-white mb-1 text-center">
+                    <div className="flex flex-col items-center">
+                      <h3 className="text-xl font-bold text-white mb-1 text-center">
                         {currentTrack?.title || "再生中の楽曲なし"}
                       </h3>
                       <p className="text-sm text-gray-300 mb-3 text-center">
@@ -154,7 +160,7 @@ const Dashboard: React.FC = () => {
                           <SkipForward className="w-4 h-4 text-gray-300" />
                         </button>
                       </div>
-                  </div>
+                    </div>
                   </div>
                 </div>
 
@@ -177,8 +183,8 @@ const Dashboard: React.FC = () => {
                             <h4 className="font-light text-white truncate text-sm">{player.name}</h4>
                           </div>
                         </div>
-                  ))}
-                </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -202,14 +208,15 @@ const Dashboard: React.FC = () => {
                         channelTitle: song.artist,
                         thumbnail: song.avatar
                       };
-                      // For mock data, we'll use YouTube video IDs for real songs
                       const youtubeIds = ['2Vv-BfVoq4g', 'bx1Bh8ZvH84', 'BciS5krYL80', 'Man4t8eIOh0', 'QkF3oxziUI4'];
                       track.id = youtubeIds[parseInt(song.id) - 1] || song.id;
                       playTrack(track);
+                      // Navigate to practice page
+                      navigate(`/practice/${track.id}`);
                     }}
                   >
                     <div className="flex-shrink-0 w-6 text-center">
-                      <span className="text-sm font-bold text-gray-400">{index + 1}</span>
+                      <span className="text-sm font-light text-gray-400">{index + 1}.</span>
                     </div>
                     <img
                       src={song.avatar}
@@ -217,15 +224,11 @@ const Dashboard: React.FC = () => {
                       className="w-10 h-10 rounded-lg object-cover"
                     />
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-white truncate text-sm group-hover:text-brand-yellow transition-colors">{song.title}</h4>
+                      <h4 className="font-light text-white truncate text-sm">{song.title}</h4>
                       <p className="text-xs text-gray-400 truncate">{song.artist}</p>
                     </div>
-                    <div className="text-right">
-                      <div className="flex items-center gap-1 mb-1">
-                        <Users className="w-3 h-3 text-gray-400" />
-                        <span className="text-xs text-gray-400">{song.plays}</span>
-                      </div>
-                      <span className={`text-xs px-2 py-0.5 rounded border ${getDifficultyColorDark(song.difficulty)}`}>
+                    <div className="flex items-center gap-2">
+                      <span className={`text-xs px-2 py-1 rounded-full border ${getDifficultyColorDark(song.difficulty)}`}>
                         {song.difficulty}
                       </span>
                     </div>
@@ -233,7 +236,7 @@ const Dashboard: React.FC = () => {
                     <div 
                       className="opacity-0 group-hover:opacity-100 transition-opacity"
                       onClick={(e) => {
-                        e.stopPropagation(); // Prevent triggering the parent onClick
+                        e.stopPropagation();
                         const track = {
                           id: song.id,
                           title: song.title,
@@ -250,8 +253,8 @@ const Dashboard: React.FC = () => {
                   </div>
                 ))}
               </div>
-              </div>
             </div>
+          </div>
 
           <div className="grid lg:grid-cols-12 gap-8">
             {/* Recent Practice Sessions - Takes first 9 columns */}
@@ -287,106 +290,106 @@ const Dashboard: React.FC = () => {
                   </div>
                 ) : (
                   recentSessions.map((session) => (
-                  <div
-                    key={session.id}
-                    className="group relative rounded-lg p-4 cursor-pointer hover:bg-gray-800/20 transition-all duration-300 hover:scale-[1.01] hover:shadow-lg"
-                    onClick={() => {
-                      // Load the song if we have track data
-                      if (session.trackData) {
-                        playTrack(session.trackData);
-                      } else {
-                        // Fallback: try to create track data from session info
-                        const fallbackTrack = {
-                          id: session.songId,
-                          title: session.songTitle,
-                          channelTitle: session.artist,
-                          thumbnail: session.thumbnail
-                        };
-                        playTrack(fallbackTrack);
-                      }
-                      navigate(`/practice/${session.songId}`);
-                    }}
-                  >
-                    <div className="flex items-center gap-4">
-                      {/* Album Art with Play Overlay */}
-                      <div className="relative">
-                        <img
-                          src={session.thumbnail}
-                          alt={session.songTitle}
-                          className="w-12 h-12 rounded-lg object-cover shadow-md"
-                    />
-                        <div className="absolute inset-0 bg-black/40 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                          <Play className="w-4 h-4 text-white" />
-                        </div>
-                        
-                        {/* Play indicator - always visible */}
-                        <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-brand-brown rounded-full flex items-center justify-center border-2 border-[#101218]">
-                          <Play className="w-2 h-2 text-white" />
-                        </div>
-                        {/* Progress Ring */}
-                        <div className="absolute -top-1 -right-1 w-5 h-5">
-                          <div className="w-full h-full rounded-full border-2 border-brand-brown bg-[#101218] flex items-center justify-center">
-                            <span className="text-xs font-bold text-brand-brown">{session.progress}%</span>
+                    <div
+                      key={session.id}
+                      className="group relative rounded-lg p-4 cursor-pointer hover:bg-gray-800/20 transition-all duration-300 hover:scale-[1.01] hover:shadow-lg"
+                      onClick={() => {
+                        // Load the song if we have track data
+                        if (session.trackData) {
+                          playTrack(session.trackData);
+                        } else {
+                          // Fallback: try to create track data from session info
+                          const fallbackTrack = {
+                            id: session.songId,
+                            title: session.songTitle,
+                            channelTitle: session.artist,
+                            thumbnail: session.thumbnail
+                          };
+                          playTrack(fallbackTrack);
+                        }
+                        navigate(`/practice/${session.songId}`);
+                      }}
+                    >
+                      <div className="flex items-center gap-4">
+                        {/* Album Art with Play Overlay */}
+                        <div className="relative">
+                          <img
+                            src={session.thumbnail}
+                            alt={session.songTitle}
+                            className="w-12 h-12 rounded-lg object-cover shadow-md"
+                          />
+                          <div className="absolute inset-0 bg-black/40 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                            <Play className="w-4 h-4 text-white" />
                           </div>
-                        </div>
-                      </div>
-
-                      {/* Song Info */}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between">
-                    <div className="flex-1 min-w-0">
-                            <h4 className="text-base font-bold text-white truncate group-hover:text-brand-yellow transition-colors">
-                              {session.songTitle}
-                            </h4>
-                            <p className="text-sm text-gray-400 truncate">{session.artist}</p>
+                          
+                          {/* Play indicator - always visible */}
+                          <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-brand-brown rounded-full flex items-center justify-center border-2 border-[#101218]">
+                            <Play className="w-2 h-2 text-white" />
                           </div>
-
-                          {/* Practice Stats */}
-                          <div className="flex items-center gap-3 text-xs text-gray-300 mx-4">
-                            <div className="flex items-center gap-1">
-                              <Clock className="w-3 h-3" />
-                              <span>{session.duration}m</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Target className="w-3 h-3" />
-                              <span>{session.progress}%</span>
-                            </div>
-                          </div>
-
-                          {/* Date and Skills */}
-                          <div className="text-right">
-                            <div className="text-xs text-gray-500 mb-1">{formatRelativeTime(session.date)}</div>
-                            <div className="flex gap-1 justify-end">
-                              {session.skillsImproved.slice(0, 1).map((skill, idx) => (
-                                <span key={idx} className="text-xs bg-gradient-to-r from-green-900/40 to-emerald-900/40 text-green-300 px-2 py-0.5 rounded-full border border-green-700/30 font-medium">
-                                  {skill}
-                                </span>
-                              ))}
-                              {session.skillsImproved.length > 1 && (
-                                <span className="text-xs bg-gray-700/30 text-gray-400 px-2 py-0.5 rounded-full border border-gray-600/30">
-                                  +{session.skillsImproved.length - 1}
-                                </span>
-                              )}
+                          {/* Progress Ring */}
+                          <div className="absolute -top-1 -right-1 w-5 h-5">
+                            <div className="w-full h-full rounded-full border-2 border-brand-brown bg-[#101218] flex items-center justify-center">
+                              <span className="text-xs font-bold text-brand-brown">{session.progress}%</span>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    </div>
 
-                    {/* Hover Effect Arrow */}
-                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-2 group-hover:translate-x-0">
-                      <div className="w-6 h-6 rounded-full bg-brand-brown/20 flex items-center justify-center">
-                        <Play className="w-3 h-3 text-brand-brown" />
+                        {/* Song Info */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between">
+                            <div className="flex-1 min-w-0">
+                              <h4 className="text-base font-bold text-white truncate group-hover:text-brand-yellow transition-colors">
+                                {session.songTitle}
+                              </h4>
+                              <p className="text-sm text-gray-400 truncate">{session.artist}</p>
+                            </div>
+
+                            {/* Practice Stats */}
+                            <div className="flex items-center gap-3 text-xs text-gray-300 mx-4">
+                              <div className="flex items-center gap-1">
+                                <Clock className="w-3 h-3" />
+                                <span>{session.duration}m</span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <Target className="w-3 h-3" />
+                                <span>{session.progress}%</span>
+                              </div>
+                            </div>
+
+                            {/* Date and Skills */}
+                            <div className="text-right">
+                              <div className="text-xs text-gray-500 mb-1">{formatRelativeTime(session.date)}</div>
+                              <div className="flex gap-1 justify-end">
+                                {session.skillsImproved.slice(0, 1).map((skill, idx) => (
+                                  <span key={idx} className="text-xs bg-gradient-to-r from-green-900/40 to-emerald-900/40 text-green-300 px-2 py-0.5 rounded-full border border-green-700/30 font-medium">
+                                    {skill}
+                                  </span>
+                                ))}
+                                {session.skillsImproved.length > 1 && (
+                                  <span className="text-xs bg-gray-700/30 text-gray-400 px-2 py-0.5 rounded-full border border-gray-600/30">
+                                    +{session.skillsImproved.length - 1}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Hover Effect Arrow */}
+                      <div className="absolute right-3 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-2 group-hover:translate-x-0">
+                        <div className="w-6 h-6 rounded-full bg-brand-brown/20 flex items-center justify-center">
+                          <Play className="w-3 h-3 text-brand-brown" />
+                        </div>
+                      </div>
+                      
+                      {/* Play button tooltip */}
+                      <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <div className="bg-brand-brown text-white text-xs px-2 py-1 rounded-md shadow-lg">
+                          クリックして再生・練習
+                        </div>
                       </div>
                     </div>
-                    
-                    {/* Play button tooltip */}
-                    <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <div className="bg-brand-brown text-white text-xs px-2 py-1 rounded-md shadow-lg">
-                        クリックして再生・練習
-                      </div>
-                    </div>
-                  </div>
                   ))
                 )}
               </div>
@@ -399,13 +402,15 @@ const Dashboard: React.FC = () => {
                   <div className="w-8 h-8 bg-gradient-to-br from-brand-brown to-brand-yellow rounded-lg flex items-center justify-center">
                     <Brain className="w-4 h-4 text-white" />
                   </div>
-                  <div>                    <h3 className="text-lg font-bold text-white">AIおすすめ</h3>
+                  <div>
+                    <h3 className="text-lg font-bold text-white">AIおすすめ</h3>
                     <p className="text-xs text-gray-400">パーソナライズされた提案</p>
-          </div>
+                  </div>
                 </div>
-                <div className="text-right">                  <div className="text-2xl font-bold">22/30</div>
+                <div className="text-right">
+                  <div className="text-2xl font-bold">22/30</div>
                   <div className="text-yellow-100 text-sm">分</div>
-              </div>
+                </div>
               </div>
               <div className="w-full bg-white/20 rounded-full h-3 mb-2">
                 <div className="bg-white h-3 rounded-full" style={{ width: '73%' }}></div>
@@ -413,17 +418,11 @@ const Dashboard: React.FC = () => {
               <p className="text-yellow-100 text-sm">1日の目標達成まであと8分！🎯</p>
             </div>
           </div>
-
-
         </div>
-        
-
       </div>
+      
       {/* Music Player Bar */}
       <MusicPlayerBar />
-      
-      {/* Sample Data Button for testing */}
-      <SampleDataButton />
     </div>
   );
 };
