@@ -6,7 +6,6 @@ import { SidebarProvider } from './contexts/SidebarContext';
 import { useAuth } from './hooks/useAuth';
 
 import LandingPage from './components/LandingPage';
-import AuthPage from './components/AuthPage';
 import SignInPage from './components/SignInPage';
 import SignUpPage from './components/SignUpPage';
 import Dashboard from './components/Dashboard';
@@ -16,6 +15,7 @@ import ProfilePage from './components/ProfilePage';
 import SettingsPage from './components/SettingsPage';
 import HistoryPage from './pages/HistoryPage';
 import RankingPage from './pages/RankingPage';
+import TestServicePage from './pages/TestServicePage';
 import PrivacyPage from './components/PrivacyPage';
 import BlogPage from './components/BlogPage';
 import FAQPage from './components/FAQPage';
@@ -117,6 +117,14 @@ function AppContent() {
             element={
               <ProtectedRoute>
                 <RankingPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/test-services" 
+            element={
+              <ProtectedRoute>
+                <TestServicePage />
               </ProtectedRoute>
             } 
           />

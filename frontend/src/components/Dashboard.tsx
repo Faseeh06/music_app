@@ -18,54 +18,22 @@ import {
   Clock
 } from 'lucide-react';
 
-interface LeaderboardEntry {
-  id: string;
-  name: string;
-  score: number;
-  avatar: string;
-  rank: number;
-  badge?: string;
-}
-
-interface PopularSong {
-  id: string;
-  title: string;
-  artist: string;
-  avatar: string;
-  plays: string;
-  difficulty: string;
-}
-
-const leaderboardData: LeaderboardEntry[] = [
-  { id: '1', name: 'Ali Hassanain', score: 98, avatar: 'https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?w=40&h=40&fit=crop&crop=face', rank: 1, badge: '🏆' },
-  { id: '2', name: 'Hamza', score: 95, avatar: 'https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg?w=40&h=40&fit=crop&crop=face', rank: 2, badge: '🥈' },
-  { id: '3', name: 'Fahad', score: 92, avatar: 'https://images.pexels.com/photos/1484794/pexels-photo-1484794.jpeg?w=40&h=40&fit=crop&crop=face', rank: 3, badge: '🥉' },
-  { id: '4', name: 'Raza', score: 89, avatar: 'https://images.pexels.com/photos/1040881/pexels-photo-1040881.jpeg?w=40&h=40&fit=crop&crop=face', rank: 4 },
-  { id: '5', name: 'Sara', score: 87, avatar: 'https://images.pexels.com/photos/1040882/pexels-photo-1040882.jpeg?w=40&h=40&fit=crop&crop=face', rank: 5 }
-];
-
-const popularSongs: PopularSong[] = [
-  { id: '1', title: 'パーフェクト', artist: 'エド・シーラン', avatar: 'https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg?w=40&h=40&fit=crop', plays: '2.1M', difficulty: '中級者' },
-  { id: '2', title: 'ワンダーウォール', artist: 'オアシス', avatar: 'https://images.pexels.com/photos/1763076/pexels-photo-1763076.jpeg?w=40&h=40&fit=crop', plays: '1.8M', difficulty: '初心者' },
-  { id: '3', title: 'ホテル・カリフォルニア', artist: 'イーグルス', avatar: 'https://images.pexels.com/photos/1763077/pexels-photo-1763077.jpeg?w=40&h=40&fit=crop', plays: '1.5M', difficulty: '上級者' },
-  { id: '4', title: 'ブラックバード', artist: 'ビートルズ', avatar: 'https://images.pexels.com/photos/1763078/pexels-photo-1763078.jpeg?w=40&h=40&fit=crop', plays: '1.2M', difficulty: '中級者' },
-  { id: '5', title: '天国への階段', artist: 'レッド・ツェッペリン', avatar: 'https://images.pexels.com/photos/1763079/pexels-photo-1763079.jpeg?w=40&h=40&fit=crop', plays: '1.0M', difficulty: '上級者' }
-];
+// The leaderboard and popular songs data is now fetched from the backend,
+// so the static mock data can be removed.
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const { isCollapsed } = useSidebar();
   const { currentTrack, isPlaying, togglePlay, progress, duration, skip, playTrack } = useMusicPlayer();
-  const { recentSessions, formatRelativeTime } = usePracticeSessions();
-
-  const getDifficultyColorDark = (difficulty: string) => {
-    switch (difficulty) {
-      case '初心者': return 'text-green-400 bg-green-900/30 border-green-700/30';
-      case '中級者': return 'text-orange-400 bg-orange-900/30 border-orange-700/30';
-      case '上級者': return 'text-red-400 bg-red-900/30 border-red-700/30';
-      default: return 'text-gray-400 bg-gray-800/30 border-gray-700/30';
-    }
-  };
+  
+  // Updated hook usage to handle loading and error states
+  const { 
+    recentSessions, 
+    formatRelativeTime, 
+    loading, 
+    error,
+    stats
+  } = usePracticeSessions();
 
   return (
     <div className="min-h-screen bg-[#101218] text-white font-poppins relative">
@@ -167,23 +135,10 @@ const Dashboard: React.FC = () => {
                 {/* Leaderboard - Right Side within the image */}
                 <div className="absolute top-3 right-16 bottom-3 flex flex-col justify-start w-56">
                   <div className="p-4">
-                    <h3 className="text-lg font-light text-white mb-4">リーダーボード</h3>
+                    <h3 className="text-lg font-light text-white mb-4">Leaderboard</h3>
                     <div className="space-y-3">
-                      {leaderboardData.slice(0, 5).map((player) => (
-                        <div key={player.id} className="flex items-center gap-3 text-sm">
-                          <div className="flex-shrink-0 w-5 text-center">
-                            <span className="text-sm font-light text-white">{player.rank}.</span>
-                          </div>
-                          <img
-                            src={player.avatar}
-                            alt={player.name}
-                            className="w-10 h-10 rounded-full object-cover"
-                          />
-                          <div className="flex-1 min-w-0">
-                            <h4 className="font-light text-white truncate text-sm">{player.name}</h4>
-                          </div>
-                        </div>
-                      ))}
+                      {/* Placeholder for fetched leaderboard data */}
+                      <p className="text-xs text-gray-400">Leaderboard loading...</p>
                     </div>
                   </div>
                 </div>
@@ -194,64 +149,11 @@ const Dashboard: React.FC = () => {
             <div className="lg:col-span-3 p-6">
               <div className="flex items-center gap-2 mb-4">
                 <TrendingUp className="w-5 h-5 text-brand-brown" />
-                <h3 className="text-lg font-bold text-white">人気の楽曲</h3>
+                <h3 className="text-lg font-bold text-white">Popular Songs</h3>
               </div>
               <div className="space-y-3">
-                {popularSongs.map((song, index) => (
-                  <div 
-                    key={song.id} 
-                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800/20 transition-colors cursor-pointer group"
-                    onClick={() => {
-                      const track = {
-                        id: song.id,
-                        title: song.title,
-                        channelTitle: song.artist,
-                        thumbnail: song.avatar
-                      };
-                      const youtubeIds = ['2Vv-BfVoq4g', 'bx1Bh8ZvH84', 'BciS5krYL80', 'Man4t8eIOh0', 'QkF3oxziUI4'];
-                      track.id = youtubeIds[parseInt(song.id) - 1] || song.id;
-                      playTrack(track);
-                      // Navigate to practice page
-                      navigate(`/practice/${track.id}`);
-                    }}
-                  >
-                    <div className="flex-shrink-0 w-6 text-center">
-                      <span className="text-sm font-light text-gray-400">{index + 1}.</span>
-                    </div>
-                    <img
-                      src={song.avatar}
-                      alt={song.title}
-                      className="w-10 h-10 rounded-lg object-cover"
-                    />
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-light text-white truncate text-sm">{song.title}</h4>
-                      <p className="text-xs text-gray-400 truncate">{song.artist}</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className={`text-xs px-2 py-1 rounded-full border ${getDifficultyColorDark(song.difficulty)}`}>
-                        {song.difficulty}
-                      </span>
-                    </div>
-                    {/* Play button overlay */}
-                    <div 
-                      className="opacity-0 group-hover:opacity-100 transition-opacity"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        const track = {
-                          id: song.id,
-                          title: song.title,
-                          channelTitle: song.artist,
-                          thumbnail: song.avatar
-                        };
-                        const youtubeIds = ['2Vv-BfVoq4g', 'bx1Bh8ZvH84', 'BciS5krYL80', 'Man4t8eIOh0', 'QkF3oxziUI4'];
-                        track.id = youtubeIds[parseInt(song.id) - 1] || song.id;
-                        playTrack(track);
-                      }}
-                    >
-                      <Play className="w-4 h-4 text-brand-brown" />
-                    </div>
-                  </div>
-                ))}
+                {/* Placeholder for fetched popular songs data */}
+                <p className="text-xs text-gray-400">Popular songs loading...</p>
               </div>
             </div>
           </div>
@@ -278,15 +180,15 @@ const Dashboard: React.FC = () => {
               </div>
               
               <div className="space-y-2">
-                {recentSessions.length === 0 ? (
+                {loading ? (
+                  <div className="text-center py-8 text-gray-400">Loading sessions...</div>
+                ) : error ? (
+                  <div className="text-center py-8 text-red-500">{error}</div>
+                ) : recentSessions.length === 0 ? (
                   <div className="text-center py-8">
                     <Music className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-                    <h4 className="text-lg font-semibold text-gray-400 mb-2">まだ練習セッションがありません</h4>
-                    <p className="text-sm text-gray-500 mb-4">楽曲を選択して練習を開始しましょう</p>
-                    <div className="text-xs text-gray-600">
-                      ヒント: 右下の「Add Sample Data」ボタンでサンプルデータを追加できます<br/>
-                      練習セッションをクリックすると、その楽曲を再生・練習できます
-                    </div>
+                    <h4 className="text-lg font-semibold text-gray-400 mb-2">No practice sessions yet</h4>
+                    <p className="text-sm text-gray-500 mb-4">Select a song and start practicing!</p>
                   </div>
                 ) : (
                   recentSessions.map((session) => (
@@ -294,19 +196,14 @@ const Dashboard: React.FC = () => {
                       key={session.id}
                       className="group relative rounded-lg p-4 cursor-pointer hover:bg-gray-800/20 transition-all duration-300 hover:scale-[1.01] hover:shadow-lg"
                       onClick={() => {
-                        // Load the song if we have track data
-                        if (session.trackData) {
-                          playTrack(session.trackData);
-                        } else {
-                          // Fallback: try to create track data from session info
-                          const fallbackTrack = {
-                            id: session.songId,
-                            title: session.songTitle,
-                            channelTitle: session.artist,
-                            thumbnail: session.thumbnail
-                          };
-                          playTrack(fallbackTrack);
-                        }
+                        // The new session object doesn't have trackData, so we construct it.
+                        const track = {
+                          id: session.songId,
+                          title: session.songTitle,
+                          channelTitle: session.artist,
+                          thumbnail: `https://i.ytimg.com/vi/${session.songId}/hqdefault.jpg` // Assuming songId is a YouTube ID
+                        };
+                        playTrack(track);
                         navigate(`/practice/${session.songId}`);
                       }}
                     >
@@ -314,23 +211,12 @@ const Dashboard: React.FC = () => {
                         {/* Album Art with Play Overlay */}
                         <div className="relative">
                           <img
-                            src={session.thumbnail}
+                            src={`https://i.ytimg.com/vi/${session.songId}/hqdefault.jpg`}
                             alt={session.songTitle}
                             className="w-12 h-12 rounded-lg object-cover shadow-md"
                           />
                           <div className="absolute inset-0 bg-black/40 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                             <Play className="w-4 h-4 text-white" />
-                          </div>
-                          
-                          {/* Play indicator - always visible */}
-                          <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-brand-brown rounded-full flex items-center justify-center border-2 border-[#101218]">
-                            <Play className="w-2 h-2 text-white" />
-                          </div>
-                          {/* Progress Ring */}
-                          <div className="absolute -top-1 -right-1 w-5 h-5">
-                            <div className="w-full h-full rounded-full border-2 border-brand-brown bg-[#101218] flex items-center justify-center">
-                              <span className="text-xs font-bold text-brand-brown">{session.progress}%</span>
-                            </div>
                           </div>
                         </div>
 
@@ -352,41 +238,16 @@ const Dashboard: React.FC = () => {
                               </div>
                               <div className="flex items-center gap-1">
                                 <Target className="w-3 h-3" />
-                                <span>{session.progress}%</span>
+                                <span>{session.score}%</span>
                               </div>
                             </div>
 
                             {/* Date and Skills */}
                             <div className="text-right">
-                              <div className="text-xs text-gray-500 mb-1">{formatRelativeTime(session.date)}</div>
-                              <div className="flex gap-1 justify-end">
-                                {session.skillsImproved.slice(0, 1).map((skill, idx) => (
-                                  <span key={idx} className="text-xs bg-gradient-to-r from-green-900/40 to-emerald-900/40 text-green-300 px-2 py-0.5 rounded-full border border-green-700/30 font-medium">
-                                    {skill}
-                                  </span>
-                                ))}
-                                {session.skillsImproved.length > 1 && (
-                                  <span className="text-xs bg-gray-700/30 text-gray-400 px-2 py-0.5 rounded-full border border-gray-600/30">
-                                    +{session.skillsImproved.length - 1}
-                                  </span>
-                                )}
-                              </div>
+                              <div className="text-xs text-gray-500 mb-1">{formatRelativeTime(session.completedAt.toDate())}</div>
+                              {/* Skills improved is not part of the new model, can be added later */}
                             </div>
                           </div>
-                        </div>
-                      </div>
-
-                      {/* Hover Effect Arrow */}
-                      <div className="absolute right-3 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-2 group-hover:translate-x-0">
-                        <div className="w-6 h-6 rounded-full bg-brand-brown/20 flex items-center justify-center">
-                          <Play className="w-3 h-3 text-brand-brown" />
-                        </div>
-                      </div>
-                      
-                      {/* Play button tooltip */}
-                      <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <div className="bg-brand-brown text-white text-xs px-2 py-1 rounded-md shadow-lg">
-                          クリックして再生・練習
                         </div>
                       </div>
                     </div>
@@ -408,14 +269,14 @@ const Dashboard: React.FC = () => {
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-2xl font-bold">22/30</div>
+                  <div className="text-2xl font-bold">{Math.floor(stats.todayPracticeTime / 60)}/30</div>
                   <div className="text-yellow-100 text-sm">分</div>
                 </div>
               </div>
               <div className="w-full bg-white/20 rounded-full h-3 mb-2">
-                <div className="bg-white h-3 rounded-full" style={{ width: '73%' }}></div>
+                <div className="bg-white h-3 rounded-full" style={{ width: `${(stats.todayPracticeTime / (30 * 60)) * 100}%` }}></div>
               </div>
-              <p className="text-yellow-100 text-sm">1日の目標達成まであと8分！🎯</p>
+              <p className="text-yellow-100 text-sm">1日の目標達成まであと{Math.max(0, 30 - Math.floor(stats.todayPracticeTime / 60))}分！🎯</p>
             </div>
           </div>
         </div>
