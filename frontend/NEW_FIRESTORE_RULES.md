@@ -48,6 +48,12 @@ service cloud.firestore {
              data.searchedAt is timestamp;
     }
 
+    function isSearchCountValid(data) {
+      return data.term is string &&
+             data.count is number &&
+             data.lastSearched is timestamp;
+    }
+
     // --- Collection Rules ---
 
     // Master list of all songs
@@ -92,6 +98,13 @@ service cloud.firestore {
       allow create: if isAuthenticated() && isOwner(request.resource.data.userId) && isRecentSearchValid(request.resource.data, request.resource.data.userId);
       // Search history is immutable once created
       allow update, delete: if false;
+    }
+
+    // Global search counts for popular searches (read-only for users, write through cloud functions or admin)
+    match /searchCounts/{searchTerm} {
+      allow read: if isAuthenticated();
+      // Only allow writes if authenticated and data is valid
+      allow write: if isAuthenticated() && isSearchCountValid(request.resource.data);
     }
   }
 }

@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { addSearchTerm } from '../services/searchService';
 import { useRecentSearches } from '../hooks/useRecentSearches';
+import { usePopularSearches } from '../hooks/usePopularSearches';
 
 const Navbar: React.FC = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -18,7 +19,8 @@ const Navbar: React.FC = () => {
   const [searchParams] = useSearchParams();
   const location = useLocation();
   const { logout, currentUser } = useAuth();
-  const { recentSearches } = useRecentSearches();  // Sync search query with URL parameters when on search page
+  const { recentSearches } = useRecentSearches();
+  const { popularSearches } = usePopularSearches();  // Sync search query with URL parameters when on search page
   useEffect(() => {
     if (location.pathname === '/search') {
       const query = searchParams.get('q');
@@ -27,9 +29,6 @@ const Navbar: React.FC = () => {
       }
     }
   }, [location.pathname, searchParams]);
-
-  // Mock trending searches (keeping this as it might be different from recent searches)
-  const trendingSearches = ['ビリー・アイリッシュ', 'テイラー・スウィフト', 'ザ・ビートルズ'];
 
   const formatTimeAgo = (date: Date) => {
     const now = new Date();
@@ -208,29 +207,36 @@ const Navbar: React.FC = () => {
                   </div>
                 )}
 
-                {/* Trending Searches */}
-                <div className="p-4">
-                  <div className="flex items-center gap-2 mb-3">
-                    <TrendingUp className="w-4 h-4 text-brand-brown" />
-                    <span className="text-sm font-medium text-gray-300">トレンド</span>
+                {/* Popular Searches */}
+                {popularSearches.length > 0 && (
+                  <div className="p-4">
+                    <div className="flex items-center gap-2 mb-3">
+                      <TrendingUp className="w-4 h-4 text-brand-brown" />
+                      <span className="text-sm font-medium text-gray-300">人気の検索</span>
+                    </div>
+                    <div className="space-y-2">
+                      {popularSearches.map((search) => (
+                        <button
+                          key={search.id}
+                          className="w-full text-left p-2 rounded-lg hover:bg-gray-800/50 transition-colors duration-150 text-white flex items-center gap-3"
+                          onClick={() => {
+                            setSearchQuery(search.term);
+                            navigate(`/search?q=${encodeURIComponent(search.term)}`);
+                            setShowSuggestions(false);
+                          }}
+                        >
+                          <TrendingUp className="w-4 h-4 text-brand-brown" />
+                          <div className="flex-1">
+                            <div>{search.term}</div>
+                            <div className="text-xs text-gray-500">
+                              {search.count}回検索
+                            </div>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                  <div className="space-y-2">
-                    {trendingSearches.map((search, index) => (
-                      <button
-                        key={index}
-                        className="w-full text-left p-2 rounded-lg hover:bg-gray-800/50 transition-colors duration-150 text-white flex items-center gap-3"
-                        onClick={() => {
-                          setSearchQuery(search);
-                          navigate(`/search?q=${encodeURIComponent(search)}`);
-                          setShowSuggestions(false);
-                        }}
-                      >
-                        <TrendingUp className="w-4 h-4 text-brand-brown" />
-                        <span>{search}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
+                )}
               </div>
             </div>
           )}
