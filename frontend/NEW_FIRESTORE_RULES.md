@@ -42,6 +42,12 @@ service cloud.firestore {
              data.score is number;
     }
 
+    function isRecentSearchValid(data, userId) {
+      return data.userId == userId &&
+             data.term is string &&
+             data.searchedAt is timestamp;
+    }
+
     // --- Collection Rules ---
 
     // Master list of all songs
@@ -76,6 +82,15 @@ service cloud.firestore {
       // A user can only create their own history entries
       allow create: if isOwner(request.resource.data.userId) && isPracticeHistoryValid(request.resource.data, request.resource.data.userId);
       // History is immutable
+      allow update, delete: if false;
+    }
+
+    // Recent searches for each user
+    match /recentSearches/{searchId} {
+      allow read: if isAuthenticated() && isOwner(resource.data.userId);
+      // A user can only create their own search entries
+      allow create: if isAuthenticated() && isOwner(request.resource.data.userId) && isRecentSearchValid(request.resource.data, request.resource.data.userId);
+      // Search history is immutable once created
       allow update, delete: if false;
     }
   }

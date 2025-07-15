@@ -1,11 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Settings, LogOut, User, Search, Mic, Filter, X, History, TrendingUp, Bell } from 'lucide-react';
+import { Settings, LogOut, User, Search, Mic, Filter, X, History, TrendingUp, Bell, Clock } from 'lucide-react';
 import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../contexts/AuthContext';
+import { addSearchTerm } from '../services/searchService';
+import { useRecentSearches } from '../hooks/useRecentSearches';
 
 const Navbar: React.FC = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [searchFocused, setSearchFocused] = useState(false);  const [searchQuery, setSearchQuery] = useState('');
+  const [searchFocused, setSearchFocused] = useState(false);  
+  const [searchQuery, setSearchQuery] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -14,7 +17,8 @@ const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const location = useLocation();
-  const { logout, currentUser } = useAuth();  // Sync search query with URL parameters when on search page
+  const { logout, currentUser } = useAuth();
+  const { recentSearches } = useRecentSearches();  // Sync search query with URL parameters when on search page
   useEffect(() => {
     if (location.pathname === '/search') {
       const query = searchParams.get('q');
@@ -23,9 +27,22 @@ const Navbar: React.FC = () => {
       }
     }
   }, [location.pathname, searchParams]);
-  // Mock recent searches and trending
-  const recentSearches = ['パーフェクト - エド・シーラン', 'ホテル・カリフォルニア', 'ワンダーウォール'];
+
+  // Mock trending searches (keeping this as it might be different from recent searches)
   const trendingSearches = ['ビリー・アイリッシュ', 'テイラー・スウィフト', 'ザ・ビートルズ'];
+
+  const formatTimeAgo = (date: Date) => {
+    const now = new Date();
+    const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
+    
+    if (diffInMinutes < 60) {
+      return `${diffInMinutes}分前`;
+    } else if (diffInMinutes < 1440) {
+      return `${Math.floor(diffInMinutes / 60)}時間前`;
+    } else {
+      return `${Math.floor(diffInMinutes / 1440)}日前`;
+    }
+  };
 
   const handleLogout = async () => {
     try {
@@ -36,9 +53,20 @@ const Navbar: React.FC = () => {
     }
   };
 
-  const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleSearch = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && searchQuery.trim()) {
-      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      const searchTerm = searchQuery.trim();
+      
+      // Save search term if user is logged in
+      if (currentUser) {
+        try {
+          await addSearchTerm(currentUser.uid, searchTerm);
+        } catch (error) {
+          console.error('Failed to save search term:', error);
+        }
+      }
+      
+      navigate(`/search?q=${encodeURIComponent(searchTerm)}`);
       setShowSuggestions(false);
       setSearchFocused(false);
     }
@@ -157,18 +185,23 @@ const Navbar: React.FC = () => {
                       <span className="text-sm font-medium text-gray-300">最近の検索</span>
                     </div>
                     <div className="space-y-2">
-                      {recentSearches.map((search, index) => (
+                      {recentSearches.map((search) => (
                         <button
-                          key={index}
+                          key={search.id}
                           className="w-full text-left p-2 rounded-lg hover:bg-gray-800/50 transition-colors duration-150 text-white flex items-center gap-3"
                           onClick={() => {
-                            setSearchQuery(search);
-                            navigate(`/search?q=${encodeURIComponent(search)}`);
+                            setSearchQuery(search.term);
+                            navigate(`/search?q=${encodeURIComponent(search.term)}`);
                             setShowSuggestions(false);
                           }}
                         >
-                          <History className="w-4 h-4 text-gray-400" />
-                          <span>{search}</span>
+                          <Clock className="w-4 h-4 text-gray-400" />
+                          <div className="flex-1">
+                            <div>{search.term}</div>
+                            <div className="text-xs text-gray-500">
+                              {formatTimeAgo(search.searchedAt)}
+                            </div>
+                          </div>
                         </button>
                       ))}
                     </div>

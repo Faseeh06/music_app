@@ -20,6 +20,7 @@ import {
 
 // The leaderboard and popular songs data is now fetched from the backend,
 // so the static mock data can be removed.
+console.log("Dashboard component initialized");
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
