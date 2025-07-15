@@ -5,6 +5,7 @@ import Navbar from './Navbar';
 import MusicPlayerBar from './MusicBar';
 import { useMusicPlayer } from '../contexts/PlayerContext';
 import { useSidebar } from '../contexts/SidebarContext';
+import { useSocket } from '../contexts/SocketContext';
 import { usePracticeSessions } from '../hooks/usePracticeSessions';
 import { getSongLeaderboard } from '../services/practiceService';
 import PracticePageHeader from './practice/PracticePageHeader';
@@ -20,6 +21,7 @@ const PracticePage: React.FC = () => {
   const { songId } = useParams<{ songId: string }>();
   const { isCollapsed } = useSidebar();
   const { currentTrack, isPlaying } = useMusicPlayer();
+  const { joinSong, leaveSong, addReaction, receivedEmojis, reactionCounts, activeUsers, isConnected } = useSocket();
   const { addSession } = usePracticeSessions();
   const [practiceTime, setPracticeTime] = useState(0);
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
@@ -95,6 +97,27 @@ const PracticePage: React.FC = () => {
     }
   }, [songId]);
 
+  // Join/leave song room for real-time emoji sharing
+  useEffect(() => {
+    if (songId && isConnected) {
+      console.log('🎯 PracticePage: Joining song room...', { songId, isConnected });
+      
+      // Small delay to ensure connection is stable
+      const timeout = setTimeout(() => {
+        joinSong(songId);
+        console.log('✅ PracticePage: Joined song room for real-time emoji sharing');
+      }, 100);
+      
+      return () => {
+        clearTimeout(timeout);
+        leaveSong(songId);
+        console.log('🚪 PracticePage: Left song room');
+      };
+    } else {
+      console.log('⏳ PracticePage: Waiting for connection...', { songId: !!songId, isConnected });
+    }
+  }, [songId, isConnected, joinSong, leaveSong]);
+
   useEffect(() => {
     return () => {
       const finalPracticeTime = practiceTimeRef.current;
@@ -158,15 +181,29 @@ const PracticePage: React.FC = () => {
   };
 
   const handleEmojiClick = (emoji: string) => {
+    console.log('🎯 PracticePage: Emoji clicked:', emoji, 'songId:', songId);
     setActiveEmoji(emoji);
     setEmojiAnimation(emoji);
     setSentEmojis(prev => [...prev, emoji]);
+    
+    // Send reaction to all users in the same song room
+    if (songId) {
+      console.log('📡 PracticePage: Sending reaction via addReaction');
+      addReaction(emoji, songId);
+    } else {
+      console.error('❌ PracticePage: No songId available for reaction');
+    }
+    
     setTimeout(() => setEmojiAnimation(null), 1000);
   };
 
   const handleSendEmoji = () => {
-    if (activeEmoji) {
+    if (activeEmoji && songId) {
       setSentEmojis(prev => [...prev, activeEmoji]);
+      
+      // Send reaction to all users in the same song room
+      addReaction(activeEmoji, songId);
+      
       setActiveEmoji(null);
     }
   };
@@ -190,10 +227,46 @@ const PracticePage: React.FC = () => {
                 sentEmojis={sentEmojis}
                 activeEmoji={activeEmoji}
                 emojiAnimation={emojiAnimation}
+                receivedEmojis={receivedEmojis}
+                reactionCounts={reactionCounts}
+                activeUsers={activeUsers}
+                isConnected={isConnected}
                 onEmojiClick={handleEmojiClick}
                 onSend={handleSendEmoji}
                 onCancel={() => setActiveEmoji(null)}
               />
+              {/* Debug Info */}
+              {process.env.NODE_ENV === 'development' && (
+                <div className="mt-4 p-2 bg-gray-900/50 rounded text-xs text-gray-400">
+                  <div>🔗 Connected: {isConnected ? 'Yes' : 'No'}</div>
+                  <div>👥 Active Users: {activeUsers}</div>
+                  <div>📨 Received Emojis: {receivedEmojis.length}</div>
+                  <div>📊 Reaction Counts: {Object.keys(reactionCounts).length} types</div>
+                  <div>🎵 Song ID: {songId}</div>
+                  
+                  {/* Test Buttons */}
+                  <div className="mt-2 flex gap-2">
+                    <button 
+                      onClick={() => {
+                        console.log('🧪 Testing manual reaction...');
+                        if (songId) addReaction('🧪', songId);
+                      }}
+                      className="px-2 py-1 bg-blue-600 text-white rounded text-xs"
+                    >
+                      Test Reaction
+                    </button>
+                    <button 
+                      onClick={() => {
+                        console.log('🏠 Testing manual join...');
+                        if (songId) joinSong(songId);
+                      }}
+                      className="px-2 py-1 bg-green-600 text-white rounded text-xs"
+                    >
+                      Test Join
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
             <PracticeSidebar
               chords={song.chords}

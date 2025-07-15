@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider } from './contexts/AuthContext';
 import { MusicPlayerProvider } from './contexts/PlayerContext';
 import { SidebarProvider } from './contexts/SidebarContext';
+import { SocketProvider } from './contexts/SocketContext';
 import { useAuth } from './hooks/useAuth';
 
 import LandingPage from './components/LandingPage';
@@ -159,11 +160,13 @@ function AppContent() {
 function App() {
   return (
     <AuthProvider>
-      <MusicPlayerProvider>
-        <SidebarProvider>
-          <AppContent />
-        </SidebarProvider>
-      </MusicPlayerProvider>
+      <SocketProvider>
+        <MusicPlayerProvider>
+          <SidebarProvider>
+            <AppContent />
+          </SidebarProvider>
+        </MusicPlayerProvider>
+      </SocketProvider>
     </AuthProvider>
   );
 }
